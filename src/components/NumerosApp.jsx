@@ -72,11 +72,11 @@ function calculateMatrix(dateStr) {
   const val    = (d) => cnt[d] === 0 ? '—' : String(d).repeat(cnt[d]);
   const status = (d) => {
     const c = cnt[d];
-    if (c === 0) return 'Пусто';
-    if (c === 1) return 'Слабо';
-    if (c === 2) return 'Норма';
-    if (c === 3) return 'Сильно';
-    return 'Мощно';
+    if (c === 0) return '—';
+    if (c === 1) return 'База';
+    if (c === 2) return 'Усилено';
+    if (c === 3) return 'Импульс';
+    return 'Экстра';
   };
   const hl      = (d) => cnt[d] >= 3;
   const lineSum = (...ds) => ds.reduce((s, d) => s + cnt[d], 0);
