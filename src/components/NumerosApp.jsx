@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Lock,
   ArrowRight,
@@ -248,95 +249,223 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
   );
 }
 
+// ─── PDFButton ───────────────────────────────────────────────────────────────
+
+function PDFButton({ birthDate, name }) {
+  const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [inputName, setInputName] = useState(name || '');
+
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+    if (!inputName.trim() || !birthDate) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: inputName.trim(), birthDate }),
+      });
+      if (!res.ok) throw new Error('Ошибка генерации');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `numeros-${inputName.trim().replace(/\s+/g, '-')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setShowForm(false);
+    } catch (err) {
+      alert('Не удалось создать PDF. Попробуй ещё раз.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showForm) {
+    return (
+      <div className="w-full max-w-md mx-auto lg:mx-0 mt-3">
+        <form onSubmit={handleGenerate} className="glass-card border border-[#D4AF37]/20 rounded-2xl p-5 flex flex-col gap-3">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Введите своё имя для разбора</p>
+          <input
+            type="text"
+            value={inputName}
+            onChange={e => setInputName(e.target.value)}
+            placeholder="Например: Айгерим"
+            className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white font-semibold outline-none focus:border-[#D4AF37]/50 transition-all"
+            required
+            autoFocus
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`flex-1 ${BTN_PRIMARY} py-3 text-[9px] ${loading ? 'opacity-50 cursor-wait' : ''}`}
+            >
+              {loading ? 'Генерирую PDF...' : 'Создать PDF'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="px-4 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white transition-colors text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setShowForm(true)}
+      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[9px] uppercase tracking-[0.2em] font-black hover:bg-[#D4AF37]/15 transition-all"
+    >
+      <Lock size={11} /> Получить PDF разбор
+    </button>
+  );
+}
+
 // ─── ShareButton ─────────────────────────────────────────────────────────────
 
 function ShareButton({ birthDate, matrixData, formatDate }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [capturing, setCapturing] = useState(false);
 
-  const shareText = `Моя матрица Пифагора (${formatDate(birthDate)}): Характер ${matrixData.char.v}, Удача ${matrixData.luck.v}, Долг ${matrixData.duty.v}, Интерес ${matrixData.interest.v}. Рассчитай свою на Numeros!`;
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://numeros.app';
+  const shareText = `Моя матрица Пифагора (${formatDate(birthDate)}): Характер ${matrixData.char.v}, Удача ${matrixData.luck.v}, Долг ${matrixData.duty.v}, Интерес ${matrixData.interest.v}. Рассчитайте свою на Numeros!`;
 
-  const networks = [
-    {
-      label: 'Telegram',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.718.942z"/></svg>
-      ),
-      href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
-    },
-    {
-      label: 'WhatsApp',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.428a.5.5 0 0 0 .614.614l5.579-1.464A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.886 9.886 0 0 1-5.031-1.371l-.36-.214-3.733.979.997-3.645-.234-.374A9.863 9.863 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/></svg>
-      ),
-      href: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
-    },
-    {
-      label: 'ВКонтакте',
-      icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.523-2.049-1.713-1.033-1.01-1.49-.1149-1.49.667v1.566c0 .334-.106.534-1.235.534-1.822 0-3.845-1.104-5.263-3.164C5.98 12.72 5.4 10.507 5.4 9.456c0-.209.065-.4.47-.4H7.6c.39 0 .533.173.686.583.752 2.17 2.01 4.072 2.528 4.072.194 0 .283-.09.283-.581v-2.26c-.064-1.047-.61-1.135-.61-1.508 0-.187.154-.374.4-.374h2.743c.33 0 .448.175.448.55v3.047c0 .334.148.448.24.448.194 0 .357-.114.712-.47 1.104-1.237 1.889-3.143 1.889-3.143.104-.211.282-.411.668-.411h1.744c.524 0 .637.268.524.632-.22.994-2.353 4.04-2.353 4.04-.185.299-.252.432 0 .766.187.251.798.773 1.205 1.237.747.855 1.32 1.572 1.477 2.067.163.482-.086.727-.568.727z"/></svg>
-      ),
-      href: `https://vk.com/share.php?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}`,
-    },
-  ];
+  // Захватить скриншот матрицы
+  const captureMatrix = async () => {
+    setCapturing(true);
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const el = document.getElementById('matrix-capture-zone');
+      if (!el) throw new Error('Элемент не найден');
+
+      const canvas = await html2canvas(el, {
+        backgroundColor: '#08090D',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      return canvas;
+    } finally {
+      setCapturing(false);
+    }
+  };
+
+  // Скачать как изображение
+  const handleDownload = async () => {
+    setOpen(false);
+    const canvas = await captureMatrix();
+    const link = document.createElement('a');
+    link.download = `numeros-matrix-${formatDate(birthDate)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  // Поделиться через Web Share API с изображением (мобильные)
+  const handleShareImage = async () => {
+    setOpen(false);
+    const canvas = await captureMatrix();
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], `numeros-${formatDate(birthDate)}.png`, { type: 'image/png' });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Моя матрица Пифагора', text: shareText });
+          return;
+        } catch { /* отменено */ }
+      }
+      // fallback — скачать
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `numeros-${formatDate(birthDate)}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* fallback */
-    }
+    } catch { /* fallback */ }
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Моя матрица Пифагора', text: shareText, url: shareUrl });
-        return;
-      } catch { /* user cancelled */ }
-    }
-    setOpen((v) => !v);
-  };
+  const networks = [
+    {
+      label: 'Telegram',
+      icon: <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.718.942z"/></svg>,
+      href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
+    },
+    {
+      label: 'WhatsApp',
+      icon: <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.428a.5.5 0 0 0 .614.614l5.579-1.464A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.886 9.886 0 0 1-5.031-1.371l-.36-.214-3.733.979.997-3.645-.234-.374A9.863 9.863 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/></svg>,
+      href: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
+    },
+  ];
 
   return (
     <div className="relative">
       <button
-        onClick={handleNativeShare}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/20 text-white/60 hover:text-white hover:border-white/40 text-[9px] uppercase tracking-[0.25em] font-black transition-all"
+        onClick={() => setOpen(v => !v)}
+        disabled={capturing}
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/20 text-white/60 hover:text-white hover:border-white/40 text-[9px] uppercase tracking-[0.25em] font-black transition-all disabled:opacity-50"
       >
         <Share2 size={11} />
-        Поделиться
+        {capturing ? 'Захват...' : 'Поделиться'}
       </button>
 
       {open && (
         <>
-          {/* overlay */}
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          {/* dropdown */}
-          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 bg-[#0D0E14] border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/50 min-w-[160px]">
+          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 bg-[#0D0E14] border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/50 min-w-[180px]">
+
+            {/* Поделиться картинкой */}
+            <button
+              onClick={handleShareImage}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
+            >
+              <Share2 size={15} className="text-[#D4AF37]" />
+              Поделиться картинкой
+            </button>
+
+            {/* Скачать */}
+            <button
+              onClick={handleDownload}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
+            >
+              <Copy size={15} />
+              Сохранить в галерею
+            </button>
+
+            {/* Разделитель */}
+            <div className="border-t border-white/5 my-1" />
+
+            {/* Соцсети */}
             {networks.map((n) => (
-              <a
-                key={n.label}
-                href={n.href}
-                target="_blank"
-                rel="noopener noreferrer"
+              <a key={n.label} href={n.href} target="_blank" rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
               >
-                {n.icon}
-                {n.label}
+                {n.icon} {n.label}
               </a>
             ))}
-            <button
-              onClick={handleCopy}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold border-t border-white/5 mt-1 pt-3"
-            >
-              {copied ? <Check size={16} className="text-[#D4AF37]" /> : <Copy size={16} />}
-              {copied ? 'Скопировано!' : 'Копировать ссылку'}
-            </button>
+
+            {/* Копировать ссылку */}
+            <div className="border-t border-white/5 mt-1 pt-1">
+              <button onClick={handleCopy}
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
+              >
+                {copied ? <Check size={15} className="text-[#D4AF37]" /> : <Copy size={15} />}
+                {copied ? 'Скопировано!' : 'Копировать ссылку'}
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -377,9 +506,9 @@ function Nav({ scrolled, isMenuOpen, setIsMenuOpen, setView, scrollTo }) {
           >
             Личная матрица
           </button>
-          <button className="hover:text-[#D4AF37] transition-colors opacity-40 cursor-not-allowed">
+          <Link href="/compatibility" className="hover:text-[#D4AF37] transition-colors normal-case">
             Совместимость
-          </button>
+          </Link>
           <button
             onClick={() => scrollTo('testimonials-section')}
             className="hover:text-[#D4AF37] transition-colors"
@@ -419,12 +548,13 @@ function Nav({ scrolled, isMenuOpen, setIsMenuOpen, setView, scrollTo }) {
           >
             Личная матрица
           </button>
-          <button
-            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-500 cursor-not-allowed"
-            disabled
+          <Link
+            href="/compatibility"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
           >
             Совместимость
-          </button>
+          </Link>
           <button
             onClick={() => { setIsMenuOpen(false); scrollTo('testimonials-section'); }}
             className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
@@ -561,7 +691,7 @@ const MONTHS = [
   'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь',
 ];
 
-function DateSelect({ value, onChange }) {
+function DateSelect({ value, onChange, showError }) {
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -571,28 +701,46 @@ function DateSelect({ value, onChange }) {
       const mm = String(month).padStart(2, '0');
       const dd = String(day).padStart(2, '0');
       onChange(`${year}-${mm}-${dd}`);
+    } else {
+      onChange('');
     }
   }, [day, month, year]);
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
 
-  const selectClass = "flex-1 bg-white/[0.04] border border-white/10 rounded-2xl px-3 py-4 text-white text-base font-semibold outline-none focus:border-[#D4AF37]/50 transition-all appearance-none text-center cursor-pointer";
+  const missingDay   = showError && !day;
+  const missingMonth = showError && !month;
+  const missingYear  = showError && !year;
+
+  const selectClass = (missing) =>
+    `flex-1 bg-white/[0.04] border rounded-2xl px-3 py-4 text-white text-base font-semibold outline-none transition-all appearance-none text-center cursor-pointer ${
+      missing
+        ? 'border-red-500/70 bg-red-500/5'
+        : 'border-white/10 focus:border-[#D4AF37]/50'
+    }`;
 
   return (
-    <div className="flex gap-2 w-full">
-      <select value={day} onChange={e => setDay(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
-        <option value="" disabled>День</option>
-        {days.map(d => <option key={d} value={d}>{d}</option>)}
-      </select>
-      <select value={month} onChange={e => setMonth(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
-        <option value="" disabled>Месяц</option>
-        {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-      </select>
-      <select value={year} onChange={e => setYear(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
-        <option value="" disabled>Год</option>
-        {years.map(y => <option key={y} value={y}>{y}</option>)}
-      </select>
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex gap-2">
+        <select value={day} onChange={e => setDay(e.target.value)} className={selectClass(missingDay)} style={{ colorScheme: 'dark' }}>
+          <option value="" disabled>День</option>
+          {days.map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <select value={month} onChange={e => setMonth(e.target.value)} className={selectClass(missingMonth)} style={{ colorScheme: 'dark' }}>
+          <option value="" disabled>Месяц</option>
+          {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+        </select>
+        <select value={year} onChange={e => setYear(e.target.value)} className={selectClass(missingYear)} style={{ colorScheme: 'dark' }}>
+          <option value="" disabled>Год</option>
+          {years.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+      </div>
+      {showError && (!day || !month || !year) && (
+        <p className="text-red-400 text-xs font-semibold px-1 flex items-center gap-1.5">
+          <span>⚠</span> Пожалуйста, выберите день, месяц и год рождения
+        </p>
+      )}
     </div>
   );
 }
@@ -603,6 +751,7 @@ export default function NumerosApp() {
   const [view, setView] = useState('landing');
   const [birthDate, setBirthDate] = useState('');
   const [matrixData, setMatrixData] = useState(null);
+  const [dateError, setDateError] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
@@ -639,10 +788,13 @@ export default function NumerosApp() {
 
   const handleCalculate = (e) => {
     e.preventDefault();
-    if (birthDate) {
-      setMatrixData(calculateMatrix(birthDate));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!birthDate) {
+      setDateError(true);
+      return;
     }
+    setDateError(false);
+    setMatrixData(calculateMatrix(birthDate));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -664,25 +816,25 @@ export default function NumerosApp() {
                 <Sparkles size={12} /> Профессиональный расчет судьбы
               </div>
               <h1 className="text-4xl md:text-6xl lg:text-[86px] font-extrabold tracking-[-0.03em] md:tracking-[-0.04em] mb-5 md:mb-10 leading-[1.05] md:leading-[0.95] text-white">
-                Твой путь в{' '}
+                Ваш путь в{' '}
                 <span className="italic font-light text-[#D4AF37]">цифрах</span>
               </h1>
               <p className="max-w-xl text-gray-400 text-base md:text-xl font-medium mb-8 md:mb-14 mx-auto lg:mx-0 leading-relaxed">
-                Раскрой свой потенциал через сакральную геометрию Квадрата
-                Пифагора. Узнай свои сильные стороны за несколько секунд.
+                Раскройте свой потенциал через сакральную геометрию Квадрата
+                Пифагора. Узнайте свои сильные стороны за несколько секунд.
               </p>
               <form
                 onSubmit={handleCalculate}
                 className="w-full max-w-md flex flex-col gap-3 md:gap-5 mx-auto lg:mx-0"
               >
-                <DateSelect value={birthDate} onChange={setBirthDate} />
+                <DateSelect value={birthDate} onChange={(v) => { setBirthDate(v); if (v) setDateError(false); }} showError={dateError} />
                 <button className={`w-full group ${BTN_PRIMARY} py-4 md:py-6 shadow-2xl shadow-[#D4AF37]/10`}>
                   Рассчитать матрицу
                   <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </button>
               </form>
             </div>
-            <div className="flex-1 w-full animate-float">
+            <div className="flex-1 w-full animate-float" id="matrix-capture-zone">
               {matrixData && (
                 <div className="flex justify-center gap-3 mb-4">
                   {/* Дата */}
@@ -854,13 +1006,13 @@ export default function NumerosApp() {
           {/* ── Final CTA ── */}
           <section className="py-20 md:py-40 px-6 text-center relative overflow-hidden">
             <h2 className="text-3xl md:text-7xl font-extrabold mb-6 md:mb-10">
-              Узнай свою судьбу
+              Узнайте свою судьбу
             </h2>
             <form
               onSubmit={handleCalculate}
               className="max-w-md mx-auto flex flex-col gap-3 md:gap-5"
             >
-              <DateSelect value={birthDate} onChange={setBirthDate} />
+              <DateSelect value={birthDate} onChange={(v) => { setBirthDate(v); if (v) setDateError(false); }} showError={dateError} />
               <button className={`w-full ${BTN_PRIMARY} py-4 md:py-7`}>
                 Рассчитать матрицу
               </button>
