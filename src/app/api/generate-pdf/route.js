@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { renderToBuffer } from '@react-pdf/renderer';
-import { NumerologyPDF } from '@/lib/NumerologyPDF.jsx';
-import { generateFullReport } from '@/lib/generateReport.js';
 
 // Дублируем расчёт матрицы на сервере (без импорта клиентского компонента)
 function sumDigits(n) {
@@ -83,10 +80,13 @@ export async function POST(req) {
     // 3. Генерируем AI-текст для каждой секции
     let report = { sections: [], summary: '' };
     if (process.env.OPENAI_API_KEY) {
+      const { generateFullReport } = await import('@/lib/generateReport.js');
       report = await generateFullReport(matrixData, name, formattedDate);
     }
 
     // 4. Рендерим PDF
+    const { renderToBuffer } = await import('@react-pdf/renderer');
+    const { NumerologyPDF } = await import('@/lib/NumerologyPDF.jsx');
     const pdfBuffer = await renderToBuffer(
       NumerologyPDF({
         matrixData,
