@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Gem, ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield } from 'lucide-react';
+import NavBar from '@/components/NavBar';
+import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield } from 'lucide-react';
 import { Manrope } from 'next/font/google';
 
 const manrope = Manrope({ subsets: ['latin', 'cyrillic'], weight: ['400','600','700','800'] });
@@ -236,13 +237,6 @@ export default function CompatibilityApp() {
   const [name2, setName2] = useState('');
   const [result, setResult] = useState(null);
   const [showError, setShowError] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleCalculate = (e) => {
     e.preventDefault();
@@ -260,22 +254,7 @@ export default function CompatibilityApp() {
   return (
     <div className={`min-h-screen bg-[#08090D] text-white overflow-x-hidden ${manrope.className}`}>
 
-      {/* ── Навигация ── */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'py-4 bg-[#08090D]/90 backdrop-blur-md border-b border-white/10' : 'py-6 bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-black tracking-tighter flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-full border border-[#D4AF37]/50 flex items-center justify-center bg-gradient-to-tr from-[#D4AF37]/20 to-transparent group-hover:rotate-180 transition-transform duration-700">
-              <Gem size={18} className="text-[#D4AF37]" />
-            </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-[#D4AF37] uppercase font-black text-xl tracking-[0.1em]">
-              Numeros
-            </span>
-          </Link>
-          <Link href="/" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-white/10 text-gray-400 hover:text-white hover:border-white/30 text-[10px] uppercase tracking-[0.2em] font-bold transition-all">
-            <ArrowLeft size={14} /> На главную
-          </Link>
-        </div>
-      </nav>
+      <NavBar activePage="compatibility" />
 
       {/* ── Hero ── */}
       <section className="pt-28 md:pt-40 pb-16 px-6 max-w-5xl mx-auto text-center">

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import NavBar from '@/components/NavBar';
 import {
   ArrowRight,
   TrendingUp,
@@ -394,114 +395,6 @@ function ShareButton({ birthDate, matrixData, formatDate }) {
   );
 }
 
-// ─── Nav ──────────────────────────────────────────────────────────────────────
-
-function Nav({ scrolled, isMenuOpen, setIsMenuOpen, setView, scrollTo }) {
-  return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? 'py-4 bg-[#08090D]/90 backdrop-blur-md border-b border-white/10'
-          : 'py-6 bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        <button
-          onClick={() => { setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          className="text-2xl font-black tracking-tighter cursor-pointer flex items-center gap-2 group"
-        >
-          <div className="w-10 h-10 rounded-full border border-[#D4AF37]/50 flex items-center justify-center bg-gradient-to-tr from-[#D4AF37]/20 to-transparent group-hover:rotate-180 transition-transform duration-700">
-            <Gem size={18} className="text-[#D4AF37]" />
-          </div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-[#D4AF37] uppercase font-black text-xl tracking-[0.1em]">
-            Numeros
-          </span>
-        </button>
-
-        {/* Desktop Links */}
-        <div className="hidden lg:flex gap-10 text-[10px] uppercase tracking-[0.25em] font-bold text-gray-400">
-          <button
-            onClick={() => { setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="hover:text-[#D4AF37] transition-colors"
-          >
-            Личная матрица
-          </button>
-          <Link href="/compatibility" className="hover:text-[#D4AF37] transition-colors normal-case">
-            Совместимость
-          </Link>
-          <button
-            onClick={() => scrollTo('testimonials-section')}
-            className="hover:text-[#D4AF37] transition-colors"
-          >
-            Отзывы
-          </button>
-          <button
-            onClick={() => scrollTo('faq-section')}
-            className="hover:text-[#D4AF37] transition-colors"
-          >
-            FAQ
-          </button>
-        </div>
-
-        {/* CTA */}
-        <div className="hidden md:block">
-          <button onClick={() => { setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={BTN_NAV}>
-            Получить разбор
-          </button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className="lg:hidden text-white p-1"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Dropdown */}
-      {isMenuOpen && (
-        <div className="lg:hidden bg-[#08090D]/95 backdrop-blur-md border-t border-white/10 px-6 py-6 flex flex-col gap-5">
-          <button
-            onClick={() => { setIsMenuOpen(false); setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
-          >
-            Личная матрица
-          </button>
-          <Link
-            href="/compatibility"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
-          >
-            Совместимость
-          </Link>
-          <button
-            onClick={() => { setIsMenuOpen(false); scrollTo('testimonials-section'); }}
-            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
-          >
-            Отзывы
-          </button>
-          <button
-            onClick={() => { setIsMenuOpen(false); scrollTo('faq-section'); }}
-            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
-          >
-            FAQ
-          </button>
-          <div className="pt-2 border-t border-white/10">
-            <button
-              onClick={() => { setIsMenuOpen(false); setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className={`${BTN_NAV} w-full justify-center`}
-            >
-              Получить разбор
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
-  );
-}
-
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const benefits = [
@@ -673,16 +566,8 @@ export default function NumerosApp() {
   const [birthDate, setBirthDate] = useState('');
   const [matrixData, setMatrixData] = useState(null);
   const [dateError, setDateError] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [pendingScroll, setPendingScroll] = useState(null);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Скроллим к нужной секции после того как view обновился и DOM перерисовался
   useEffect(() => {
@@ -720,13 +605,7 @@ export default function NumerosApp() {
 
   return (
     <div className="min-h-screen bg-[#08090D] text-white overflow-x-hidden">
-      <Nav
-        scrolled={scrolled}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        setView={setView}
-        scrollTo={scrollTo}
-      />
+      <NavBar activePage="home" />
 
       {(
         <div className="relative z-10">
