@@ -253,139 +253,126 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
 
 function ShareButton({ birthDate, matrixData, formatDate }) {
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [capturing, setCapturing] = useState(false);
+  const [status, setStatus] = useState('idle'); // idle | capturing | done | error
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://numeros.app';
   const shareText = `Моя матрица Пифагора (${formatDate(birthDate)}): Характер ${matrixData.char.v}, Удача ${matrixData.luck.v}, Долг ${matrixData.duty.v}, Интерес ${matrixData.interest.v}. Рассчитайте свою на Numeros!`;
 
-  // Захватить скриншот матрицы
   const captureMatrix = async () => {
-    setCapturing(true);
-    try {
-      const html2canvas = (await import('html2canvas')).default;
-      const el = document.getElementById('matrix-capture-zone');
-      if (!el) throw new Error('Элемент не найден');
+    const { toPng } = await import('html-to-image');
+    const el = document.getElementById('matrix-capture-zone');
+    if (!el) throw new Error('Элемент не найден');
+    const dataUrl = await toPng(el, {
+      backgroundColor: '#08090D',
+      pixelRatio: 2,
+      skipFonts: false,
+    });
+    return dataUrl;
+  };
 
-      const canvas = await html2canvas(el, {
-        backgroundColor: '#08090D',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-      return canvas;
-    } finally {
-      setCapturing(false);
+  const withCapture = async (fn) => {
+    setOpen(false);
+    setStatus('capturing');
+    try {
+      const canvas = await captureMatrix();
+      await fn(canvas);
+      setStatus('done');
+      setTimeout(() => setStatus('idle'), 2000);
+    } catch (err) {
+      console.error('Share error:', err);
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 2500);
     }
   };
 
-  // Скачать как изображение
-  const handleDownload = async () => {
-    setOpen(false);
-    const canvas = await captureMatrix();
+  const handleDownload = () => withCapture(async (dataUrl) => {
     const link = document.createElement('a');
-    link.download = `numeros-matrix-${formatDate(birthDate)}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = `numeros-${formatDate(birthDate)}.png`;
+    link.href = dataUrl;
     link.click();
-  };
+  });
 
-  // Поделиться через Web Share API с изображением (мобильные)
-  const handleShareImage = async () => {
-    setOpen(false);
-    const canvas = await captureMatrix();
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], `numeros-${formatDate(birthDate)}.png`, { type: 'image/png' });
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], title: 'Моя матрица Пифагора', text: shareText });
-          return;
-        } catch { /* отменено */ }
-      }
-      // fallback — скачать
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `numeros-${formatDate(birthDate)}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }, 'image/png');
-  };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch { /* fallback */ }
+      setStatus('done');
+      setTimeout(() => setStatus('idle'), 2000);
+    } catch { setStatus('error'); setTimeout(() => setStatus('idle'), 2000); }
+    setOpen(false);
   };
 
-  const networks = [
-    {
-      label: 'Telegram',
-      icon: <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.718.942z"/></svg>,
-      href: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
-    },
-    {
-      label: 'WhatsApp',
-      icon: <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.428a.5.5 0 0 0 .614.614l5.579-1.464A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.886 9.886 0 0 1-5.031-1.371l-.36-.214-3.733.979.997-3.645-.234-.374A9.863 9.863 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/></svg>,
-      href: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
-    },
-  ];
+  // Конвертирует dataUrl в File
+  const dataUrlToFile = async (dataUrl, name) => {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], name, { type: 'image/png' });
+  };
+
+  const handleShareTo = (appName) => withCapture(async (dataUrl) => {
+    const file = await dataUrlToFile(dataUrl, `numeros-${formatDate(birthDate)}.png`);
+    // Нативный шаринг с картинкой (мобильные iOS/Android)
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Моя матрица Пифагора', text: shareText });
+      return;
+    }
+    // Десктоп — скачиваем картинку
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url; a.download = file.name; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  const TgIcon = () => (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.43 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.718.942z"/></svg>
+  );
+  const WaIcon = () => (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.85L.057 23.428a.5.5 0 0 0 .614.614l5.579-1.464A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.886 9.886 0 0 1-5.031-1.371l-.36-.214-3.733.979.997-3.645-.234-.374A9.863 9.863 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/></svg>
+  );
+
+  const btnLabel = status === 'capturing' ? 'Захват...' : status === 'done' ? 'Готово!' : status === 'error' ? 'Ошибка' : 'Поделиться';
+  const btnColor = status === 'done' ? 'text-green-400 border-green-400/30' : status === 'error' ? 'text-red-400 border-red-400/30' : 'text-white/60 border-white/20 hover:text-white hover:border-white/40';
 
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(v => !v)}
-        disabled={capturing}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/20 text-white/60 hover:text-white hover:border-white/40 text-[9px] uppercase tracking-[0.25em] font-black transition-all disabled:opacity-50"
+        onClick={() => status === 'idle' && setOpen(v => !v)}
+        disabled={status === 'capturing'}
+        className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border text-[9px] uppercase tracking-[0.25em] font-black transition-all disabled:opacity-50 ${btnColor}`}
       >
         <Share2 size={11} />
-        {capturing ? 'Захват...' : 'Поделиться'}
+        {btnLabel}
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 bg-[#0D0E14] border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/50 min-w-[180px]">
+          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 bg-[#0D0E14] border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/50 min-w-[190px]">
 
-            {/* Поделиться картинкой */}
-            <button
-              onClick={handleShareImage}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
-            >
-              <Share2 size={15} className="text-[#D4AF37]" />
-              Поделиться картинкой
+            {/* Telegram с картинкой */}
+            <button onClick={() => handleShareTo('telegram')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold">
+              <TgIcon /> Telegram
             </button>
 
-            {/* Скачать */}
-            <button
-              onClick={handleDownload}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
-            >
-              <Copy size={15} />
-              Сохранить в галерею
+            {/* WhatsApp с картинкой */}
+            <button onClick={() => handleShareTo('whatsapp')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold">
+              <WaIcon /> WhatsApp
             </button>
 
-            {/* Разделитель */}
             <div className="border-t border-white/5 my-1" />
 
-            {/* Соцсети */}
-            {networks.map((n) => (
-              <a key={n.label} href={n.href} target="_blank" rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
-              >
-                {n.icon} {n.label}
-              </a>
-            ))}
+            {/* Скачать */}
+            <button onClick={handleDownload}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold">
+              <Copy size={15} /> Сохранить картинку
+            </button>
 
-            {/* Копировать ссылку */}
             <div className="border-t border-white/5 mt-1 pt-1">
               <button onClick={handleCopy}
-                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold"
-              >
-                {copied ? <Check size={15} className="text-[#D4AF37]" /> : <Copy size={15} />}
-                {copied ? 'Скопировано!' : 'Копировать ссылку'}
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all text-gray-300 hover:text-white text-sm font-bold">
+                <Copy size={15} /> Копировать ссылку
               </button>
             </div>
           </div>
