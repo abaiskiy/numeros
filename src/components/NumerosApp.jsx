@@ -637,6 +637,7 @@ export default function NumerosApp() {
     e.preventDefault();
     if (birthDate) {
       setMatrixData(calculateMatrix(birthDate));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -694,29 +695,33 @@ export default function NumerosApp() {
           </section>
 
           {/* ── Benefits ── */}
-          <section className="py-32 px-6 max-w-7xl mx-auto">
-            <div className="text-center mb-24">
-              <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white">
+          <section className="py-16 md:py-32 px-6 max-w-7xl mx-auto">
+            <div className="text-center mb-10 md:mb-20">
+              <h2 className="text-4xl md:text-7xl font-extrabold tracking-tighter text-white">
                 Что откроет вам разбор
               </h2>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
               {benefits.map((item, idx) => (
                 <div
                   key={idx}
-                  className={`glass-card p-10 rounded-[56px] group hover:border-white/20 transition-all duration-700 relative overflow-hidden flex flex-col border border-white/5`}
+                  className="glass-card border border-white/5 rounded-3xl md:rounded-[56px] group hover:border-white/20 transition-all duration-700 overflow-hidden
+                    flex flex-row md:flex-col items-center md:items-start
+                    p-5 md:p-10 gap-4 md:gap-0"
                 >
                   <div
-                    className={`w-24 h-24 rounded-[32px] bg-[#111218] border border-white/10 flex items-center justify-center mb-10 shadow-2xl ${item.shadow}`}
+                    className={`w-14 h-14 md:w-24 md:h-24 shrink-0 rounded-2xl md:rounded-[32px] bg-[#111218] border border-white/10 flex items-center justify-center md:mb-10 shadow-xl ${item.shadow}`}
                   >
-                    {item.icon}
+                    <span className="scale-75 md:scale-100">{item.icon}</span>
                   </div>
-                  <h3 className="text-3xl font-black mb-6 leading-tight tracking-tighter">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-400 text-lg leading-relaxed font-medium opacity-80 mb-10">
-                    {item.desc}
-                  </p>
+                  <div className="flex flex-col">
+                    <h3 className="text-lg md:text-3xl font-black mb-1 md:mb-6 leading-tight tracking-tight">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm md:text-lg leading-relaxed font-medium opacity-80">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -795,19 +800,32 @@ export default function NumerosApp() {
           </section>
 
           {/* ── Testimonials ── */}
-          <section id="testimonials-section" className="py-32 px-6 max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-10">
+          <section id="testimonials-section" className="py-16 md:py-32">
+            <div className="px-6 max-w-7xl mx-auto mb-8 md:mb-12">
+              <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-white text-center">
+                Отзывы
+              </h2>
+            </div>
+            {/* Mobile: horizontal swipe scroll */}
+            <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-10
+              overflow-x-auto md:overflow-visible
+              snap-x snap-mandatory md:snap-none
+              px-6 md:px-6 md:max-w-7xl md:mx-auto
+              scrollbar-none pb-4 md:pb-0"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               {testimonials.map((t, idx) => (
                 <div
                   key={idx}
-                  className="glass-card p-10 rounded-[48px] flex flex-col"
+                  className="glass-card p-6 md:p-10 rounded-3xl md:rounded-[48px] flex flex-col
+                    shrink-0 w-[80vw] sm:w-[60vw] md:w-auto snap-start"
                 >
-                  <Quote className="text-[#D4AF37]/20 mb-8" size={32} />
-                  <p className="text-gray-300 text-lg italic mb-10 grow">
+                  <Quote className="text-[#D4AF37]/20 mb-4 md:mb-8" size={24} />
+                  <p className="text-gray-300 text-base md:text-lg italic mb-6 md:mb-10 grow leading-relaxed">
                     &ldquo;{t.text}&rdquo;
                   </p>
-                  <div className="flex items-center gap-4 mt-auto">
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/30 shrink-0">
+                  <div className="flex items-center gap-3 mt-auto">
+                    <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/30 shrink-0">
                       <Image
                         src={t.avatar}
                         alt={t.name}
@@ -817,7 +835,7 @@ export default function NumerosApp() {
                       />
                     </div>
                     <div>
-                      <div className="font-black text-white">{t.name}</div>
+                      <div className="font-black text-white text-sm md:text-base">{t.name}</div>
                       <div className="text-[10px] text-[#D4AF37] uppercase tracking-widest mt-0.5">
                         {t.role}
                       </div>
