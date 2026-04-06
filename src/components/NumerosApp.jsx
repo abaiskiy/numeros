@@ -130,20 +130,20 @@ const BTN_NAV =
 function MatrixItem({ label, value, status, highlight = false }) {
   return (
     <div
-      className={`relative group aspect-square flex flex-col items-center justify-center gap-2 rounded-[20px] border transition-all duration-300 hover:-translate-y-0.5 ${
+      className={`relative group aspect-square flex flex-col items-center justify-center gap-1 md:gap-2 rounded-2xl md:rounded-[20px] border transition-all duration-300 hover:-translate-y-0.5 ${
         highlight
           ? 'bg-gradient-to-br from-[#D4AF37]/25 to-[#D4AF37]/5 border-[#D4AF37]/50 shadow-[0_8px_24px_-8px_rgba(212,175,55,0.2)]'
           : 'bg-white/[0.06] border-white/20 hover:border-white/35 hover:bg-white/[0.09]'
       }`}
     >
-      <span className={`text-[7px] uppercase tracking-[0.15em] font-black leading-none ${highlight ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
+      <span className={`text-[5px] md:text-[7px] uppercase tracking-[0.1em] md:tracking-[0.15em] font-black leading-none ${highlight ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
         {label}
       </span>
-      <span className={`text-2xl font-black leading-none ${highlight ? 'text-white' : 'text-gray-100'}`}>
+      <span className={`text-base md:text-2xl font-black leading-none ${highlight ? 'text-white' : 'text-gray-100'}`}>
         {value || '—'}
       </span>
       {status && (
-        <span className="text-[6px] uppercase font-bold tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors leading-none">
+        <span className="text-[4px] md:text-[6px] uppercase font-bold tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors leading-none">
           {status}
         </span>
       )}
@@ -155,10 +155,10 @@ function MatrixItem({ label, value, status, highlight = false }) {
 
 function SideCell({ label, value, icon }) {
   return (
-    <div className="aspect-square flex flex-col items-center justify-center gap-1.5 rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
-      <div className="text-gray-500 leading-none">{icon}</div>
-      <p className="text-xl font-black text-gray-200 leading-none">{value}</p>
-      <p className="text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
+    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
+      <div className="text-gray-500 leading-none scale-75 md:scale-100">{icon}</div>
+      <p className="text-sm md:text-xl font-black text-gray-200 leading-none">{value}</p>
+      <p className="text-[4px] md:text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
@@ -167,10 +167,10 @@ function SideCell({ label, value, icon }) {
 
 function BottomCell({ label, value, icon }) {
   return (
-    <div className="aspect-square flex flex-col items-center justify-center gap-1.5 rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
-      <div className="text-gray-500 leading-none">{icon}</div>
-      <p className="text-xl font-black text-gray-200 leading-none">{value}</p>
-      <p className="text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
+    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
+      <div className="text-gray-500 leading-none scale-75 md:scale-100">{icon}</div>
+      <p className="text-sm md:text-xl font-black text-gray-200 leading-none">{value}</p>
+      <p className="text-[4px] md:text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
@@ -190,25 +190,25 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#D4AF37]/10 blur-[100px] rounded-full animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full" />
 
-      <div className="relative z-10 p-1 bg-gradient-to-br from-white/10 to-transparent rounded-[40px]">
-        <div className="bg-[#0D0E14] rounded-[36px] p-5 md:p-6">
-          <div className="grid grid-cols-4 gap-2.5">
+      <div className="relative z-10 p-[1px] md:p-1 bg-gradient-to-br from-white/10 to-transparent rounded-3xl md:rounded-[40px]">
+        <div className="bg-[#0D0E14] rounded-[28px] md:rounded-[36px] p-3 md:p-6">
+          <div className="grid grid-cols-4 gap-1.5 md:gap-2.5">
 
             {/* ── Строка 1: Ключевые числа + Темперамент ── */}
-            <div className="col-span-3 rounded-[20px] bg-white/[0.03] border border-white/10 p-2.5 flex flex-col gap-2">
-              <p className="text-[7px] uppercase tracking-[0.25em] font-black text-gray-600 px-1">
-                Дополнительные числа
+            <div className="col-span-3 rounded-2xl md:rounded-[20px] bg-white/[0.03] border border-white/10 p-2 md:p-2.5 flex flex-col gap-1.5 md:gap-2">
+              <p className="text-[5px] md:text-[7px] uppercase tracking-[0.2em] font-black text-gray-600 px-1">
+                Доп. числа
               </p>
-              <div className="grid grid-cols-4 gap-2 flex-1">
+              <div className="grid grid-cols-4 gap-1 md:gap-2 flex-1">
                 {[
                   { l: 'Судьба',  v: d.destiny },
                   { l: 'Душа',    v: d.soul    },
                   { l: 'Карма',   v: d.karma   },
                   { l: 'Скрытое', v: d.hidden  },
                 ].map((k) => (
-                  <div key={k.l} className="flex flex-col items-center justify-center rounded-[14px] bg-[#D4AF37]/10 border border-[#D4AF37]/20 gap-1 py-3">
-                    <span className="text-2xl font-black text-white leading-none">{k.v}</span>
-                    <span className="text-[7px] uppercase font-black text-[#D4AF37]/60 tracking-wide">{k.l}</span>
+                  <div key={k.l} className="flex flex-col items-center justify-center rounded-xl md:rounded-[14px] bg-[#D4AF37]/10 border border-[#D4AF37]/20 gap-0.5 md:gap-1 py-2 md:py-3">
+                    <span className="text-base md:text-2xl font-black text-white leading-none">{k.v}</span>
+                    <span className="text-[5px] md:text-[7px] uppercase font-black text-[#D4AF37]/60 tracking-wide">{k.l}</span>
                   </div>
                 ))}
               </div>
@@ -654,25 +654,25 @@ export default function NumerosApp() {
       {(
         <div className="relative z-10">
           {/* ── Hero ── */}
-          <section className="pt-48 pb-24 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+          <section className="pt-28 md:pt-48 pb-12 md:pb-24 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20">
             <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[9px] uppercase tracking-[0.3em] mb-10 font-black">
-                <Sparkles size={14} /> Профессиональный расчет судьбы
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[8px] md:text-[9px] uppercase tracking-[0.2em] md:tracking-[0.3em] mb-6 md:mb-10 font-black">
+                <Sparkles size={12} /> Профессиональный расчет судьбы
               </div>
-              <h1 className="text-6xl md:text-[86px] font-extrabold tracking-[-0.04em] mb-10 leading-[0.95] text-white">
+              <h1 className="text-4xl md:text-6xl lg:text-[86px] font-extrabold tracking-[-0.03em] md:tracking-[-0.04em] mb-5 md:mb-10 leading-[1.05] md:leading-[0.95] text-white">
                 Твой путь в{' '}
                 <span className="italic font-light text-[#D4AF37]">цифрах</span>
               </h1>
-              <p className="max-w-xl text-gray-400 text-xl font-medium mb-14 mx-auto lg:mx-0 leading-relaxed">
+              <p className="max-w-xl text-gray-400 text-base md:text-xl font-medium mb-8 md:mb-14 mx-auto lg:mx-0 leading-relaxed">
                 Раскрой свой потенциал через сакральную геометрию Квадрата
                 Пифагора. Узнай свои сильные стороны за несколько секунд.
               </p>
               <form
                 onSubmit={handleCalculate}
-                className="w-full max-w-md flex flex-col gap-5 mx-auto lg:mx-0"
+                className="w-full max-w-md flex flex-col gap-3 md:gap-5 mx-auto lg:mx-0"
               >
                 <DateSelect value={birthDate} onChange={setBirthDate} />
-                <button className={`w-full group ${BTN_PRIMARY} py-6 shadow-2xl shadow-[#D4AF37]/10`}>
+                <button className={`w-full group ${BTN_PRIMARY} py-4 md:py-6 shadow-2xl shadow-[#D4AF37]/10`}>
                   Рассчитать матрицу
                   <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </button>
@@ -728,12 +728,12 @@ export default function NumerosApp() {
           </section>
 
           {/* ── Insights ── */}
-          <section className="py-32 px-6 max-w-7xl mx-auto">
-            <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-16 text-center">
+          <section className="py-16 md:py-32 px-6 max-w-7xl mx-auto">
+            <h2 className="text-3xl md:text-7xl font-extrabold tracking-tighter mb-8 md:mb-16 text-center">
               Как читать свои цифры?
             </h2>
-            <div className="flex flex-col lg:flex-row items-start gap-16">
-              {/* Матрица — выровнена по верху карточек */}
+            <div className="flex flex-col lg:flex-row items-start gap-8 md:gap-16">
+              {/* Матрица-пример */}
               <div className="flex-1 w-full relative">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-[9px] uppercase tracking-[0.25em] font-black text-white/50">
                   Пример
@@ -742,19 +742,19 @@ export default function NumerosApp() {
                   <ModernMatrixGrid size="large" />
                 </div>
               </div>
-              {/* Карточки — на том же уровне */}
-              <div className="flex-1 space-y-6">
+              {/* Карточки */}
+              <div className="flex-1 w-full space-y-4 md:space-y-6">
                 {insights.map((insight, idx) => (
                   <div
                     key={idx}
-                    className="glass-card p-6 rounded-3xl border border-white/5 hover:border-[#D4AF37]/30 transition-all flex gap-5"
+                    className="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl border border-white/5 hover:border-[#D4AF37]/30 transition-all flex gap-4 md:gap-5"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
                       {insight.icon}
                     </div>
                     <div>
-                      <h4 className="text-lg font-black mb-2">{insight.title}</h4>
-                      <p className="text-gray-400 text-sm italic">{insight.text}</p>
+                      <h4 className="text-base md:text-lg font-black mb-1 md:mb-2">{insight.title}</h4>
+                      <p className="text-gray-400 text-sm italic leading-relaxed">{insight.text}</p>
                     </div>
                   </div>
                 ))}
@@ -765,32 +765,30 @@ export default function NumerosApp() {
           {/* ── FAQ ── */}
           <section
             id="faq-section"
-            className="py-32 px-6 max-w-4xl mx-auto"
+            className="py-16 md:py-32 px-4 md:px-6 max-w-4xl mx-auto"
           >
-            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-center mb-10 md:mb-20">
               Часто задаваемые вопросы
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {faqs.map((faq, idx) => (
                 <div
                   key={idx}
-                  className="glass-card rounded-3xl border border-white/5 overflow-hidden"
+                  className="glass-card rounded-2xl md:rounded-3xl border border-white/5 overflow-hidden"
                 >
                   <button
                     onClick={() =>
                       setActiveFaq(activeFaq === idx ? null : idx)
                     }
-                    className="w-full px-8 py-7 flex items-center justify-between text-left"
+                    className="w-full px-5 py-4 md:px-8 md:py-7 flex items-center justify-between text-left gap-3"
                   >
-                    <span className="text-lg font-bold">{faq.q}</span>
-                    {activeFaq === idx ? (
-                      <Minus size={16} />
-                    ) : (
-                      <Plus size={16} />
-                    )}
+                    <span className="text-sm md:text-lg font-bold leading-snug">{faq.q}</span>
+                    <span className="shrink-0 text-gray-400">
+                      {activeFaq === idx ? <Minus size={16} /> : <Plus size={16} />}
+                    </span>
                   </button>
                   {activeFaq === idx && (
-                    <div className="px-8 pb-8 text-gray-400 font-medium">
+                    <div className="px-5 pb-5 md:px-8 md:pb-8 text-gray-400 text-sm md:text-base font-medium leading-relaxed">
                       {faq.a}
                     </div>
                   )}
@@ -847,16 +845,16 @@ export default function NumerosApp() {
           </section>
 
           {/* ── Final CTA ── */}
-          <section className="py-40 px-6 text-center relative overflow-hidden">
-            <h2 className="text-5xl md:text-7xl font-extrabold mb-10">
+          <section className="py-20 md:py-40 px-6 text-center relative overflow-hidden">
+            <h2 className="text-3xl md:text-7xl font-extrabold mb-6 md:mb-10">
               Узнай свою судьбу
             </h2>
             <form
               onSubmit={handleCalculate}
-              className="max-w-md mx-auto flex flex-col gap-5"
+              className="max-w-md mx-auto flex flex-col gap-3 md:gap-5"
             >
               <DateSelect value={birthDate} onChange={setBirthDate} />
-              <button className={`w-full ${BTN_PRIMARY} py-7`}>
+              <button className={`w-full ${BTN_PRIMARY} py-4 md:py-7`}>
                 Рассчитать матрицу
               </button>
             </form>
