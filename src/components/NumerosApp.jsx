@@ -132,23 +132,48 @@ const BTN_NAV =
 
 // ─── MatrixItem (основная 3×3) ───────────────────────────────────────────────
 
+const STATUS_STYLE = {
+  '—':        'bg-white/5 text-gray-600',
+  'База':     'bg-blue-500/15 text-blue-400',
+  'Усилено':  'bg-teal-500/15 text-teal-400',
+  'Импульс':  'bg-orange-400/15 text-orange-400',
+  'Экстра':   'bg-[#D4AF37]/20 text-[#D4AF37]',
+};
+
+function StatusDots({ value }) {
+  const count = value === '—' ? 0 : value?.length ?? 0;
+  const max = 5;
+  return (
+    <div className="flex gap-[3px] items-center">
+      {Array.from({ length: max }).map((_, i) => (
+        <div key={i} className={`w-[4px] h-[4px] md:w-[5px] md:h-[5px] rounded-full transition-all ${
+          i < count ? 'bg-[#D4AF37] shadow-[0_0_4px_#D4AF37]' : 'bg-white/10'
+        }`} />
+      ))}
+    </div>
+  );
+}
+
 function MatrixItem({ label, value, status, highlight = false }) {
+  const badgeClass = STATUS_STYLE[status] ?? 'bg-white/5 text-gray-600';
   return (
     <div
-      className={`relative group aspect-square flex flex-col items-center justify-center gap-1 md:gap-2 rounded-2xl md:rounded-[20px] border transition-all duration-300 hover:-translate-y-0.5 ${
+      className={`relative group aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] border transition-all duration-300 hover:-translate-y-0.5 overflow-hidden ${
         highlight
-          ? 'bg-gradient-to-br from-[#D4AF37]/25 to-[#D4AF37]/5 border-[#D4AF37]/50 shadow-[0_8px_24px_-8px_rgba(212,175,55,0.2)]'
-          : 'bg-white/[0.06] border-white/20 hover:border-white/35 hover:bg-white/[0.09]'
+          ? 'bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border-[#D4AF37]/60 shadow-[0_0_20px_-4px_rgba(212,175,55,0.35)]'
+          : 'bg-white/[0.05] border-white/[0.12] hover:border-white/25 hover:bg-white/[0.08]'
       }`}
     >
-      <span className={`text-[5px] md:text-[7px] uppercase tracking-[0.1em] md:tracking-[0.15em] font-black leading-none ${highlight ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
+      {highlight && <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#D4AF37]/0 via-[#D4AF37] to-[#D4AF37]/0" />}
+      <span className={`text-[5px] md:text-[7px] uppercase tracking-[0.1em] font-black leading-none ${highlight ? 'text-[#D4AF37]/80' : 'text-gray-500'}`}>
         {label}
       </span>
-      <span className={`text-base md:text-2xl font-black leading-none ${highlight ? 'text-white' : 'text-gray-100'}`}>
+      <span className={`text-base md:text-[22px] font-black leading-none tracking-tight ${highlight ? 'text-white' : 'text-gray-100'}`}>
         {value || '—'}
       </span>
-      {status && (
-        <span className="text-[4px] md:text-[6px] uppercase font-bold tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors leading-none">
+      <StatusDots value={value} />
+      {status && status !== '—' && (
+        <span className={`text-[4px] md:text-[6px] font-black tracking-wider leading-none px-1.5 py-0.5 rounded-full ${badgeClass}`}>
           {status}
         </span>
       )}
@@ -160,10 +185,11 @@ function MatrixItem({ label, value, status, highlight = false }) {
 
 function SideCell({ label, value, icon }) {
   return (
-    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
-      <div className="text-gray-500 leading-none scale-75 md:scale-100">{icon}</div>
-      <p className="text-sm md:text-xl font-black text-gray-200 leading-none">{value}</p>
-      <p className="text-[4px] md:text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
+    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-blue-500/[0.04] border border-blue-500/20 hover:bg-blue-500/[0.08] hover:border-blue-400/30 transition-all cursor-default overflow-hidden relative">
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-400/40 to-blue-500/0" />
+      <div className="text-blue-400/60 leading-none scale-75 md:scale-100">{icon}</div>
+      <p className="text-sm md:text-xl font-black text-gray-100 leading-none">{value}</p>
+      <p className="text-[4px] md:text-[6px] uppercase font-black text-blue-400/50 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
@@ -172,10 +198,11 @@ function SideCell({ label, value, icon }) {
 
 function BottomCell({ label, value, icon }) {
   return (
-    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-white/[0.02] border border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20 transition-all cursor-default">
-      <div className="text-gray-500 leading-none scale-75 md:scale-100">{icon}</div>
-      <p className="text-sm md:text-xl font-black text-gray-200 leading-none">{value}</p>
-      <p className="text-[4px] md:text-[6px] uppercase font-black text-gray-600 tracking-wide leading-none text-center px-1">{label}</p>
+    <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-purple-500/[0.04] border border-purple-500/20 hover:bg-purple-500/[0.08] hover:border-purple-400/30 transition-all cursor-default overflow-hidden relative">
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-purple-500/0 via-purple-400/40 to-purple-500/0" />
+      <div className="text-purple-400/60 leading-none scale-75 md:scale-100">{icon}</div>
+      <p className="text-sm md:text-xl font-black text-gray-100 leading-none">{value}</p>
+      <p className="text-[4px] md:text-[6px] uppercase font-black text-purple-400/50 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
