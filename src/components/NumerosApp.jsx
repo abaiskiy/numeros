@@ -550,6 +550,49 @@ const testimonials = [
   },
 ];
 
+// ─── Date Select ──────────────────────────────────────────────────────────────
+
+const MONTHS = [
+  'Январь','Февраль','Март','Апрель','Май','Июнь',
+  'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь',
+];
+
+function DateSelect({ value, onChange }) {
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+
+  useEffect(() => {
+    if (day && month && year) {
+      const mm = String(month).padStart(2, '0');
+      const dd = String(day).padStart(2, '0');
+      onChange(`${year}-${mm}-${dd}`);
+    }
+  }, [day, month, year]);
+
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+
+  const selectClass = "flex-1 bg-white/[0.04] border border-white/10 rounded-2xl px-3 py-4 text-white text-base font-semibold outline-none focus:border-[#D4AF37]/50 transition-all appearance-none text-center cursor-pointer";
+
+  return (
+    <div className="flex gap-2 w-full">
+      <select value={day} onChange={e => setDay(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
+        <option value="" disabled>День</option>
+        {days.map(d => <option key={d} value={d}>{d}</option>)}
+      </select>
+      <select value={month} onChange={e => setMonth(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
+        <option value="" disabled>Месяц</option>
+        {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+      </select>
+      <select value={year} onChange={e => setYear(e.target.value)} className={selectClass} style={{ colorScheme: 'dark' }}>
+        <option value="" disabled>Год</option>
+        {years.map(y => <option key={y} value={y}>{y}</option>)}
+      </select>
+    </div>
+  );
+}
+
 // ─── Main App ─────────────────────────────────────────────────────────────────
 
 export default function NumerosApp() {
@@ -627,13 +670,7 @@ export default function NumerosApp() {
                 onSubmit={handleCalculate}
                 className="w-full max-w-md flex flex-col gap-5 mx-auto lg:mx-0"
               >
-                <input
-                  type="date"
-                  required
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-8 py-6 focus:border-[#D4AF37]/50 outline-none transition-all text-white text-xl font-bold"
-                  style={{ colorScheme: 'dark' }}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                />
+                <DateSelect value={birthDate} onChange={setBirthDate} />
                 <button className={`w-full group ${BTN_PRIMARY} py-6 shadow-2xl shadow-[#D4AF37]/10`}>
                   Рассчитать матрицу
                   <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -800,13 +837,7 @@ export default function NumerosApp() {
               onSubmit={handleCalculate}
               className="max-w-md mx-auto flex flex-col gap-5"
             >
-              <input
-                type="date"
-                required
-                className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-8 py-7 text-white text-2xl font-bold text-center outline-none focus:border-[#D4AF37]/50 transition-all"
-                style={{ colorScheme: 'dark' }}
-                onChange={(e) => setBirthDate(e.target.value)}
-              />
+              <DateSelect value={birthDate} onChange={setBirthDate} />
               <button className={`w-full ${BTN_PRIMARY} py-7`}>
                 Рассчитать матрицу
               </button>
