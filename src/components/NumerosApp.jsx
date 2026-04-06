@@ -47,10 +47,12 @@ function calculateMatrix(dateStr) {
   const dateDigits = (dd + mm + yyyy).split('').map(Number);
 
   // Four working numbers
-  const A = dateDigits.reduce((s, d) => s + d, 0);           // sum of all date digits
-  const B = sumDigits(A);                                      // sum of digits of A
-  const C = A - Number(dd[0]) * 2;                            // A minus (first digit of day × 2)
-  const D = sumDigits(C);                                      // sum of digits of C
+  // A: сумма всех цифр даты (с ведущими нулями: ДД.ММ.ГГГГ)
+  const A = dateDigits.reduce((s, d) => s + d, 0);
+  const B = sumDigits(A);
+  // C: A минус удвоенная ПЕРВАЯ ЦИФРА ДНЯ (без ведущего нуля: для дня 1 → цифра 1, а не 0)
+  const C = A - Number(String(day)[0]) * 2;
+  const D = sumDigits(Math.abs(C));
 
   // Collect every digit (date + A + B + C + D), drop zeros
   const allDigits = [
@@ -114,8 +116,10 @@ function calculateMatrix(dateStr) {
   };
 }
 
-// Demo data — shown on the landing page (date 28.10.1988)
-const DEMO_DATA = calculateMatrix('1988-10-28');
+// Герой — Брэд Питт, 18.12.1963
+const DEMO_DATA = calculateMatrix('1963-12-18');
+// Пример в секции Insights — Анджелина Джоли, 04.06.1975
+const JOLIE_DATA = calculateMatrix('1975-06-04');
 
 // ─── Shared button classes ────────────────────────────────────────────────────
 
@@ -490,18 +494,18 @@ const benefits = [
 
 const insights = [
   {
-    title: 'Характер 111',
-    text: 'Три единицы — максимальная сила воли и харизма. Такой человек рождён вести за собой, его мнение весомо, а решения — твёрдые.',
+    title: 'Здоровье 44',
+    text: 'Двойная четвёрка — физическая выносливость и внутренняя сила. Джоли готовится к ролям месяцами, трансформирует тело и разум. Эта энергия даёт способность преодолевать то, что ломает других.',
     icon: <Target className="text-[#D4AF37]" size={20} />,
   },
   {
-    title: 'Долг 888',
-    text: 'Тройные восьмёрки указывают на мощную связь с материальным миром. Высокое чувство ответственности, склонность к системному мышлению и управлению ресурсами.',
+    title: 'Труд 66',
+    text: 'Двойная шестёрка — символ заботы и ответственности. Шестеро детей, гуманитарные миссии в 30+ странах. Цифры матрицы объясняют, почему служение другим — не поступок, а часть её природы.',
     icon: <TrendingUp className="text-[#D4AF37]" size={20} />,
   },
   {
-    title: 'Интерес 333',
-    text: 'Три тройки — редкий творческий дар. Богатый внутренний мир, тяга к искусству, общению и саморазвитию. Источник вдохновения для окружающих.',
+    title: 'Душа 5',
+    text: 'Число Души равно пяти — жажда свободы, перемен и острых ощущений. Экстремальные роли, смена стран, неожиданные решения — всё это не хаос, а внутренняя потребность жить на полную.',
     icon: <ShieldCheck className="text-[#D4AF37]" size={20} />,
   },
 ];
@@ -705,9 +709,7 @@ export default function NumerosApp() {
               {benefits.map((item, idx) => (
                 <div
                   key={idx}
-                  className="glass-card border border-white/5 rounded-3xl md:rounded-[56px] group hover:border-white/20 transition-all duration-700 overflow-hidden
-                    flex flex-row md:flex-col items-center md:items-start
-                    p-5 md:p-10 gap-4 md:gap-0"
+                  className="glass-card border border-white/5 rounded-3xl md:rounded-[56px] group hover:border-white/20 transition-all duration-700 overflow-hidden flex flex-row md:flex-col items-center md:items-start p-5 md:p-10 gap-4 md:gap-0"
                 >
                   <div
                     className={`w-14 h-14 md:w-24 md:h-24 shrink-0 rounded-2xl md:rounded-[32px] bg-[#111218] border border-white/10 flex items-center justify-center md:mb-10 shadow-xl ${item.shadow}`}
@@ -735,11 +737,21 @@ export default function NumerosApp() {
             <div className="flex flex-col lg:flex-row items-start gap-8 md:gap-16">
               {/* Матрица-пример */}
               <div className="flex-1 w-full relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-[9px] uppercase tracking-[0.25em] font-black text-white/50">
-                  Пример
+                {/* Фото + подпись — выровнено по левому краю матрицы */}
+                <div className="flex items-center gap-4 mb-6 md:mb-8 pl-[15%]">
+                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden border border-[#D4AF37]/30 shrink-0 shadow-lg shadow-[#D4AF37]/10">
+                    <Image src="/avatar-angelina.jpg" alt="Анджелина Джоли" fill className="object-cover" sizes="64px" />
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-base md:text-lg leading-tight">Анджелина Джоли</p>
+                    <p className="text-[#D4AF37] text-xs uppercase tracking-widest mt-0.5 font-bold">04.06.1975 · Пример разбора</p>
+                  </div>
+                </div>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 hidden">
+                  Анджелина Джоли · 04.06.1975
                 </div>
                 <div className="origin-top scale-[0.7] w-full" style={{marginBottom: 'calc((0.7 - 1) * 100%)'}}>
-                  <ModernMatrixGrid size="large" />
+                  <ModernMatrixGrid size="large" data={JOLIE_DATA} />
                 </div>
               </div>
               {/* Карточки */}
@@ -805,18 +817,13 @@ export default function NumerosApp() {
               </h2>
             </div>
             {/* Mobile: horizontal swipe scroll */}
-            <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-10
-              overflow-x-auto md:overflow-visible
-              snap-x snap-mandatory md:snap-none
-              px-6 md:px-6 md:max-w-7xl md:mx-auto
-              scrollbar-none pb-4 md:pb-0"
+            <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-10 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none px-6 md:max-w-7xl md:mx-auto scrollbar-none pb-4 md:pb-0"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {testimonials.map((t, idx) => (
                 <div
                   key={idx}
-                  className="glass-card p-6 md:p-10 rounded-3xl md:rounded-[48px] flex flex-col
-                    shrink-0 w-[80vw] sm:w-[60vw] md:w-auto snap-start"
+                  className="glass-card p-6 md:p-10 rounded-3xl md:rounded-[48px] flex flex-col shrink-0 w-[80vw] sm:w-[60vw] md:w-auto snap-start"
                 >
                   <Quote className="text-[#D4AF37]/20 mb-4 md:mb-8" size={24} />
                   <p className="text-gray-300 text-base md:text-lg italic mb-6 md:mb-10 grow leading-relaxed">
@@ -863,7 +870,7 @@ export default function NumerosApp() {
       )}
 
       <footer className="py-20 text-center border-t border-white/5 opacity-40 text-[10px] uppercase tracking-[0.4em] font-black">
-        © 2024 NUMEROS • PREMIUM NUMEROLOGY SERVICE
+        © 2026 NUMEROS • Премиальный нумерологический сервис
       </footer>
     </div>
   );
