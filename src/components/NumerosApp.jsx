@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Lock,
   ArrowRight,
   TrendingUp,
   Heart,
@@ -246,84 +245,6 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
         </div>
       </div>
     </div>
-  );
-}
-
-// ─── PDFButton ───────────────────────────────────────────────────────────────
-
-function PDFButton({ birthDate, name }) {
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [inputName, setInputName] = useState(name || '');
-
-  const handleGenerate = async (e) => {
-    e.preventDefault();
-    if (!inputName.trim() || !birthDate) return;
-    setLoading(true);
-    try {
-      const res = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: inputName.trim(), birthDate }),
-      });
-      if (!res.ok) throw new Error('Ошибка генерации');
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `numeros-${inputName.trim().replace(/\s+/g, '-')}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setShowForm(false);
-    } catch (err) {
-      alert('Не удалось создать PDF. Попробуй ещё раз.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (showForm) {
-    return (
-      <div className="w-full max-w-md mx-auto lg:mx-0 mt-3">
-        <form onSubmit={handleGenerate} className="glass-card border border-[#D4AF37]/20 rounded-2xl p-5 flex flex-col gap-3">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Введите своё имя для разбора</p>
-          <input
-            type="text"
-            value={inputName}
-            onChange={e => setInputName(e.target.value)}
-            placeholder="Например: Айгерим"
-            className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white font-semibold outline-none focus:border-[#D4AF37]/50 transition-all"
-            required
-            autoFocus
-          />
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`flex-1 ${BTN_PRIMARY} py-3 text-[9px] ${loading ? 'opacity-50 cursor-wait' : ''}`}
-            >
-              {loading ? 'Генерирую PDF...' : 'Создать PDF'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="px-4 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white transition-colors text-sm"
-            >
-              ✕
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
-
-  return (
-    <button
-      onClick={() => setShowForm(true)}
-      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[9px] uppercase tracking-[0.2em] font-black hover:bg-[#D4AF37]/15 transition-all"
-    >
-      <Lock size={11} /> Получить PDF разбор
-    </button>
   );
 }
 
