@@ -399,12 +399,50 @@ function Nav({ scrolled, isMenuOpen, setIsMenuOpen, setView, scrollTo }) {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="lg:hidden text-white"
+          className="lg:hidden text-white p-1"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
+
+      {/* Mobile Dropdown */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-[#08090D]/95 backdrop-blur-md border-t border-white/10 px-6 py-6 flex flex-col gap-5">
+          <button
+            onClick={() => { setIsMenuOpen(false); setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
+          >
+            Личная матрица
+          </button>
+          <button
+            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-500 cursor-not-allowed"
+            disabled
+          >
+            Совместимость
+          </button>
+          <button
+            onClick={() => { setIsMenuOpen(false); scrollTo('testimonials-section'); }}
+            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
+          >
+            Отзывы
+          </button>
+          <button
+            onClick={() => { setIsMenuOpen(false); scrollTo('faq-section'); }}
+            className="text-left text-sm uppercase tracking-[0.2em] font-bold text-gray-300 hover:text-[#D4AF37] transition-colors"
+          >
+            FAQ
+          </button>
+          <div className="pt-2 border-t border-white/10">
+            <button
+              onClick={() => { setIsMenuOpen(false); setView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className={`${BTN_NAV} w-full justify-center`}
+            >
+              Получить разбор
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
@@ -593,6 +631,7 @@ export default function NumerosApp() {
                   type="date"
                   required
                   className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-8 py-6 focus:border-[#D4AF37]/50 outline-none transition-all text-white text-xl font-bold"
+                  style={{ colorScheme: 'dark' }}
                   onChange={(e) => setBirthDate(e.target.value)}
                 />
                 <button className={`w-full group ${BTN_PRIMARY} py-6 shadow-2xl shadow-[#D4AF37]/10`}>
@@ -765,6 +804,7 @@ export default function NumerosApp() {
                 type="date"
                 required
                 className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-8 py-7 text-white text-2xl font-bold text-center outline-none focus:border-[#D4AF37]/50 transition-all"
+                style={{ colorScheme: 'dark' }}
                 onChange={(e) => setBirthDate(e.target.value)}
               />
               <button className={`w-full ${BTN_PRIMARY} py-7`}>
