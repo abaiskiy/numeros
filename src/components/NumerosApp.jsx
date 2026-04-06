@@ -768,7 +768,7 @@ export default function NumerosApp() {
     if (pendingScroll && view === 'landing') {
       const el = document.getElementById(pendingScroll);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
-      setPendingScroll(null);
+      setTimeout(() => setPendingScroll(null), 0);
     }
   }, [view, pendingScroll]);
 
