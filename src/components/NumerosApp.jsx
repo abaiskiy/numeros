@@ -160,7 +160,7 @@ function MatrixItem({ label, value, status, highlight = false }) {
     <div
       className={`relative group aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] border transition-all duration-300 hover:-translate-y-0.5 overflow-hidden ${
         highlight
-          ? 'bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border-[#D4AF37]/60 shadow-[0_0_20px_-4px_rgba(212,175,55,0.35)]'
+          ? 'bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border-[#D4AF37]/60'
           : 'bg-white/[0.05] border-white/[0.12] hover:border-white/25 hover:bg-white/[0.08]'
       }`}
     >
