@@ -726,19 +726,18 @@ function OrderModal({ onClose, initialDate }) {
           </form>
         ) : (
           /* Успех */
-          <div className="px-6 py-12 flex flex-col items-center text-center gap-5">
-            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
-              <Sparkles size={28} className="text-[#D4AF37]" />
+          <div className="px-6 py-8 flex flex-col items-center text-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
+              <Sparkles size={22} className="text-[#D4AF37]" />
             </div>
             <div>
-              <p className="text-white text-2xl font-black tracking-tight mb-2">Спасибо, {name}!</p>
+              <p className="text-white text-xl font-black tracking-tight mb-1.5">Спасибо, {name}!</p>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Ваш персональный разбор готовится.<br />
-                Отправим на <span className="text-white font-semibold">{email}</span><br className="hidden sm:block" /> в течение <span className="text-[#D4AF37] font-black">5 минут</span>.
+                Разбор готовится и придёт на <span className="text-white font-semibold">{email}</span> в течение <span className="text-[#D4AF37] font-black">5 минут</span>.
               </p>
             </div>
-            <div className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl px-5 py-4 text-sm text-gray-400 leading-relaxed">
-              Пока ждёте — можете поделиться своей матрицей с друзьями 🙂
+            <div className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl px-4 py-3 text-xs text-gray-400">
+              Пока ждёте — поделитесь матрицей с друзьями 🙂
             </div>
             <button onClick={onClose} className="text-gray-500 hover:text-gray-300 text-sm font-semibold transition-colors">
               Закрыть
