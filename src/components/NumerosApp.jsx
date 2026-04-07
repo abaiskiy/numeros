@@ -573,12 +573,190 @@ function DateSelect({ value, onChange, showError }) {
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
 
+// ─── OrderModal ───────────────────────────────────────────────────────────────
+
+function OrderModal({ onClose, initialDate }) {
+  const [step, setStep] = useState('form'); // form | success
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [date, setDate] = useState(initialDate || '');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const e = {};
+    if (!name.trim()) e.name = true;
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = true;
+    if (!date) e.date = true;
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = (ev) => {
+    ev.preventDefault();
+    if (!validate()) return;
+    setStep('success');
+  };
+
+  const MONTHS_SHORT = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  const days   = Array.from({ length: 31 }, (_, i) => i + 1);
+  const years  = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+  const [dd, mm, yy] = date ? date.split('-').reverse() : ['','',''];
+
+  const inputCls = (err) =>
+    `w-full bg-white/[0.04] border rounded-2xl px-4 py-3.5 text-white text-sm font-semibold outline-none transition-all placeholder:text-gray-600 ${
+      err ? 'border-red-500/60 bg-red-500/5 focus:border-red-400' : 'border-white/10 focus:border-[#D4AF37]/50'
+    }`;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Панель */}
+      <div className="relative w-full sm:max-w-md bg-[#0D0E14] border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden">
+
+        {/* Шапка */}
+        <div className="relative px-6 pt-6 pb-5 border-b border-white/[0.07]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
+              <Sparkles size={16} className="text-[#D4AF37]" />
+            </div>
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Персональный разбор</p>
+              <p className="text-white font-black text-base leading-tight">Глубокий анализ матрицы</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+            <X size={14} />
+          </button>
+        </div>
+
+        {step === 'form' ? (
+          <form onSubmit={handleSubmit} className="px-6 py-6 flex flex-col gap-4">
+            <p className="text-gray-400 text-sm leading-relaxed -mt-1">
+              Заполните форму — нумеролог подготовит ваш личный разбор и пришлёт на почту.
+            </p>
+
+            {/* Имя */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] uppercase tracking-[0.15em] font-black text-gray-500">Ваше имя</label>
+              <input
+                value={name} onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: false })); }}
+                placeholder="Например: Айгерим"
+                className={inputCls(errors.name)}
+              />
+              {errors.name && <p className="text-red-400 text-xs font-semibold">Введите ваше имя</p>}
+            </div>
+
+            {/* Email */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] uppercase tracking-[0.15em] font-black text-gray-500">Email для получения</label>
+              <input
+                type="email" value={email}
+                onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: false })); }}
+                placeholder="your@email.com"
+                className={inputCls(errors.email)}
+              />
+              {errors.email && <p className="text-red-400 text-xs font-semibold">Введите корректный email</p>}
+            </div>
+
+            {/* Дата рождения */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] uppercase tracking-[0.15em] font-black text-gray-500">Дата рождения</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { placeholder: 'День',   options: days,                 current: dd, field: 'day'   },
+                  { placeholder: 'Месяц',  options: MONTHS_SHORT,         current: mm ? MONTHS_SHORT[Number(mm)-1] : '', field: 'month' },
+                  { placeholder: 'Год',    options: years,                current: yy, field: 'year'  },
+                ].map(({ placeholder, options, current, field }) => (
+                  <select
+                    key={field}
+                    value={field === 'month' ? mm : field === 'day' ? dd : yy}
+                    onChange={e => {
+                      const val = e.target.value;
+                      const parts = date ? date.split('-') : ['','',''];
+                      if (field === 'year')  { setDate(`${val}-${parts[1]||''}-${parts[2]||''}`); }
+                      if (field === 'month') { setDate(`${parts[0]||''}-${String(val).padStart(2,'0')}-${parts[2]||''}`); }
+                      if (field === 'day')   { setDate(`${parts[0]||''}-${parts[1]||''}-${String(val).padStart(2,'0')}`); }
+                      setErrors(p => ({ ...p, date: false }));
+                    }}
+                    style={{ colorScheme: 'dark' }}
+                    className={`bg-white/[0.04] border rounded-2xl px-2 py-3.5 text-white text-sm font-semibold outline-none transition-all appearance-none text-center cursor-pointer ${
+                      errors.date ? 'border-red-500/60' : 'border-white/10 focus:border-[#D4AF37]/50'
+                    }`}
+                  >
+                    <option value="" disabled>{placeholder}</option>
+                    {options.map((o, i) => (
+                      <option key={i} value={field === 'month' ? i + 1 : o}>{field === 'month' ? o : o}</option>
+                    ))}
+                  </select>
+                ))}
+              </div>
+              {errors.date && <p className="text-red-400 text-xs font-semibold">Выберите дату рождения</p>}
+            </div>
+
+            {/* Что входит */}
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 flex flex-col gap-2">
+              {['Анализ всех 9 секторов матрицы', 'Числа Судьбы, Души, Кармы и Скрытого', 'Денежный код и финансовый потенциал', 'Совет по отношениям и совместимости'].map(t => (
+                <div key={t} className="flex items-center gap-2.5 text-sm text-gray-300">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shrink-0" />
+                  {t}
+                </div>
+              ))}
+            </div>
+
+            {/* Цена */}
+            <div className="flex items-center justify-between bg-[#D4AF37]/5 border border-[#D4AF37]/20 rounded-2xl px-5 py-4">
+              <div>
+                <p className="text-gray-400 text-xs mb-0.5">Стоимость разбора</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-gray-600 text-sm line-through">9 990 ₸</span>
+                  <span className="text-white text-xl font-black">4 990 ₸</span>
+                </div>
+              </div>
+              <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/30 rounded-xl px-3 py-1.5 text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">
+                −50%
+              </div>
+            </div>
+
+            <button type="submit" className={`${BTN_PRIMARY} w-full py-4 justify-center text-sm`}>
+              Оплатить и получить разбор <ArrowRight size={16} />
+            </button>
+            <p className="text-center text-gray-600 text-[10px]">Безопасная оплата · Готово за 5 минут</p>
+          </form>
+        ) : (
+          /* Успех */
+          <div className="px-6 py-12 flex flex-col items-center text-center gap-5">
+            <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
+              <Sparkles size={28} className="text-[#D4AF37]" />
+            </div>
+            <div>
+              <p className="text-white text-2xl font-black tracking-tight mb-2">Спасибо, {name}!</p>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                Ваш персональный разбор готовится.<br />
+                Отправим на <span className="text-white font-semibold">{email}</span><br className="hidden sm:block" /> в течение <span className="text-[#D4AF37] font-black">5 минут</span>.
+              </p>
+            </div>
+            <div className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl px-5 py-4 text-sm text-gray-400 leading-relaxed">
+              Пока ждёте — можете поделиться своей матрицей с друзьями 🙂
+            </div>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-300 text-sm font-semibold transition-colors">
+              Закрыть
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function NumerosApp() {
   const [view, setView] = useState('landing');
   const [birthDate, setBirthDate] = useState('');
   const [matrixData, setMatrixData] = useState(null);
   const [dateError, setDateError] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(null);
 
   // Скроллим к нужной секции после того как view обновился и DOM перерисовался
@@ -659,6 +837,60 @@ export default function NumerosApp() {
                 </div>
               )}
               <ModernMatrixGrid data={matrixData ?? DEMO_DATA} />
+            </div>
+          </section>
+
+          {/* ── CTA — Персональный разбор ── */}
+          <section className="py-10 md:py-16 px-6">
+            <div className="max-w-2xl mx-auto">
+              <div className="relative rounded-3xl overflow-hidden p-[1px] bg-gradient-to-br from-[#D4AF37]/50 via-[#D4AF37]/15 to-transparent">
+                <div className="bg-gradient-to-br from-[#D4AF37]/10 to-[#08090D] rounded-3xl px-6 md:px-10 py-8 md:py-10">
+
+                  {/* Бейдж срочности */}
+                  <div className="flex justify-center md:justify-start mb-5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-[9px] uppercase tracking-[0.2em] font-black">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                      Специальная цена · Ограничено
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-7">
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-3">
+                        Узнайте всё о себе —<br />
+                        <span className="text-[#D4AF37]">полный разбор матрицы</span>
+                      </h3>
+                      <p className="text-gray-400 text-sm leading-relaxed mb-5">
+                        Нумеролог вручную интерпретирует вашу матрицу: характер, таланты, денежный код, отношения и ключевые периоды жизни.
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto md:mx-0">
+                        {['25+ страниц разбора', 'Денежный потенциал', 'Код отношений', 'Прогноз на 3 года'].map(t => (
+                          <div key={t} className="flex items-center gap-2 text-xs text-gray-300">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shrink-0" /> {t}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Цена + кнопка */}
+                    <div className="shrink-0 flex flex-col items-center gap-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl px-7 py-6 text-center">
+                      <p className="text-gray-500 text-xs font-semibold">Стоимость разбора</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-gray-600 text-base font-semibold line-through">9 990 ₸</span>
+                        <span className="text-white text-3xl font-black">4 990 ₸</span>
+                      </div>
+                      <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">Скидка 50%</p>
+                      <button
+                        onClick={() => setShowOrderModal(true)}
+                        className={`${BTN_PRIMARY} w-full py-3.5 justify-center text-sm shadow-xl shadow-[#D4AF37]/20`}
+                      >
+                        Заказать разбор <ArrowRight size={15} />
+                      </button>
+                      <p className="text-gray-600 text-[10px]">Готово за 5 минут · На email</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -836,6 +1068,11 @@ export default function NumerosApp() {
       <footer className="py-20 text-center border-t border-white/5 opacity-40 text-[10px] uppercase tracking-[0.4em] font-black">
         © 2026 NUMEROS • Премиальный нумерологический сервис
       </footer>
+
+      {/* ── Модал заказа разбора ── */}
+      {showOrderModal && (
+        <OrderModal onClose={() => setShowOrderModal(false)} initialDate={birthDate} />
+      )}
     </div>
   );
 }
