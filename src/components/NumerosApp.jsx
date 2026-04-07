@@ -287,14 +287,18 @@ function ShareButton({ birthDate, matrixData, formatDate }) {
 
   const captureMatrix = async () => {
     const { toPng } = await import('html-to-image');
-    const el = document.getElementById('matrix-capture-zone');
-    if (!el) throw new Error('Элемент не найден');
-    const dataUrl = await toPng(el, {
-      backgroundColor: '#08090D',
-      pixelRatio: 2,
-      skipFonts: false,
-    });
-    return dataUrl;
+    const card = document.getElementById('share-card');
+    if (!card) throw new Error('Элемент не найден');
+    // Показываем карточку на время захвата
+    card.style.visibility = 'visible';
+    card.style.opacity = '1';
+    await new Promise(r => setTimeout(r, 80)); // даём браузеру отрисовать
+    try {
+      return await toPng(card, { backgroundColor: '#08090D', pixelRatio: 2, skipFonts: false });
+    } finally {
+      card.style.visibility = 'hidden';
+      card.style.opacity = '0';
+    }
   };
 
   const withCapture = async (fn) => {
@@ -651,17 +655,67 @@ export default function NumerosApp() {
             <div className="flex-1 w-full animate-float" id="matrix-capture-zone">
               {matrixData && (
                 <div className="flex justify-center gap-3 mb-4">
-                  {/* Дата */}
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[9px] uppercase tracking-[0.25em] font-black">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
                     {formatDate(birthDate)}
                   </div>
-                  {/* Поделиться */}
                   <ShareButton birthDate={birthDate} matrixData={matrixData} formatDate={formatDate} />
                 </div>
               )}
               <ModernMatrixGrid data={matrixData ?? DEMO_DATA} />
             </div>
+
+            {/* ── Share Card (невидим, только для захвата) ── */}
+            {matrixData && (
+              <div
+                id="share-card"
+                style={{ visibility: 'hidden', opacity: 0, position: 'fixed', top: '-9999px', left: '-9999px', zIndex: -1 }}
+                className="w-[520px] bg-[#08090D] rounded-3xl overflow-hidden"
+              >
+                {/* Шапка */}
+                <div className="px-8 pt-8 pb-5">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="w-8 h-8 rounded-full border border-[#D4AF37]/50 flex items-center justify-center bg-gradient-to-tr from-[#D4AF37]/20 to-transparent">
+                      <Gem size={14} className="text-[#D4AF37]" />
+                    </div>
+                    <span className="text-white uppercase font-black text-base tracking-[0.15em]">Numeros</span>
+                  </div>
+                  <p className="text-[#D4AF37] text-[10px] uppercase tracking-[0.25em] font-black mb-1">Матрица Пифагора</p>
+                  <p className="text-white text-2xl font-black tracking-tight">{formatDate(birthDate)}</p>
+                </div>
+
+                {/* Матрица */}
+                <div className="px-6">
+                  <ModernMatrixGrid data={matrixData} />
+                </div>
+
+                {/* Ключевые числа */}
+                <div className="px-8 py-5 grid grid-cols-4 gap-3">
+                  {[
+                    { l: 'Судьба',  v: matrixData.destiny },
+                    { l: 'Душа',    v: matrixData.soul    },
+                    { l: 'Карма',   v: matrixData.karma   },
+                    { l: 'Скрытое', v: matrixData.hidden  },
+                  ].map(k => (
+                    <div key={k.l} className="flex flex-col items-center gap-1 bg-white/[0.04] rounded-2xl py-3">
+                      <span className="text-xl font-black text-white">{k.v}</span>
+                      <span className="text-[9px] uppercase font-black text-[#D4AF37]/60 tracking-wide">{k.l}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <div className="mx-6 mb-8 rounded-2xl bg-gradient-to-r from-[#D4AF37]/15 to-[#D4AF37]/5 border border-[#D4AF37]/30 px-6 py-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-white font-black text-sm">Узнай свою матрицу</p>
+                    <p className="text-[#D4AF37]/70 text-xs font-semibold mt-0.5">Бесплатный расчёт за 10 секунд</p>
+                  </div>
+                  <div className="text-[#D4AF37] font-black text-xs uppercase tracking-widest bg-[#D4AF37]/10 px-3 py-2 rounded-xl border border-[#D4AF37]/30">
+                    numeros.app
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* ── Benefits ── */}
