@@ -496,7 +496,7 @@ function KarmicSection({ karmicLessons, karmicSummary }) {
       ))}
       {karmicSummary ? (
         <View wrap={false} style={[s.karmicCard, { marginTop: 0 }]}>
-          <Text style={[s.karmicBody, { fontStyle: 'italic' }]}>{karmicSummary}</Text>
+          <Text style={s.karmicBody}>{karmicSummary}</Text>
         </View>
       ) : null}
     </>
