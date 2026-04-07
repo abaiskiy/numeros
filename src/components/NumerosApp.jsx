@@ -215,7 +215,7 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
     <div
       className={`relative w-full ${
         size === 'large' ? 'max-w-[700px]' : 'max-w-[580px]'
-      } mx-auto overflow-visible ${
+      } mx-auto overflow-hidden ${
         blurred ? 'blur-2xl opacity-40 pointer-events-none' : ''
       }`}
     >
