@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { calculateMatrix } from '@/lib/matrixCalc';
+import { calculateMatrix, getPersonalYears } from '@/lib/matrixCalc';
 
-// ─── Compatibility score calculation (same logic as frontend) ─────────────────
+// ─── Compatibility score (same logic as frontend) ─────────────────────────────
 function calculateCompatibility(m1, m2) {
   let sectorScore = 0;
   for (let d = 1; d <= 9; d++) {
@@ -21,21 +21,26 @@ function calculateCompatibility(m1, m2) {
 }
 
 // ─── GPT analysis ─────────────────────────────────────────────────────────────
-async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2, score, book) {
+async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2, score, book, py1, py2) {
   const { default: OpenAI } = await import('openai');
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  const py1Ctx = py1.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
+  const py2Ctx = py2.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
 
   const prompt = `Ты — профессиональный нумеролог. Составь детальный разбор совместимости двух людей.
 
 ЧЕЛОВЕК 1: ${name1 || 'Первый'} (${fmt(date1)})
 - Число судьбы: ${m1.destiny}, Число души: ${m1.soul}, Карма: ${m1.karma}, Скрытое: ${m1.hidden}
 - Матрица: Характер(1)=${m1.char.v}[${m1.char.s}], Энергия(2)=${m1.energy.v}[${m1.energy.s}], Здоровье(4)=${m1.health.v}[${m1.health.s}], Логика(5)=${m1.logic.v}[${m1.logic.s}], Труд(6)=${m1.labor.v}[${m1.labor.s}], Удача(7)=${m1.luck.v}[${m1.luck.s}], Долг(8)=${m1.duty.v}[${m1.duty.s}], Память(9)=${m1.memory.v}[${m1.memory.s}]
+- Личные годы: ${py1Ctx}
 
 ЧЕЛОВЕК 2: ${name2 || 'Второй'} (${fmt(date2)})
 - Число судьбы: ${m2.destiny}, Число души: ${m2.soul}, Карма: ${m2.karma}, Скрытое: ${m2.hidden}
 - Матрица: Характер(1)=${m2.char.v}[${m2.char.s}], Энергия(2)=${m2.energy.v}[${m2.energy.s}], Здоровье(4)=${m2.health.v}[${m2.health.s}], Логика(5)=${m2.logic.v}[${m2.logic.s}], Труд(6)=${m2.labor.v}[${m2.labor.s}], Удача(7)=${m2.luck.v}[${m2.luck.s}], Долг(8)=${m2.duty.v}[${m2.duty.s}], Память(9)=${m2.memory.v}[${m2.memory.s}]
+- Личные годы: ${py2Ctx}
 
 ОБЩИЙ БАЛЛ СОВМЕСТИМОСТИ: ${score}/99
 
@@ -45,79 +50,48 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
   "overallLevel": "${score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы'}",
   "overallDesc": "2-3 предложения — что означает этот уровень именно для них. Обращение на Вы к обоим.",
   "spheres": [
-    {
-      "title": "Романтика и страсть",
-      "icon": "♡",
-      "score": <число 0-100>,
-      "color": "rose",
-      "content": "60-80 слов — анализ совместимости в этой сфере для данной пары. Обращение на Вы."
-    },
-    {
-      "title": "Семья и быт",
-      "icon": "⌂",
-      "score": <число 0-100>,
-      "color": "amber",
-      "content": "60-80 слов."
-    },
-    {
-      "title": "Интеллект и общение",
-      "icon": "◇",
-      "score": <число 0-100>,
-      "color": "blue",
-      "content": "60-80 слов."
-    },
-    {
-      "title": "Финансы и цели",
-      "icon": "◈",
-      "score": <число 0-100>,
-      "color": "green",
-      "content": "60-80 слов."
-    },
-    {
-      "title": "Доверие и поддержка",
-      "icon": "◎",
-      "score": <число 0-100>,
-      "color": "purple",
-      "content": "60-80 слов."
-    },
-    {
-      "title": "Духовный рост",
-      "icon": "★",
-      "score": <число 0-100>,
-      "color": "teal",
-      "content": "60-80 слов."
-    }
+    { "title": "Романтика и страсть", "icon": "♡", "score": <0-100>, "color": "rose", "content": "60-80 слов" },
+    { "title": "Семья и быт", "icon": "⌂", "score": <0-100>, "color": "amber", "content": "60-80 слов" },
+    { "title": "Интеллект и общение", "icon": "◇", "score": <0-100>, "color": "blue", "content": "60-80 слов" },
+    { "title": "Финансы и цели", "icon": "◈", "score": <0-100>, "color": "green", "content": "60-80 слов" },
+    { "title": "Доверие и поддержка", "icon": "◎", "score": <0-100>, "color": "purple", "content": "60-80 слов" },
+    { "title": "Духовный рост", "icon": "★", "score": <0-100>, "color": "teal", "content": "60-80 слов" }
   ],
   "keyNumbers": {
-    "destiny": {
-      "v1": ${m1.destiny}, "v2": ${m2.destiny},
-      "match": ${m1.destiny === m2.destiny},
-      "content": "40-60 слов — как взаимодействуют их числа судьбы"
-    },
-    "soul": {
-      "v1": ${m1.soul}, "v2": ${m2.soul},
-      "match": ${m1.soul === m2.soul},
-      "content": "40-60 слов — внутренняя гармония / напряжение"
-    },
-    "karma": {
-      "v1": ${m1.karma}, "v2": ${m2.karma},
-      "match": ${m1.karma === m2.karma},
-      "content": "40-60 слов — общие кармические уроки"
-    }
+    "destiny": { "v1": ${m1.destiny}, "v2": ${m2.destiny}, "match": ${m1.destiny === m2.destiny}, "content": "40-60 слов — как взаимодействуют числа судьбы" },
+    "soul":    { "v1": ${m1.soul},    "v2": ${m2.soul},    "match": ${m1.soul === m2.soul},       "content": "40-60 слов — внутренняя гармония" },
+    "karma":   { "v1": ${m1.karma},   "v2": ${m2.karma},   "match": ${m1.karma === m2.karma},     "content": "40-60 слов — общие кармические уроки" }
   },
-  "strengths": [
-    "что пара усиливает друг в друге (4-5 пунктов, каждый 15-25 слов)"
+  "loveLanguages": {
+    "person1": {
+      "primary": "язык любви ${name1 || 'первого'} (слова, прикосновения, время, подарки или помощь)",
+      "description": "50 слов — как ${name1 || 'первый'} выражает и воспринимает любовь"
+    },
+    "person2": {
+      "primary": "язык любви ${name2 || 'второго'}",
+      "description": "50 слов — как ${name2 || 'второй'} выражает и воспринимает любовь"
+    },
+    "compatibility": "40-50 слов — насколько совместимы их языки любви и как выстраивать гармонию"
+  },
+  "strengths": ["что пара усиливает друг в друге (4-5 пунктов, 15-25 слов каждый)"],
+  "tensions": ["точки напряжения (3-4 пункта, 15-25 слов) с советом как преодолеть"],
+  "greenFlags": [
+    "зелёный флаг союза 1 (10-15 слов)",
+    "зелёный флаг 2",
+    "зелёный флаг 3",
+    "зелёный флаг 4"
   ],
-  "tensions": [
-    "точки возможного напряжения (3-4 пункта, каждый 15-25 слов) с советом как преодолеть"
+  "dangerSignals": [
+    "сигнал внимания 1 — что отслеживать (10-15 слов)",
+    "сигнал 2",
+    "сигнал 3"
   ],
   "bestYears": {
-    "content": "60-80 слов — благоприятные периоды для совместных решений (свадьба, дети, бизнес) на основе чисел"
+    "content": "60-80 слов — благоприятные периоды для совместных решений на основе чисел"
   },
-  "recommendations": [
-    "конкретный совет паре (4-5 пунктов, каждый 20-30 слов)"
-  ],
-  "conclusion": "150-200 слов — итоговый вывод о союзе. Вдохновляющий, но честный. Обращение на Вы."
+  "personalYearNote": "60-70 слов: как совпадают или контрастируют их личные годы сейчас и что это значит для отношений",
+  "recommendations": ["конкретный совет паре (4-5 пунктов, 20-30 слов)"],
+  "conclusion": "150-200 слов — итоговый вывод о союзе. Вдохновляющий, честный. Обращение на Вы."
 }
 
 ВАЖНО: Пиши на русском. Обращайся на Вы. Упоминай имена. Будь конкретным.`;
@@ -133,12 +107,12 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
 }
 
 // ─── Build PDF ────────────────────────────────────────────────────────────────
-async function buildPDF(name1, date1, m1, name2, date2, m2, score, analysis) {
+async function buildPDF(name1, date1, m1, name2, date2, m2, score, analysis, extras) {
   const { createElement } = await import('react');
   const { renderToBuffer } = await import('@react-pdf/renderer');
   const { CompatibilityPDF } = await import('@/lib/CompatibilityPDF');
 
-  const doc = createElement(CompatibilityPDF, { name1, date1, m1, name2, date2, m2, score, analysis });
+  const doc = createElement(CompatibilityPDF, { name1, date1, m1, name2, date2, m2, score, analysis, extras });
   return await renderToBuffer(doc);
 }
 
@@ -158,19 +132,16 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
         <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
         <h2 style="font-size:20px;margin:0 0 8px;">Разбор готов!</h2>
         <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-          Персональный нумерологический разбор совместимости <strong style="color:#fff;">${name1 || 'первого'}</strong> и <strong style="color:#fff;">${name2 || 'второго'}</strong> прикреплён к этому письму.
+          Нумерологический разбор совместимости <strong style="color:#fff;">${name1 || 'первого'}</strong> и <strong style="color:#fff;">${name2 || 'второго'}</strong> прикреплён к этому письму.
         </p>
         <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
           <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 PDF разбор во вложении</p>
-          <p style="color:#aaa;font-size:14px;margin:0;">Детальный анализ по 6 сферам жизни, сильные стороны союза, точки напряжения и прогноз.</p>
+          <p style="color:#aaa;font-size:14px;margin:0;">6 сфер совместимости, языки любви, зелёные флаги и сигналы, личные годы и итоговый прогноз.</p>
         </div>
         <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
       </div>
     `,
-    attachments: [{
-      filename: `numeros-sovmestimost.pdf`,
-      content: pdfBuffer,
-    }],
+    attachments: [{ filename: `numeros-sovmestimost.pdf`, content: pdfBuffer }],
   });
 }
 
@@ -188,20 +159,33 @@ export async function POST(req) {
     const m2 = calculateMatrix(date2);
     const score = calculateCompatibility(m1, m2);
 
-    console.log('[order-compatibility] 2. Loading book');
+    console.log('[order-compatibility] 2. Computing personal years');
+    const py1 = getPersonalYears(date1, 3);
+    const py2 = getPersonalYears(date2, 3);
+
+    console.log('[order-compatibility] 3. Generating QR code');
+    const QRCode = (await import('qrcode')).default;
+    const qrDataUrl = await QRCode.toDataURL('https://numeros.kz', {
+      width: 110, margin: 1,
+      color: { dark: '#C9A84C', light: '#0D0E14' },
+    });
+
+    const extras = { personalYears1: py1, personalYears2: py2, qrDataUrl };
+
+    console.log('[order-compatibility] 4. Loading book');
     const book = JSON.parse(readFileSync(join(process.cwd(), 'src/data/numerology-book.json'), 'utf-8'));
 
-    console.log('[order-compatibility] 3. GPT analysis...');
-    const analysis = await generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2, score, book);
-    console.log('[order-compatibility] 3. GPT done');
+    console.log('[order-compatibility] 5. GPT analysis...');
+    const analysis = await generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2, score, book, py1, py2);
+    console.log('[order-compatibility] 5. GPT done');
 
-    console.log('[order-compatibility] 4. Building PDF...');
-    const pdfBuffer = await buildPDF(name1, date1, m1, name2, date2, m2, score, analysis);
-    console.log('[order-compatibility] 4. PDF built:', pdfBuffer?.length);
+    console.log('[order-compatibility] 6. Building PDF...');
+    const pdfBuffer = await buildPDF(name1, date1, m1, name2, date2, m2, score, analysis, extras);
+    console.log('[order-compatibility] 6. PDF built:', pdfBuffer?.length);
 
-    console.log('[order-compatibility] 5. Sending email to', email);
+    console.log('[order-compatibility] 7. Sending email to', email);
     await sendEmail(name1, name2, email, pdfBuffer);
-    console.log('[order-compatibility] 5. Done');
+    console.log('[order-compatibility] 7. Done');
 
     return NextResponse.json({ ok: true });
   } catch (err) {

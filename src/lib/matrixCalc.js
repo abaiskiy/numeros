@@ -50,16 +50,11 @@ export function calculateMatrix(dateStr) {
   const derived = (n) => n === 0 ? '—' : String(n);
 
   return {
-    // Raw counts for server-side book lookup
     counts: cnt,
-
-    // Four key numbers
     destiny : A,
     soul    : B,
     karma   : C,
     hidden  : D,
-
-    // 3×3 cells
     char    : { digit: 1, v: val(1), s: status(1), h: hl(1) },
     health  : { digit: 4, v: val(4), s: status(4), h: hl(4) },
     luck    : { digit: 7, v: val(7), s: status(7), h: hl(7) },
@@ -69,8 +64,6 @@ export function calculateMatrix(dateStr) {
     interest: { digit: 3, v: val(3), s: status(3), h: hl(3) },
     labor   : { digit: 6, v: val(6), s: status(6), h: hl(6) },
     memory  : { digit: 9, v: val(9), s: status(9), h: hl(9) },
-
-    // Row/column potentials
     temperament : derived(lineSum(3, 5, 7)),
     goal        : derived(lineSum(1, 4, 7)),
     family      : derived(lineSum(2, 5, 8)),
@@ -82,18 +75,11 @@ export function calculateMatrix(dateStr) {
   };
 }
 
-/**
- * Maps digit count to the key used in numerology-book.json
- * e.g., count=3 → "3", count=5 → "5+"
- */
 export function countKey(n) {
   if (n >= 5) return '5+';
   return String(n);
 }
 
-/**
- * Builds the context string for GPT prompt from book data + matrix.
- */
 export function buildBookContext(matrix, book) {
   const { quantitative, transitions, lines } = book;
   const { counts } = matrix;
@@ -120,7 +106,6 @@ export function buildBookContext(matrix, book) {
     ctx += `Цифра ${digit} — ${q.cellName} (количество: ${c}):\n${interpretation}\n\n`;
   }
 
-  // Check for notable combinations
   const specials = transitions?.specials ?? {};
   const matchedSpecials = [];
   for (const [pattern, desc] of Object.entries(specials)) {
@@ -137,7 +122,6 @@ export function buildBookContext(matrix, book) {
     ctx += `=== ОСОБЫЕ КОМБИНАЦИИ ===\n${matchedSpecials.join('\n')}\n\n`;
   }
 
-  // Lines context
   if (lines?.rows) {
     ctx += `=== ЛИНИИ ПСИХОМАТРИЦЫ ===\n`;
     for (const [, row] of Object.entries(lines.rows)) {
@@ -146,4 +130,121 @@ export function buildBookContext(matrix, book) {
   }
 
   return ctx;
+}
+
+// ─── Extended calculations ────────────────────────────────────────────────────
+
+function reduceToSingle(n) {
+  let num = Math.abs(n);
+  while (num > 9) {
+    num = String(num).split('').reduce((s, d) => s + Number(d), 0);
+  }
+  return num;
+}
+
+// Pythagorean Russian: letters in alphabetical order cycling 1-9
+const RU_NUM = {
+  А:1, Б:2, В:3, Г:4, Д:5, Е:6, Ё:7, Ж:8, З:9,
+  И:1, Й:2, К:3, Л:4, М:5, Н:6, О:7, П:8, Р:9,
+  С:1, Т:2, У:3, Ф:4, Х:5, Ц:6, Ч:7, Ш:8, Щ:9,
+  Ъ:1, Ы:2, Ь:3, Э:4, Ю:5, Я:6,
+};
+const RU_VOWELS = new Set(['А','Е','Ё','И','О','У','Ы','Э','Ю','Я']);
+
+export function calculateNameNumerology(name) {
+  const upper = name.toUpperCase().replace(/[^А-ЯЁ]/g, '');
+  if (!upper.length) return null;
+  let expr = 0, soulN = 0, personality = 0;
+  for (const ch of upper) {
+    const num = RU_NUM[ch] || 0;
+    expr += num;
+    if (RU_VOWELS.has(ch)) soulN += num;
+    else personality += num;
+  }
+  return {
+    expression:  reduceToSingle(expr),
+    soulUrge:    reduceToSingle(soulN),
+    personality: reduceToSingle(personality),
+  };
+}
+
+export function calculatePinnacles(birthDate) {
+  const [year, month, day] = birthDate.split('-').map(Number);
+  const rd = reduceToSingle;
+  const yearReduced = rd([...String(year)].reduce((s, d) => s + Number(d), 0));
+
+  const p1 = rd(month + day);
+  const p2 = rd(day + yearReduced);
+  const p3 = rd(p1 + p2);
+  const p4 = rd(month + yearReduced);
+
+  const lifePath = rd(
+    (String(day).padStart(2, '0') + String(month).padStart(2, '0') + String(year))
+      .split('').reduce((s, d) => s + Number(d), 0)
+  );
+  const end1 = 36 - lifePath;
+
+  return [
+    { number: p1, from: 0,       to: end1,       label: 'Первый пинакль'     },
+    { number: p2, from: end1+1,  to: end1+9,     label: 'Второй пинакль'    },
+    { number: p3, from: end1+10, to: end1+18,    label: 'Третий пинакль'    },
+    { number: p4, from: end1+19, to: 99,         label: 'Четвёртый пинакль' },
+  ];
+}
+
+const PERSONAL_YEAR_MEANINGS = {
+  1: 'Новые начала. Время запускать проекты и строить планы.',
+  2: 'Партнёрство и терпение. Год для сотрудничества.',
+  3: 'Творчество и общение. Рост социальных связей.',
+  4: 'Дисциплина и труд. Закладка прочных основ.',
+  5: 'Перемены и свобода. Время движения и нового опыта.',
+  6: 'Семья и гармония. Ответственность и забота.',
+  7: 'Самопознание. Уединение и духовный поиск.',
+  8: 'Карьера и достижения. Год финансового роста.',
+  9: 'Завершение цикла. Отпустить прошлое, подготовка.',
+};
+
+export function getPersonalYears(birthDate, count = 5) {
+  const [, month, day] = birthDate.split('-').map(Number);
+  const curYear = new Date().getFullYear();
+  return Array.from({ length: count }, (_, i) => {
+    const year = curYear + i;
+    const py   = reduceToSingle(day + month + year);
+    return { year, personalYear: py, meaning: PERSONAL_YEAR_MEANINGS[py] ?? '' };
+  });
+}
+
+const KARMIC_LESSONS = {
+  1: 'Учитесь принимать самостоятельные решения. Развивайте волю, уверенность и независимость.',
+  2: 'Осваивайте терпение и дипломатию. Важно слышать других и находить компромисс.',
+  3: 'Раскрывайте самовыражение. Говорите о чувствах и делитесь своим творчеством.',
+  4: 'Развивайте дисциплину. Систематический труд и доведение дел до конца — ваши уроки.',
+  5: 'Принимайте перемены. Научитесь адаптироваться и видеть в переменах возможности.',
+  6: 'Берите ответственность за близких. Ищите баланс между заботой о других и о себе.',
+  7: 'Доверяйте интуиции. Развивайте внутренний голос и духовную глубину.',
+  8: 'Работайте с материальным миром открыто. Цените труд и не бойтесь брать заработанное.',
+  9: 'Развивайте сострадание. Учитесь видеть жизнь за пределами личных интересов.',
+};
+
+export function getKarmicLessons(counts) {
+  return [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    .filter(d => counts[d] === 0)
+    .map(d => ({ digit: d, lesson: KARMIC_LESSONS[d] }));
+}
+
+const FAMOUS_BY_DIGIT = {
+  1: [{ name: 'Стив Джобс',       field: 'Технологии' }, { name: 'Наполеон Бонапарт', field: 'История'    }],
+  2: [{ name: 'Барак Обама',       field: 'Политика'   }, { name: 'Мать Тереза',       field: 'Гуманизм'   }],
+  3: [{ name: 'Уолт Дисней',       field: 'Творчество' }, { name: 'Дж. К. Роулинг',    field: 'Литература' }],
+  4: [{ name: 'Альберт Эйнштейн',  field: 'Наука'      }, { name: 'Билл Гейтс',        field: 'Технологии' }],
+  5: [{ name: 'Авраам Линкольн',   field: 'Политика'   }, { name: 'Мерилин Монро',     field: 'Кино'       }],
+  6: [{ name: 'Леонардо да Винчи', field: 'Искусство'  }, { name: 'Майкл Джексон',     field: 'Музыка'     }],
+  7: [{ name: 'Никола Тесла',      field: 'Наука'      }, { name: 'Стивен Хокинг',     field: 'Физика'     }],
+  8: [{ name: 'Пабло Пикассо',     field: 'Искусство'  }, { name: 'Элвис Пресли',      field: 'Музыка'     }],
+  9: [{ name: 'Махатма Ганди',     field: 'Философия'  }, { name: 'Лев Толстой',       field: 'Литература' }],
+};
+
+export function getFamousByDestiny(destiny) {
+  const n = reduceToSingle(Math.abs(destiny));
+  return FAMOUS_BY_DIGIT[n] ?? FAMOUS_BY_DIGIT[1];
 }

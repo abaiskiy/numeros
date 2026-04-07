@@ -1,6 +1,6 @@
 import React from 'react';
 import path from 'path';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 
 Font.register({
   family: 'Roboto',
@@ -15,8 +15,8 @@ const C = {
   dark: '#08090D', surface: '#0D0E14', card: '#12131A',
   border: '#21222C', gray: '#6B6C7E', grayLight: '#9B9CAD',
   white: '#FFFFFF', text: '#D0D1E0',
-  p1: '#C9A84C', p1faint: '#1C1A10', p1border: '#3A3218',   // gold for person 1
-  p2: '#5B9BD5', p2faint: '#0C1420', p2border: '#1E3050',   // blue for person 2
+  p1: '#C9A84C', p1faint: '#1C1A10', p1border: '#3A3218',
+  p2: '#5B9BD5', p2faint: '#0C1420', p2border: '#1E3050',
   rose: '#D48EC0', roseFaint: '#12080F', roseBorder: '#2A1025',
   green: '#8ABF5A', greenFaint: '#0C100A', greenBorder: '#1E2A12',
   teal: '#3ABFB3', tealFaint: '#080F0E', tealBorder: '#102A28',
@@ -38,22 +38,16 @@ const s = StyleSheet.create({
   coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, letterSpacing: 3 },
   coverBadge: { alignSelf: 'flex-start', backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 32 },
   coverBadgeText: { fontSize: 7.5, color: C.rose, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 2 },
-
-  // Names row on cover
   coverNamesRow: { flexDirection: 'row', alignItems: 'center', gap: 0, marginBottom: 16 },
   coverName1: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 700, color: C.p1, lineHeight: 1.2 },
   coverHeart: { fontSize: 22, color: C.rose, paddingHorizontal: 12 },
   coverName2: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 700, color: C.p2, lineHeight: 1.2, textAlign: 'right' },
   coverTitle: { fontSize: 12, color: C.grayLight, marginBottom: 48 },
-
-  // Score on cover
   coverScoreBlock: { alignItems: 'center', paddingVertical: 48, borderTopWidth: 1, borderTopColor: C.border },
   coverScoreCircle: { width: 120, height: 120, borderRadius: 60, borderWidth: 3, borderColor: C.rose, alignItems: 'center', justifyContent: 'center', marginBottom: 12, backgroundColor: C.roseFaint },
   coverScoreNum: { fontSize: 44, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
   coverScoreLabel: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 700, color: C.rose, marginBottom: 8 },
   coverScoreDesc: { fontSize: 9.5, color: C.grayLight, textAlign: 'center', maxWidth: 280 },
-
-  // Toc on cover
   coverToc: { padding: 48, paddingTop: 0, flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   coverTocItem: { flexDirection: 'row', alignItems: 'center', gap: 7, width: '47%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 9, paddingHorizontal: 11, paddingVertical: 8 },
   coverTocNum: { width: 17, height: 17, borderRadius: 9, backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, alignItems: 'center', justifyContent: 'center' },
@@ -135,11 +129,40 @@ const s = StyleSheet.create({
   keyNumVsText: { fontSize: 10, color: C.gray },
   keyNumBody: { fontSize: 8.5, color: C.text, lineHeight: 1.7 },
 
-  // Strengths / tensions
+  // List cards (strengths/tensions/flags)
   listCard: { borderRadius: 10, padding: 14, marginBottom: 8, borderWidth: 1 },
   listItem: { flexDirection: 'row', gap: 8, marginBottom: 7 },
   listDot: { width: 6, height: 6, borderRadius: 3, marginTop: 4, flexShrink: 0 },
   listText: { flex: 1, fontSize: 9.5, color: C.text, lineHeight: 1.7 },
+
+  // Green flags / danger signals side by side
+  flagsRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  flagsCol: { flex: 1, borderRadius: 10, padding: 13, borderWidth: 1 },
+  flagsColTitle: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  flagItem: { flexDirection: 'row', gap: 7, marginBottom: 7 },
+  flagBullet: { width: 5, height: 5, borderRadius: 3, marginTop: 4, flexShrink: 0 },
+  flagText: { flex: 1, fontSize: 9, lineHeight: 1.65 },
+
+  // Love languages
+  loveCard: { backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 11, padding: 15, marginBottom: 10 },
+  loveRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  lovePersonCol: { flex: 1, backgroundColor: '#0D070B', borderWidth: 1, borderRadius: 9, padding: 12 },
+  lovePrimaryBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start', marginBottom: 6 },
+  lovePrimaryText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700 },
+  lovePersonName: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 5 },
+  loveDesc: { fontSize: 9, color: C.grayLight, lineHeight: 1.65 },
+  loveCompatNote: { fontSize: 9, color: '#E8B8D5', lineHeight: 1.7, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.roseBorder },
+
+  // Personal years comparison
+  pyCompCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
+  pyCompRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 7, borderBottomWidth: 1, borderBottomColor: C.border, gap: 8 },
+  pyCompRowLast: { borderBottomWidth: 0 },
+  pyCompYear: { fontSize: 8.5, color: C.gray, width: 36, fontFamily: 'Roboto', fontWeight: 700 },
+  pyCompCircle: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  pyCompNum: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700 },
+  pyCompMid: { flex: 1, paddingHorizontal: 8 },
+  pyCompMatch: { fontSize: 7.5, color: C.grayLight, lineHeight: 1.5 },
+  pyCompNote: { fontSize: 9, color: C.grayLight, lineHeight: 1.65, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.border },
 
   // Recommendations
   recCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 8 },
@@ -147,6 +170,13 @@ const s = StyleSheet.create({
   recNum: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   recNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
   recText: { flex: 1, fontSize: 9.5, color: C.text, lineHeight: 1.7 },
+
+  // QR
+  qrSection: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
+  qrImage: { width: 60, height: 60, flexShrink: 0 },
+  qrTextBlock: { flex: 1 },
+  qrSiteText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 3 },
+  qrDescText: { fontSize: 8.5, color: C.grayLight, lineHeight: 1.65 },
 
   // Conclusion
   conclusionCard: { backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 12, padding: 20, marginBottom: 14 },
@@ -237,15 +267,135 @@ function Footer({ name1, name2 }) {
   );
 }
 
+// ─── Love Languages ───────────────────────────────────────────────────────────
+function LoveLanguagesSection({ loveLanguages, n1, n2 }) {
+  if (!loveLanguages) return null;
+  const { person1, person2, compatibility } = loveLanguages;
+  return (
+    <View wrap={false} style={s.loveCard}>
+      <View style={s.loveRow}>
+        <View style={[s.lovePersonCol, { borderColor: C.p1border }]}>
+          <Text style={[s.lovePersonName, { color: C.p1 }]}>{n1}</Text>
+          {person1?.primary ? (
+            <View style={[s.lovePrimaryBadge, { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder }]}>
+              <Text style={[s.lovePrimaryText, { color: C.gold }]}>{person1.primary}</Text>
+            </View>
+          ) : null}
+          <Text style={s.loveDesc}>{person1?.description || ''}</Text>
+        </View>
+        <View style={[s.lovePersonCol, { borderColor: C.p2border }]}>
+          <Text style={[s.lovePersonName, { color: C.p2 }]}>{n2}</Text>
+          {person2?.primary ? (
+            <View style={[s.lovePrimaryBadge, { backgroundColor: C.p2faint, borderWidth: 1, borderColor: C.p2border }]}>
+              <Text style={[s.lovePrimaryText, { color: C.p2 }]}>{person2.primary}</Text>
+            </View>
+          ) : null}
+          <Text style={s.loveDesc}>{person2?.description || ''}</Text>
+        </View>
+      </View>
+      {compatibility ? (
+        <Text style={s.loveCompatNote}>♡  {compatibility}</Text>
+      ) : null}
+    </View>
+  );
+}
+
+// ─── Green Flags / Danger Signals ────────────────────────────────────────────
+function FlagsSection({ greenFlags, dangerSignals }) {
+  return (
+    <View wrap={false} style={s.flagsRow}>
+      <View style={[s.flagsCol, { backgroundColor: C.greenFaint, borderColor: C.greenBorder }]}>
+        <Text style={[s.flagsColTitle, { color: C.green }]}>✓  Зелёные флаги</Text>
+        {(greenFlags || []).map((item, i) => (
+          <View key={i} style={s.flagItem}>
+            <View style={[s.flagBullet, { backgroundColor: C.green }]} />
+            <Text style={[s.flagText, { color: '#B0D090' }]}>{item}</Text>
+          </View>
+        ))}
+      </View>
+      <View style={[s.flagsCol, { backgroundColor: '#0F0A0A', borderColor: '#2A1515' }]}>
+        <Text style={[s.flagsColTitle, { color: '#D46060' }]}>◌  Сигналы внимания</Text>
+        {(dangerSignals || []).map((item, i) => (
+          <View key={i} style={s.flagItem}>
+            <View style={[s.flagBullet, { backgroundColor: '#D46060' }]} />
+            <Text style={[s.flagText, { color: '#E0A0A0' }]}>{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+// ─── Personal years comparison ────────────────────────────────────────────────
+function PersonalYearsComparison({ py1, py2, n1, n2, note }) {
+  if (!py1 || !py2) return null;
+  const curYear = new Date().getFullYear();
+  return (
+    <View wrap={false} style={s.pyCompCard}>
+      <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+        <Text style={{ width: 36 }} />
+        <Text style={{ flex: 1, fontSize: 7, color: C.p1, fontFamily: 'Roboto', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n1}</Text>
+        <Text style={{ flex: 1, fontSize: 7, color: C.p2, fontFamily: 'Roboto', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n2}</Text>
+        <View style={{ flex: 2 }} />
+      </View>
+      {py1.map((y, i) => {
+        const y2 = py2[i];
+        const match = y2 && y.personalYear === y2.personalYear;
+        return (
+          <View key={i} style={[s.pyCompRow, i === py1.length - 1 && s.pyCompRowLast, y.year === curYear && { backgroundColor: C.goldFaint + '80' }]}>
+            <Text style={[s.pyCompYear, y.year === curYear && { color: C.gold }]}>{y.year}</Text>
+            <View style={[s.pyCompCircle, { backgroundColor: C.p1faint, borderColor: C.p1border }]}>
+              <Text style={[s.pyCompNum, { color: C.p1 }]}>{y.personalYear}</Text>
+            </View>
+            <View style={[s.pyCompCircle, { backgroundColor: C.p2faint, borderColor: C.p2border }]}>
+              <Text style={[s.pyCompNum, { color: C.p2 }]}>{y2?.personalYear ?? '?'}</Text>
+            </View>
+            <View style={s.pyCompMid}>
+              {match && <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Roboto', fontWeight: 700 }}>★ Совпадение!</Text>}
+            </View>
+            <View style={{ flex: 3 }}>
+              <Text style={s.pyCompMatch} numberOfLines={2}>{y.meaning}</Text>
+            </View>
+          </View>
+        );
+      })}
+      {note ? <Text style={s.pyCompNote}>{note}</Text> : null}
+    </View>
+  );
+}
+
+// ─── QR section ───────────────────────────────────────────────────────────────
+function QRSection({ qrDataUrl }) {
+  return (
+    <View wrap={false} style={s.qrSection}>
+      {qrDataUrl ? <Image src={qrDataUrl} style={s.qrImage} /> : null}
+      <View style={s.qrTextBlock}>
+        <Text style={s.qrSiteText}>numeros.kz</Text>
+        <Text style={s.qrDescText}>
+          Закажите персональный нумерологический разбор или подарите его близкому человеку
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
-export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, analysis }) {
+export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, analysis, extras }) {
   const a = analysis ?? {};
-  const spheres = a.spheres ?? [];
-  const keyNums = a.keyNumbers ?? {};
-  const strengths = a.strengths ?? [];
-  const tensions = a.tensions ?? [];
-  const recs = a.recommendations ?? [];
-  const bestYears = a.bestYears ?? {};
+  const spheres      = a.spheres ?? [];
+  const keyNums      = a.keyNumbers ?? {};
+  const strengths    = a.strengths ?? [];
+  const tensions     = a.tensions ?? [];
+  const recs         = a.recommendations ?? [];
+  const bestYears    = a.bestYears ?? {};
+  const loveLanguages = a.loveLanguages ?? null;
+  const greenFlags    = a.greenFlags ?? [];
+  const dangerSignals = a.dangerSignals ?? [];
+  const personalYearNote = a.personalYearNote ?? '';
+
+  const py1 = extras?.personalYears1 ?? [];
+  const py2 = extras?.personalYears2 ?? [];
+  const qrDataUrl = extras?.qrDataUrl ?? null;
 
   const levelLabel = score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы';
   const levelColor = score >= 85 ? C.gold : score >= 70 ? '#86efac' : score >= 55 ? C.blue : '#fca5a5';
@@ -253,7 +403,18 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
   const n1 = name1 || 'Первый';
   const n2 = name2 || 'Второй';
 
-  const toc = ['Матрицы и ключевые числа','Общий балл совместимости','Совместимость по 6 сферам','Ключевые числа — сравнение','Сильные стороны союза','Точки напряжения','Благоприятные периоды','Итог и рекомендации'];
+  const toc = [
+    'Матрицы и ключевые числа',
+    'Общий балл совместимости',
+    'Совместимость по 6 сферам',
+    'Языки любви',
+    'Зелёные флаги и сигналы',
+    'Ключевые числа — сравнение',
+    'Сильные стороны союза',
+    'Личные годы пары',
+    'Благоприятные периоды',
+    'Рекомендации и итог',
+  ];
 
   return (
     <Document title={`Совместимость: ${n1} & ${n2}`}>
@@ -297,7 +458,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
         </View>
       </Page>
 
-      {/* ── Page 2: Intro + Matrices ──────────────────────────────────────── */}
+      {/* ── Page 2: Intro + Matrices + Score ──────────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
 
@@ -313,7 +474,6 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
           <PersonCard name={n2} date={date2} m={m2} isP2={true} />
         </View>
 
-        {/* Score summary */}
         <View wrap={false} style={{ backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <View style={{ alignItems: 'center' }}>
             <View style={[s.scoreBigCircle, { width: 72, height: 72, borderRadius: 36, borderColor: levelColor, backgroundColor: '#08090D' }]}>
@@ -356,11 +516,25 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
         <Footer name1={n1} name2={n2} />
       </Page>
 
-      {/* ── Page 4: Key numbers + Strengths/Tensions ─────────────────────── */}
+      {/* ── Page 4: Love Languages + Green Flags ──────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
 
-        {/* Key numbers */}
+        <Text style={s.sectionLabel}>◆  ЯЗЫКИ ЛЮБВИ</Text>
+        <LoveLanguagesSection loveLanguages={loveLanguages} n1={n1} n2={n2} />
+
+        <View style={s.divider} />
+
+        <Text style={s.sectionLabel}>◆  ЗЕЛЁНЫЕ ФЛАГИ И СИГНАЛЫ ВНИМАНИЯ</Text>
+        <FlagsSection greenFlags={greenFlags} dangerSignals={dangerSignals} />
+
+        <Footer name1={n1} name2={n2} />
+      </Page>
+
+      {/* ── Page 5: Key numbers + Strengths/Tensions ─────────────────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name1={n1} name2={n2} />
+
         <Text style={s.sectionLabel}>◆  КЛЮЧЕВЫЕ ЧИСЛА — СРАВНЕНИЕ</Text>
         {Object.entries(keyNums).map(([key, kn]) => {
           const labels = { destiny: 'Число судьбы', soul: 'Число души', karma: 'Число кармы' };
@@ -382,7 +556,6 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
 
         <View style={s.divider} />
 
-        {/* Strengths */}
         <Text style={s.sectionLabel}>◆  СИЛЬНЫЕ СТОРОНЫ СОЮЗА</Text>
         <View wrap={false} style={[s.listCard, { backgroundColor: C.greenFaint, borderColor: C.greenBorder }]}>
           {strengths.map((item, i) => (
@@ -395,7 +568,6 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
 
         <View style={s.divider} />
 
-        {/* Tensions */}
         <Text style={s.sectionLabel}>◆  ТОЧКИ НАПРЯЖЕНИЯ</Text>
         <View wrap={false} style={[s.listCard, { backgroundColor: '#0F0A0A', borderColor: '#2A1010' }]}>
           {tensions.map((item, i) => (
@@ -409,9 +581,17 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
         <Footer name1={n1} name2={n2} />
       </Page>
 
-      {/* ── Page 5: Best years + Recommendations + Conclusion ────────────── */}
+      {/* ── Page 6: Personal Years + Best Years + Recs + Conclusion ──────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
+
+        {py1.length > 0 && (
+          <>
+            <Text style={s.sectionLabel}>◆  ЛИЧНЫЕ ГОДЫ ПАРЫ</Text>
+            <PersonalYearsComparison py1={py1} py2={py2} n1={n1} n2={n2} note={personalYearNote} />
+            <View style={s.divider} />
+          </>
+        )}
 
         <Text style={s.sectionLabel}>◆  БЛАГОПРИЯТНЫЕ ПЕРИОДЫ</Text>
         <View wrap={false} style={[s.listCard, { backgroundColor: C.tealFaint, borderColor: C.tealBorder, marginBottom: 14 }]}>
@@ -437,6 +617,8 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
           <Text style={s.conclusionTitle}>♡  Ваш союз</Text>
           <Text style={s.conclusionBody}>{a.conclusion}</Text>
         </View>
+
+        <QRSection qrDataUrl={qrDataUrl} />
 
         <View wrap={false} style={s.outroCard}>
           <Text style={s.outroText}>
