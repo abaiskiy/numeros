@@ -13,50 +13,93 @@ async function generateAnalysis(name, birthDate, matrix, book) {
   const dateFormatted = new Date(birthDate + 'T00:00:00')
     .toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const prompt = `Ты — профессиональный нумеролог. Составь персональный нумерологический разбор для ${name} (дата рождения: ${dateFormatted}).
+  // Compute current year personal year number for forecast
+  const [y, m, d] = birthDate.split('-').map(Number);
+  const currentYear = new Date().getFullYear();
+  const personalYearSum = d + m + currentYear;
+  const personalYear = String(personalYearSum).split('').reduce((s, x) => s + +x, 0);
 
-Матрица Пифагора:
+  const prompt = `Ты — профессиональный нумеролог. Составь подробный персональный нумерологический разбор для ${name} (дата рождения: ${dateFormatted}).
+
+МАТРИЦА ПИФАГОРА:
 - Характер (1): ${matrix.char.v} [${matrix.char.s}]
 - Энергия (2): ${matrix.energy.v} [${matrix.energy.s}]
 - Самооценка (3): ${matrix.interest.v} [${matrix.interest.s}]
 - Здоровье (4): ${matrix.health.v} [${matrix.health.s}]
 - Логика (5): ${matrix.logic.v} [${matrix.logic.s}]
-- Труд (6): ${matrix.labor.v} [${matrix.labor.s}]
+- Труд и деньги (6): ${matrix.labor.v} [${matrix.labor.s}]
 - Удача (7): ${matrix.luck.v} [${matrix.luck.s}]
 - Чувство долга (8): ${matrix.duty.v} [${matrix.duty.s}]
-- Память (9): ${matrix.memory.v} [${matrix.memory.s}]
+- Память и интеллект (9): ${matrix.memory.v} [${matrix.memory.s}]
 
-Ключевые числа:
+КЛЮЧЕВЫЕ ЧИСЛА:
 - Число судьбы: ${matrix.destiny}
 - Число души: ${matrix.soul}
 - Число кармы: ${matrix.karma}
 - Скрытое число: ${matrix.hidden}
+- Личный год (${currentYear}): ${personalYear}
+
+ЛИНИИ:
+- Целеустремлённость (1-4-7): ${matrix.goal}
+- Семья (2-5-8): ${matrix.family}
+- Стабильность (3-6-9): ${matrix.stability}
+- Самооценка (1-2-3): ${matrix.selfEsteem}
+- Быт (4-5-6): ${matrix.household}
+- Талант (7-8-9): ${matrix.talent}
+- Духовность (1-5-9): ${matrix.spirituality}
 
 ${bookContext}
 
-Составь разбор в формате JSON:
+Составь разбор строго в формате JSON (только JSON, без markdown):
 {
-  "sections": [
+  "intro": "2-3 предложения — что такое психоматрица Пифагора и чему посвящён этот разбор для ${name}",
+  "cells": [
     {
+      "digit": 1,
       "title": "Характер и воля",
-      "highlight": true,
-      "content": "..."
+      "value": "${matrix.char.v}",
+      "status": "${matrix.char.s}",
+      "content": "80-120 слов, обращение на Вы, конкретный личный анализ"
     },
-    {
-      "title": "Энергия и жизненная сила",
-      "highlight": false,
-      "content": "..."
-    },
-    ... (по каждой ячейке и ключевым числам, 6-8 разделов)
+    { "digit": 2, "title": "Энергия и биополе", "value": "${matrix.energy.v}", "status": "${matrix.energy.s}", "content": "..." },
+    { "digit": 3, "title": "Самооценка и интерес к жизни", "value": "${matrix.interest.v}", "status": "${matrix.interest.s}", "content": "..." },
+    { "digit": 4, "title": "Здоровье и тело", "value": "${matrix.health.v}", "status": "${matrix.health.s}", "content": "..." },
+    { "digit": 5, "title": "Логика и интуиция", "value": "${matrix.logic.v}", "status": "${matrix.logic.s}", "content": "..." },
+    { "digit": 6, "title": "Труд и материальный мир", "value": "${matrix.labor.v}", "status": "${matrix.labor.s}", "content": "..." },
+    { "digit": 7, "title": "Удача и везение", "value": "${matrix.luck.v}", "status": "${matrix.luck.s}", "content": "..." },
+    { "digit": 8, "title": "Чувство долга и ответственность", "value": "${matrix.duty.v}", "status": "${matrix.duty.s}", "content": "..." },
+    { "digit": 9, "title": "Память и интеллект", "value": "${matrix.memory.v}", "status": "${matrix.memory.s}", "content": "..." }
   ],
-  "conclusion": "Итоговый абзац с главными выводами и рекомендациями для ${name}"
+  "combinations": [
+    {
+      "title": "название значимой комбинации цифр",
+      "digits": "например: 111 + 66",
+      "content": "50-80 слов о том что означает эта комбинация конкретно для ${name}"
+    }
+  ],
+  "money": {
+    "score": <число от 1 до 10 — денежный потенциал>,
+    "title": "Денежный потенциал",
+    "content": "100-150 слов: финансовые таланты, путь к деньгам, предупреждения, советы. Обращение на Вы."
+  },
+  "relationships": {
+    "title": "Код отношений",
+    "content": "100-150 слов: характер в отношениях, идеальный партнёр, сильные и слабые стороны в любви. Обращение на Вы."
+  },
+  "forecast": {
+    "year": ${currentYear},
+    "personalYear": ${personalYear},
+    "title": "Прогноз на ${currentYear} год",
+    "content": "100-150 слов: что несёт личный год ${personalYear} для ${name}, на что обратить внимание, благоприятные периоды. Обращение на Вы."
+  },
+  "conclusion": "150-200 слов: главные выводы, сильные стороны, рекомендации и вдохновляющее напутствие для ${name}. Обращение на Вы."
 }
 
-Пиши на русском языке. Обращайся по имени (${name}). Каждый раздел 80-120 слов. Будь конкретным, содержательным и вдохновляющим. Не повторяй числа механически — интерпретируй их.`;
+ВАЖНО: Пиши на русском. Обращайся на Вы. Будь конкретным и вдохновляющим. Избегай шаблонных фраз.`;
 
   const resp = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
-    temperature: 0.7,
+    temperature: 0.75,
     response_format: { type: 'json_object' },
     messages: [{ role: 'user', content: prompt }],
   });
