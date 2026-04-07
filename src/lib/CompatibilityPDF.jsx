@@ -1,12 +1,20 @@
 import React from 'react';
 import path from 'path';
+import { readFileSync } from 'fs';
 import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 
+const fontDir = path.join(process.cwd(), 'src/fonts');
 Font.register({
   family: 'Roboto',
   fonts: [
-    { src: path.join(process.cwd(), 'src/fonts/Roboto-Regular.ttf'), fontWeight: 400 },
-    { src: path.join(process.cwd(), 'src/fonts/Roboto-Bold.ttf'),    fontWeight: 700 },
+    {
+      src: `data:font/truetype;base64,${readFileSync(path.join(fontDir, 'Roboto-Regular.ttf')).toString('base64')}`,
+      fontWeight: 'normal',
+    },
+    {
+      src: `data:font/truetype;base64,${readFileSync(path.join(fontDir, 'Roboto-Bold.ttf')).toString('base64')}`,
+      fontWeight: 'bold',
+    },
   ],
 });
 
@@ -26,7 +34,7 @@ const C = {
 };
 
 const s = StyleSheet.create({
-  page: { backgroundColor: C.surface, fontFamily: 'Roboto', fontWeight: 400, fontSize: 10, color: C.text, lineHeight: 1.6 },
+  page: { backgroundColor: C.surface, fontFamily: 'Roboto', fontWeight: 'normal', fontSize: 10, color: C.text, lineHeight: 1.6 },
   coverPage: { backgroundColor: C.dark, padding: 0 },
   contentPage: { padding: 40, paddingTop: 32, paddingBottom: 44 },
 
@@ -34,38 +42,38 @@ const s = StyleSheet.create({
   coverTop: { padding: 48, paddingBottom: 0 },
   coverLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 48 },
   coverLogoDot: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, borderColor: C.gold, backgroundColor: C.goldFaint, alignItems: 'center', justifyContent: 'center' },
-  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 700 },
-  coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, letterSpacing: 3 },
+  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' },
+  coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 3 },
   coverBadge: { alignSelf: 'flex-start', backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 32 },
-  coverBadgeText: { fontSize: 7.5, color: C.rose, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 2 },
+  coverBadgeText: { fontSize: 7.5, color: C.rose, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2 },
   coverNamesRow: { flexDirection: 'row', alignItems: 'center', gap: 0, marginBottom: 16 },
-  coverName1: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 700, color: C.p1, lineHeight: 1.2 },
+  coverName1: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 'bold', color: C.p1, lineHeight: 1.2 },
   coverHeart: { fontSize: 22, color: C.rose, paddingHorizontal: 12 },
-  coverName2: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 700, color: C.p2, lineHeight: 1.2, textAlign: 'right' },
+  coverName2: { flex: 1, fontSize: 26, fontFamily: 'Roboto', fontWeight: 'bold', color: C.p2, lineHeight: 1.2, textAlign: 'right' },
   coverTitle: { fontSize: 12, color: C.grayLight, marginBottom: 48 },
   coverScoreBlock: { alignItems: 'center', paddingVertical: 48, borderTopWidth: 1, borderTopColor: C.border },
   coverScoreCircle: { width: 120, height: 120, borderRadius: 60, borderWidth: 3, borderColor: C.rose, alignItems: 'center', justifyContent: 'center', marginBottom: 12, backgroundColor: C.roseFaint },
-  coverScoreNum: { fontSize: 44, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
-  coverScoreLabel: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 700, color: C.rose, marginBottom: 8 },
+  coverScoreNum: { fontSize: 44, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  coverScoreLabel: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, marginBottom: 8 },
   coverScoreDesc: { fontSize: 9.5, color: C.grayLight, textAlign: 'center', maxWidth: 280 },
   coverToc: { padding: 48, paddingTop: 0, flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   coverTocItem: { flexDirection: 'row', alignItems: 'center', gap: 7, width: '47%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 9, paddingHorizontal: 11, paddingVertical: 8 },
   coverTocNum: { width: 17, height: 17, borderRadius: 9, backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, alignItems: 'center', justifyContent: 'center' },
-  coverTocNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.rose },
+  coverTocNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose },
   coverTocText: { fontSize: 8.5, color: C.grayLight, flex: 1 },
   coverBottom: { paddingHorizontal: 48, paddingBottom: 24, flexDirection: 'row', justifyContent: 'space-between' },
   coverBottomL: { fontSize: 8, color: C.gray },
-  coverBottomR: { fontSize: 8, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 1 },
+  coverBottomR: { fontSize: 8, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
   // Page header / footer
   pageHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: C.border },
-  pageHeaderLogo: { fontSize: 10, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 2 },
+  pageHeaderLogo: { fontSize: 10, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2 },
   pageHeaderRight: { fontSize: 8.5, color: C.gray },
   footer: { position: 'absolute', bottom: 16, left: 40, right: 40, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 7, borderTopWidth: 1, borderTopColor: C.border },
   footerL: { fontSize: 7.5, color: C.gray },
-  footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 1 },
+  footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
-  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.rose, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
+  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
   sectionLabelGold: { color: C.gold },
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
 
@@ -78,13 +86,13 @@ const s = StyleSheet.create({
   personCard: { flex: 1, borderRadius: 10, padding: 14, borderWidth: 1 },
   personCardP1: { backgroundColor: C.p1faint, borderColor: C.p1border },
   personCardP2: { backgroundColor: C.p2faint, borderColor: C.p2border },
-  personName: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 10 },
+  personName: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 10 },
   personNameP1: { color: C.p1 },
   personNameP2: { color: C.p2 },
   personDate: { fontSize: 8, color: C.gray, marginBottom: 10 },
   personNums: { flexDirection: 'row', gap: 5, flexWrap: 'wrap' },
   personNumItem: { flex: 1, alignItems: 'center', borderRadius: 7, paddingVertical: 7, borderWidth: 1 },
-  personNumVal: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 700 },
+  personNumVal: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold' },
   personNumLbl: { fontSize: 6, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
 
   // Mini matrix
@@ -96,13 +104,13 @@ const s = StyleSheet.create({
   miniCellHL: { borderColor: C.p1, backgroundColor: C.goldFaint },
   miniCellHLP2: { borderColor: C.p2, backgroundColor: C.p2faint },
   miniCellLabel: { fontSize: 5, color: C.gray, textTransform: 'uppercase' },
-  miniCellValue: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
+  miniCellValue: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
 
   // Score overview
   scoreOverview: { alignItems: 'center', marginBottom: 18 },
   scoreBigCircle: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: C.rose, alignItems: 'center', justifyContent: 'center', backgroundColor: C.roseFaint, marginBottom: 8 },
-  scoreBigNum: { fontSize: 36, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
-  scoreLevelText: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 700, color: C.rose, marginBottom: 4 },
+  scoreBigNum: { fontSize: 36, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  scoreLevelText: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, marginBottom: 4 },
   scoreLevelDesc: { fontSize: 9, color: C.grayLight, textAlign: 'center', maxWidth: 300 },
 
   // Sphere cards
@@ -111,8 +119,8 @@ const s = StyleSheet.create({
   sphereIconBox: { width: 28, height: 28, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
   sphereIcon: { fontSize: 13 },
   sphereTitleWrap: { flex: 1 },
-  sphereTitle: { fontSize: 10.5, fontFamily: 'Roboto', fontWeight: 700 },
-  sphereScoreText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, width: 38, textAlign: 'right' },
+  sphereTitle: { fontSize: 10.5, fontFamily: 'Roboto', fontWeight: 'bold' },
+  sphereScoreText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', width: 38, textAlign: 'right' },
   barBg: { height: 5, backgroundColor: C.border, borderRadius: 3, marginBottom: 8 },
   barFill: { height: 5, borderRadius: 3 },
   sphereBody: { fontSize: 9, lineHeight: 1.75 },
@@ -123,9 +131,9 @@ const s = StyleSheet.create({
   keyNumHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   keyNumLabel: { fontSize: 7, color: C.gray, textTransform: 'uppercase', letterSpacing: 1 },
   keyNumMatchBadge: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2 },
-  keyNumMatchText: { fontSize: 6.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 700 },
+  keyNumMatchText: { fontSize: 6.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' },
   keyNumVals: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  keyNumVal: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 700 },
+  keyNumVal: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold' },
   keyNumVsText: { fontSize: 10, color: C.gray },
   keyNumBody: { fontSize: 8.5, color: C.text, lineHeight: 1.7 },
 
@@ -138,7 +146,7 @@ const s = StyleSheet.create({
   // Green flags / danger signals side by side
   flagsRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   flagsCol: { flex: 1, borderRadius: 10, padding: 13, borderWidth: 1 },
-  flagsColTitle: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  flagsColTitle: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
   flagItem: { flexDirection: 'row', gap: 7, marginBottom: 7 },
   flagBullet: { width: 5, height: 5, borderRadius: 3, marginTop: 4, flexShrink: 0 },
   flagText: { flex: 1, fontSize: 9, lineHeight: 1.65 },
@@ -148,8 +156,8 @@ const s = StyleSheet.create({
   loveRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   lovePersonCol: { flex: 1, backgroundColor: '#0D070B', borderWidth: 1, borderRadius: 9, padding: 12 },
   lovePrimaryBadge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start', marginBottom: 6 },
-  lovePrimaryText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700 },
-  lovePersonName: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 5 },
+  lovePrimaryText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold' },
+  lovePersonName: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 5 },
   loveDesc: { fontSize: 9, color: C.grayLight, lineHeight: 1.65 },
   loveCompatNote: { fontSize: 9, color: '#E8B8D5', lineHeight: 1.7, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.roseBorder },
 
@@ -157,9 +165,9 @@ const s = StyleSheet.create({
   pyCompCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
   pyCompRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 7, borderBottomWidth: 1, borderBottomColor: C.border, gap: 8 },
   pyCompRowLast: { borderBottomWidth: 0 },
-  pyCompYear: { fontSize: 8.5, color: C.gray, width: 36, fontFamily: 'Roboto', fontWeight: 700 },
+  pyCompYear: { fontSize: 8.5, color: C.gray, width: 36, fontFamily: 'Roboto', fontWeight: 'bold' },
   pyCompCircle: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  pyCompNum: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700 },
+  pyCompNum: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold' },
   pyCompMid: { flex: 1, paddingHorizontal: 8 },
   pyCompMatch: { fontSize: 7.5, color: C.grayLight, lineHeight: 1.5 },
   pyCompNote: { fontSize: 9, color: C.grayLight, lineHeight: 1.65, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.border },
@@ -168,19 +176,19 @@ const s = StyleSheet.create({
   recCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 8 },
   recItem: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   recNum: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  recNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
+  recNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
   recText: { flex: 1, fontSize: 9.5, color: C.text, lineHeight: 1.7 },
 
   // QR
   qrSection: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
   qrImage: { width: 60, height: 60, flexShrink: 0 },
   qrTextBlock: { flex: 1 },
-  qrSiteText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 3 },
+  qrSiteText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 3 },
   qrDescText: { fontSize: 8.5, color: C.grayLight, lineHeight: 1.65 },
 
   // Conclusion
   conclusionCard: { backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 12, padding: 20, marginBottom: 14 },
-  conclusionTitle: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 700, color: C.rose, marginBottom: 10 },
+  conclusionTitle: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, marginBottom: 10 },
   conclusionBody: { fontSize: 10, color: C.text, lineHeight: 1.82 },
   outroCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14 },
   outroText: { fontSize: 9, color: C.gray, lineHeight: 1.7, textAlign: 'center' },
@@ -334,8 +342,8 @@ function PersonalYearsComparison({ py1, py2, n1, n2, note }) {
     <View wrap={false} style={s.pyCompCard}>
       <View style={{ flexDirection: 'row', marginBottom: 10 }}>
         <Text style={{ width: 36 }} />
-        <Text style={{ flex: 1, fontSize: 7, color: C.p1, fontFamily: 'Roboto', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n1}</Text>
-        <Text style={{ flex: 1, fontSize: 7, color: C.p2, fontFamily: 'Roboto', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n2}</Text>
+        <Text style={{ flex: 1, fontSize: 7, color: C.p1, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n1}</Text>
+        <Text style={{ flex: 1, fontSize: 7, color: C.p2, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 }}>{n2}</Text>
         <View style={{ flex: 2 }} />
       </View>
       {py1.map((y, i) => {
@@ -351,7 +359,7 @@ function PersonalYearsComparison({ py1, py2, n1, n2, note }) {
               <Text style={[s.pyCompNum, { color: C.p2 }]}>{y2?.personalYear ?? '?'}</Text>
             </View>
             <View style={s.pyCompMid}>
-              {match && <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Roboto', fontWeight: 700 }}>★ Совпадение!</Text>}
+              {match && <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' }}>★ Совпадение!</Text>}
             </View>
             <View style={{ flex: 3 }}>
               <Text style={s.pyCompMatch} numberOfLines={2}>{y.meaning}</Text>
@@ -481,7 +489,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
             </View>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 13, fontFamily: 'Roboto', fontWeight: 700, color: levelColor, marginBottom: 4 }}>{levelLabel} совместимость</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: levelColor, marginBottom: 4 }}>{levelLabel} совместимость</Text>
             <Text style={{ fontSize: 9, color: C.grayLight, lineHeight: 1.7 }}>{a.overallDesc || ''}</Text>
           </View>
         </View>

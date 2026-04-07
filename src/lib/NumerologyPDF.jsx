@@ -1,12 +1,20 @@
 import React from 'react';
 import path from 'path';
+import { readFileSync } from 'fs';
 import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 
+const fontDir = path.join(process.cwd(), 'src/fonts');
 Font.register({
   family: 'Roboto',
   fonts: [
-    { src: path.join(process.cwd(), 'src/fonts/Roboto-Regular.ttf'), fontWeight: 400 },
-    { src: path.join(process.cwd(), 'src/fonts/Roboto-Bold.ttf'),    fontWeight: 700 },
+    {
+      src: `data:font/truetype;base64,${readFileSync(path.join(fontDir, 'Roboto-Regular.ttf')).toString('base64')}`,
+      fontWeight: 'normal',
+    },
+    {
+      src: `data:font/truetype;base64,${readFileSync(path.join(fontDir, 'Roboto-Bold.ttf')).toString('base64')}`,
+      fontWeight: 'bold',
+    },
   ],
 });
 
@@ -21,7 +29,7 @@ const C = {
 };
 
 const s = StyleSheet.create({
-  page: { backgroundColor: C.surface, fontFamily: 'Roboto', fontWeight: 400, fontSize: 10, color: C.text, lineHeight: 1.6 },
+  page: { backgroundColor: C.surface, fontFamily: 'Roboto', fontWeight: 'normal', fontSize: 10, color: C.text, lineHeight: 1.6 },
   coverPage: { backgroundColor: C.dark, padding: 0, justifyContent: 'space-between' },
   contentPage: { padding: 40, paddingTop: 32, paddingBottom: 44 },
 
@@ -29,30 +37,30 @@ const s = StyleSheet.create({
   coverTop: { padding: 48, paddingBottom: 28, borderBottomWidth: 1, borderBottomColor: C.border },
   coverLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 52 },
   coverLogoDot: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, borderColor: C.gold, backgroundColor: C.goldFaint, alignItems: 'center', justifyContent: 'center' },
-  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 700 },
-  coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, letterSpacing: 3 },
+  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' },
+  coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 3 },
   coverBadge: { alignSelf: 'flex-start', backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 18 },
-  coverBadgeText: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 2 },
-  coverName: { fontSize: 30, fontFamily: 'Roboto', fontWeight: 700, color: C.white, marginBottom: 8, lineHeight: 1.2 },
+  coverBadgeText: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2 },
+  coverName: { fontSize: 30, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, marginBottom: 8, lineHeight: 1.2 },
   coverDate: { fontSize: 12, color: C.grayLight },
   coverMid: { padding: 48, paddingTop: 30, paddingBottom: 30, flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   coverTocItem: { flexDirection: 'row', alignItems: 'center', gap: 8, width: '47%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 9, paddingHorizontal: 12, paddingVertical: 9 },
   coverTocNum: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center' },
-  coverTocNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
+  coverTocNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
   coverTocText: { fontSize: 9, color: C.grayLight, flex: 1 },
   coverBottom: { padding: 48, paddingTop: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   coverBottomL: { fontSize: 8, color: C.gray },
-  coverBottomR: { fontSize: 8, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 1 },
+  coverBottomR: { fontSize: 8, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
   // Page header / footer
   pageHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: C.border },
-  pageHeaderLogo: { fontSize: 10, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 2 },
+  pageHeaderLogo: { fontSize: 10, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2 },
   pageHeaderRight: { fontSize: 8.5, color: C.gray },
   footer: { position: 'absolute', bottom: 16, left: 40, right: 40, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 7, borderTopWidth: 1, borderTopColor: C.border },
   footerL: { fontSize: 7.5, color: C.gray },
-  footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 700, letterSpacing: 1 },
+  footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
-  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
+  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
 
   // Intro
   introCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderLeftWidth: 3, borderLeftColor: C.gold, borderRadius: 10, padding: 14, marginBottom: 18 },
@@ -62,7 +70,7 @@ const s = StyleSheet.create({
   keyRow: { flexDirection: 'row', gap: 7, marginBottom: 16 },
   keyCard: { flex: 1, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 8, alignItems: 'center' },
   keyLabel: { fontSize: 6, color: C.gold, letterSpacing: 0.5, marginBottom: 5, textTransform: 'uppercase', opacity: 0.7 },
-  keyValue: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
+  keyValue: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
   keyDesc: { fontSize: 7, color: C.grayLight, marginTop: 3 },
 
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
@@ -74,7 +82,7 @@ const s = StyleSheet.create({
   matrixKeyBlockLabel: { fontSize: 5.5, color: C.gray, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 },
   matrixKeyInner: { flexDirection: 'row', gap: 4 },
   matrixKeyItem: { flex: 1, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 6, paddingVertical: 7, alignItems: 'center' },
-  matrixKeyItemVal: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
+  matrixKeyItemVal: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
   matrixKeyItemLbl: { fontSize: 5, color: C.gold, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2, opacity: 0.8 },
   matrixGrid: { flexDirection: 'column', gap: 5 },
   matrixRow: { flexDirection: 'row', gap: 5 },
@@ -82,22 +90,22 @@ const s = StyleSheet.create({
   matrixCellHL: { backgroundColor: C.goldFaint, borderColor: C.gold, borderWidth: 1.5 },
   matrixCellTopBar: { position: 'absolute', top: 0, left: 10, right: 10, height: 1.5, backgroundColor: C.gold, borderRadius: 1 },
   matrixCellLabel: { fontSize: 5.5, color: C.gray, textTransform: 'uppercase', letterSpacing: 0.5 },
-  matrixCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
+  matrixCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
   matrixCellValueHL: { color: C.gold },
   dotsRow: { flexDirection: 'row', gap: 2 },
   dot: { width: 3.5, height: 3.5, borderRadius: 2, backgroundColor: C.border },
   dotFill: { backgroundColor: C.gold },
   statusBadge: { borderRadius: 8, paddingHorizontal: 5, paddingVertical: 1.5, marginTop: 2 },
-  statusText: { fontSize: 5, fontFamily: 'Roboto', fontWeight: 700 },
+  statusText: { fontSize: 5, fontFamily: 'Roboto', fontWeight: 'bold' },
   sideCell: { flex: 1, backgroundColor: '#0F1220', borderWidth: 1, borderColor: '#1E2540', borderRadius: 7, paddingVertical: 9, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', gap: 3 },
   sideCellTopBar: { position: 'absolute', top: 0, left: 6, right: 6, height: 1.5, backgroundColor: C.blue, borderRadius: 1, opacity: 0.7 },
   sideCellLabel: { fontSize: 5.5, color: '#5A7AAA', textTransform: 'uppercase', letterSpacing: 0.5 },
-  sideCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 700, color: '#7AAAD4' },
+  sideCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: '#7AAAD4' },
   matrixBottomRow: { flexDirection: 'row', gap: 5, marginTop: 5 },
   bottomCell: { flex: 1, backgroundColor: '#120F20', borderWidth: 1, borderColor: '#231840', borderRadius: 7, paddingVertical: 9, paddingHorizontal: 6, alignItems: 'center', gap: 3 },
   bottomCellLeftBar: { position: 'absolute', left: 0, top: 8, bottom: 8, width: 1.5, backgroundColor: C.purple, borderRadius: 1, opacity: 0.7 },
   bottomCellLabel: { fontSize: 5.5, color: '#7A5AAA', textTransform: 'uppercase', letterSpacing: 0.5 },
-  bottomCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 700, color: '#B090D8' },
+  bottomCellValue: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: '#B090D8' },
 
   // ─── Cell analysis cards ──────────────────────────────────────────────────────
   cellCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 13, marginBottom: 8 },
@@ -108,19 +116,19 @@ const s = StyleSheet.create({
   cellIconSymbol: { fontSize: 13, color: C.grayLight },
   cellIconSymbolHL: { color: C.gold },
   cellTitleWrap: { flex: 1 },
-  cellTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700, color: C.white },
+  cellTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
   cellTitleHL: { color: C.gold },
   cellSub: { fontSize: 7.5, color: C.gray, marginTop: 1.5 },
   cellBadge: { borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2.5 },
-  cellBadgeText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 700 },
+  cellBadgeText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold' },
   cellBody: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
 
   // ─── Combinations ─────────────────────────────────────────────────────────────
   combCard: { backgroundColor: '#0D0B14', borderWidth: 1, borderColor: '#221840', borderLeftWidth: 3, borderLeftColor: C.purple, borderRadius: 10, padding: 13, marginBottom: 8 },
   combHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 7 },
   combChip: { backgroundColor: '#1E1530', borderWidth: 1, borderColor: '#3A2A50', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
-  combChipText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700, color: C.purple },
-  combTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700, color: '#C4A8E8', flex: 1 },
+  combChipText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple },
+  combTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', flex: 1 },
   combBody: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
 
   // ─── Special sections ─────────────────────────────────────────────────────────
@@ -129,20 +137,20 @@ const s = StyleSheet.create({
   foreCard:  { backgroundColor: '#080F0F', borderWidth: 1, borderColor: '#102820', borderRadius: 12, padding: 16, marginBottom: 0 },
   specialIconRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
   specialIconBox: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  specialTitle: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 700 },
+  specialTitle: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 'bold' },
   specialSub: { fontSize: 8, marginTop: 2 },
   specialBody: { fontSize: 9.5, lineHeight: 1.78 },
   scoreBarRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   scoreBarBg: { flex: 1, height: 6, backgroundColor: C.border, borderRadius: 3 },
   scoreBarFill: { height: 6, borderRadius: 3 },
-  scoreNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, width: 32 },
+  scoreNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', width: 32 },
 
   // ─── Strengths / Weaknesses ───────────────────────────────────────────────────
   swCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 11, marginBottom: 10, overflow: 'hidden' },
   swRow: { flexDirection: 'row' },
   swLeftCol: { flex: 1, padding: 14, borderRightWidth: 1, borderRightColor: C.border },
   swRightCol: { flex: 1, padding: 14 },
-  swColTitle: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 10, letterSpacing: 0.5, textTransform: 'uppercase' },
+  swColTitle: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 10, letterSpacing: 0.5, textTransform: 'uppercase' },
   swItem: { flexDirection: 'row', gap: 7, marginBottom: 8 },
   swBullet: { width: 5, height: 5, borderRadius: 3, marginTop: 4, flexShrink: 0, backgroundColor: C.green },
   swItemText: { flex: 1, fontSize: 9, lineHeight: 1.65, color: '#B0D090' },
@@ -151,8 +159,8 @@ const s = StyleSheet.create({
   karmicCard: { backgroundColor: '#0D0818', borderWidth: 1, borderColor: '#2A1840', borderLeftWidth: 3, borderLeftColor: C.purple, borderRadius: 10, padding: 13, marginBottom: 8 },
   karmicHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   karmicNumCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#1E1030', borderWidth: 1, borderColor: '#3A2055', alignItems: 'center', justifyContent: 'center' },
-  karmicNum: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 700, color: C.purple },
-  karmicTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700, color: '#C4A8E8', flex: 1 },
+  karmicNum: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple },
+  karmicTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', flex: 1 },
   karmicBody: { fontSize: 9.5, color: '#C0A8D8', lineHeight: 1.72 },
   karmicNoLessons: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 10, padding: 13, marginBottom: 10 },
   karmicNoLessonsText: { fontSize: 9.5, color: C.grayLight, lineHeight: 1.72 },
@@ -161,12 +169,12 @@ const s = StyleSheet.create({
   nameCard: { backgroundColor: '#080E18', borderWidth: 1, borderColor: '#1A2A40', borderRadius: 11, padding: 14, marginBottom: 10 },
   nameHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   nameIconBox: { width: 32, height: 32, borderRadius: 9, backgroundColor: '#102030', borderWidth: 1, borderColor: '#1E3A55', alignItems: 'center', justifyContent: 'center' },
-  nameIcon: { fontSize: 14, color: C.blue, fontFamily: 'Roboto', fontWeight: 700 },
-  nameTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: '#90C0E8' },
+  nameIcon: { fontSize: 14, color: C.blue, fontFamily: 'Roboto', fontWeight: 'bold' },
+  nameTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: '#90C0E8' },
   nameSub: { fontSize: 7.5, color: '#4A7A9A', marginTop: 2 },
   nameNumsRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   nameNumItem: { flex: 1, backgroundColor: '#0D1828', borderWidth: 1, borderColor: '#1E304A', borderRadius: 8, paddingVertical: 9, alignItems: 'center' },
-  nameNumVal: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 700, color: C.blue },
+  nameNumVal: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold', color: C.blue },
   nameNumLbl: { fontSize: 6.5, color: '#4A7A9A', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 3 },
   nameBody: { fontSize: 9.5, color: '#A0C0D8', lineHeight: 1.72 },
 
@@ -175,9 +183,9 @@ const s = StyleSheet.create({
   pinnacleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: C.border },
   pinnacleRowLast: { borderBottomWidth: 0 },
   pinnacleNumCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.goldFaint, borderWidth: 1.5, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  pinnacleNum: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
+  pinnacleNum: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
   pinnacleInfo: { flex: 1 },
-  pinnacleLabel: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 700, color: C.white, marginBottom: 3 },
+  pinnacleLabel: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, marginBottom: 3 },
   pinnacleAge: { fontSize: 8.5, color: C.gray },
 
   // ─── Personal years ───────────────────────────────────────────────────────────
@@ -185,12 +193,12 @@ const s = StyleSheet.create({
   pyRow: { flexDirection: 'row', alignItems: 'center', gap: 0, paddingVertical: 9, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: C.border },
   pyRowCurrent: { backgroundColor: C.goldFaint },
   pyRowLast: { borderBottomWidth: 0 },
-  pyYear: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 700, color: C.grayLight, width: 38 },
+  pyYear: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.grayLight, width: 38 },
   pyNumCircle: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#1A1B26', borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center', marginRight: 10, flexShrink: 0 },
-  pyNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
+  pyNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
   pyMeaning: { flex: 1, fontSize: 9, color: C.text, lineHeight: 1.55 },
   pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 6 },
-  pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 700, color: C.dark },
+  pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 'bold', color: C.dark },
 
   // ─── Famous person ────────────────────────────────────────────────────────────
   famousCard: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 12, padding: 16, marginBottom: 14 },
@@ -198,20 +206,20 @@ const s = StyleSheet.create({
   famousRow: { flexDirection: 'row', gap: 10 },
   famousItem: { flex: 1, backgroundColor: '#100E08', borderWidth: 1, borderColor: C.goldBorder, borderRadius: 9, padding: 12, alignItems: 'center' },
   famousCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.goldFaint, borderWidth: 1.5, borderColor: C.gold, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  famousInitial: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 700, color: C.gold },
-  famousName: { fontSize: 9.5, fontFamily: 'Roboto', fontWeight: 700, color: C.white, textAlign: 'center', marginBottom: 3 },
+  famousInitial: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
+  famousName: { fontSize: 9.5, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, textAlign: 'center', marginBottom: 3 },
   famousField: { fontSize: 8, color: C.gold, textAlign: 'center' },
 
   // ─── QR section ───────────────────────────────────────────────────────────────
   qrSection: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
   qrImage: { width: 60, height: 60, flexShrink: 0 },
   qrTextBlock: { flex: 1 },
-  qrSiteText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 3 },
+  qrSiteText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 3 },
   qrDescText: { fontSize: 8.5, color: C.grayLight, lineHeight: 1.65 },
 
   // ─── Conclusion ───────────────────────────────────────────────────────────────
   conclusionCard: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 12, padding: 20, marginBottom: 14 },
-  conclusionTitle: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 10 },
+  conclusionTitle: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 10 },
   conclusionBody: { fontSize: 10, color: C.text, lineHeight: 1.82 },
   outroCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14 },
   outroText: { fontSize: 9, color: C.gray, lineHeight: 1.7, textAlign: 'center' },
@@ -462,7 +470,7 @@ function KarmicSection({ karmicLessons, karmicSummary }) {
   if (!karmicLessons || karmicLessons.length === 0) {
     return (
       <View wrap={false} style={s.karmicNoLessons}>
-        <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 5 }}>
+        <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 5 }}>
           ★  Все цифры присутствуют в вашей матрице
         </Text>
         {karmicSummary ? (
@@ -582,7 +590,7 @@ function FamousPersonCard({ famous, destinyDigit }) {
   })();
   return (
     <View wrap={false} style={s.famousCard}>
-      <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 700, color: C.gold, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+      <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5 }}>
         Ваше окружение успеха
       </Text>
       <Text style={s.famousIntro}>
