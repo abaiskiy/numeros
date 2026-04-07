@@ -122,6 +122,147 @@ const DEMO_DATA = calculateMatrix('1963-12-18');
 // Пример в секции Insights — Анджелина Джоли, 04.06.1975
 const JOLIE_DATA = calculateMatrix('1975-06-04');
 
+// ─── Famous people by destiny digit ──────────────────────────────────────────
+
+function reduceToSingle(n) {
+  let num = Math.abs(n);
+  while (num > 9) num = String(num).split('').reduce((s, d) => s + Number(d), 0);
+  return num;
+}
+
+const FAMOUS_BY_DIGIT = {
+  1: {
+    trait: 'Лидерство, новаторство, независимость',
+    people: [
+      { name: 'Стив Джобс',       field: 'Технологии',  birth: '24.02.1955', fact: 'Изменил индустрию несколько раз' },
+      { name: 'Наполеон Бонапарт', field: 'История',     birth: '15.08.1769', fact: 'Завоевал половину Европы' },
+      { name: 'Чарли Чаплин',      field: 'Кино',        birth: '16.04.1889', fact: 'Создал универсальный язык юмора' },
+    ],
+  },
+  2: {
+    trait: 'Дипломатия, интуиция, сотрудничество',
+    people: [
+      { name: 'Барак Обама',    field: 'Политика', birth: '04.08.1961', fact: '44-й президент США' },
+      { name: 'Мать Тереза',   field: 'Гуманизм', birth: '26.08.1910', fact: 'Нобелевская премия мира' },
+      { name: 'Билл Клинтон',  field: 'Политика', birth: '19.08.1946', fact: '42-й президент США' },
+    ],
+  },
+  3: {
+    trait: 'Творчество, общение, вдохновение',
+    people: [
+      { name: 'Уолт Дисней',       field: 'Творчество',  birth: '05.12.1901', fact: 'Создал волшебный мир детства' },
+      { name: 'Дж. К. Роулинг',    field: 'Литература',  birth: '31.07.1965', fact: 'Написала серию о Гарри Поттере' },
+      { name: 'Дэвид Боуи',        field: 'Музыка',      birth: '08.01.1947', fact: 'Легенда глэм-рока и авангарда' },
+    ],
+  },
+  4: {
+    trait: 'Системность, труд, надёжность',
+    people: [
+      { name: 'Альберт Эйнштейн',  field: 'Наука',       birth: '14.03.1879', fact: 'Теория относительности' },
+      { name: 'Билл Гейтс',        field: 'Технологии',  birth: '28.10.1955', fact: 'Основатель Microsoft' },
+      { name: 'Арнольд Шварценеггер', field: 'Кино/Политика', birth: '30.07.1947', fact: 'Губернатор, актёр, чемпион' },
+    ],
+  },
+  5: {
+    trait: 'Свобода, перемены, харизма',
+    people: [
+      { name: 'Авраам Линкольн', field: 'Политика', birth: '12.02.1809', fact: 'Отменил рабство в США' },
+      { name: 'Мерилин Монро',   field: 'Кино',     birth: '01.06.1926', fact: 'Икона эпохи 50-х' },
+      { name: 'Мик Джаггер',     field: 'Музыка',   birth: '26.07.1943', fact: 'Лидер Rolling Stones' },
+    ],
+  },
+  6: {
+    trait: 'Ответственность, гармония, искусство',
+    people: [
+      { name: 'Леонардо да Винчи', field: 'Искусство', birth: '15.04.1452', fact: 'Гений эпохи Возрождения' },
+      { name: 'Майкл Джексон',     field: 'Музыка',    birth: '29.08.1958', fact: 'Король поп-музыки' },
+      { name: 'Джон Леннон',       field: 'Музыка',    birth: '09.10.1940', fact: 'Один из основателей Beatles' },
+    ],
+  },
+  7: {
+    trait: 'Аналитика, мудрость, духовный поиск',
+    people: [
+      { name: 'Никола Тесла',    field: 'Наука',   birth: '10.07.1856', fact: 'Опередил своё время на 100 лет' },
+      { name: 'Стивен Хокинг',  field: 'Физика',  birth: '08.01.1942', fact: 'Раскрыл тайны чёрных дыр' },
+      { name: 'Кьяну Ривз',     field: 'Кино',    birth: '02.09.1964', fact: 'Известен смирением и добротой' },
+    ],
+  },
+  8: {
+    trait: 'Власть, амбиции, материальный успех',
+    people: [
+      { name: 'Пабло Пикассо',  field: 'Искусство', birth: '25.10.1881', fact: 'Создатель кубизма' },
+      { name: 'Элвис Пресли',   field: 'Музыка',    birth: '08.01.1935', fact: 'Король рок-н-ролла' },
+      { name: 'Пол Маккартни',  field: 'Музыка',    birth: '18.06.1942', fact: 'Самый успешный автор хитов' },
+    ],
+  },
+  9: {
+    trait: 'Гуманизм, мудрость, духовная сила',
+    people: [
+      { name: 'Махатма Ганди',  field: 'Философия',  birth: '02.10.1869', fact: 'Изменил страну без насилия' },
+      { name: 'Лев Толстой',    field: 'Литература', birth: '09.09.1828', fact: 'Написал «Войну и мир»' },
+      { name: 'Далай-лама XIV', field: 'Духовность', birth: '06.07.1935', fact: 'Символ мира и сострадания' },
+    ],
+  },
+};
+
+function FamousSection({ destiny }) {
+  const digit = reduceToSingle(destiny);
+  const data  = FAMOUS_BY_DIGIT[digit];
+  if (!data) return null;
+  return (
+    <section className="py-10 md:py-14 px-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
+          <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-black">
+            Число судьбы {digit}
+          </span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-1">
+          Ваше окружение успеха
+        </h2>
+        <p className="text-gray-500 text-sm mb-7">
+          Эти известные люди разделяют с вами одно число судьбы —&nbsp;
+          <span className="text-[#D4AF37]/80">{data.trait}</span>
+        </p>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {data.people.map((p) => (
+            <div
+              key={p.name}
+              className="group relative rounded-2xl overflow-hidden border border-white/[0.07] bg-white/[0.03] hover:bg-[#D4AF37]/5 hover:border-[#D4AF37]/25 transition-all duration-300 p-5"
+            >
+              {/* Avatar */}
+              <div className="w-11 h-11 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-4">
+                <span className="text-[#D4AF37] font-black text-lg leading-none">
+                  {p.name.charAt(0)}
+                </span>
+              </div>
+
+              {/* Name & field */}
+              <p className="text-white font-bold text-sm mb-0.5">{p.name}</p>
+              <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.15em] mb-2">
+                {p.field}
+              </p>
+
+              {/* Fact */}
+              <p className="text-gray-500 text-xs leading-relaxed">{p.fact}</p>
+
+              {/* Birth */}
+              <p className="mt-3 text-gray-700 text-[10px]">{p.birth}</p>
+
+              {/* Subtle accent line */}
+              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Shared button classes ────────────────────────────────────────────────────
 
 const BTN_PRIMARY =
@@ -876,6 +1017,9 @@ export default function NumerosApp() {
               <ModernMatrixGrid data={matrixData ?? DEMO_DATA} />
             </div>
           </section>
+
+          {/* ── Знаменитости с тем же числом судьбы ── */}
+          {matrixData && <FamousSection destiny={matrixData.destiny} />}
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="py-10 md:py-16 px-6">
