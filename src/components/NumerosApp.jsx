@@ -576,11 +576,12 @@ function DateSelect({ value, onChange, showError }) {
 // ─── OrderModal ───────────────────────────────────────────────────────────────
 
 function OrderModal({ onClose, initialDate }) {
-  const [step, setStep] = useState('form'); // form | success
+  const [step, setStep] = useState('form'); // form | loading | success | error
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [date, setDate] = useState(initialDate || '');
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState('');
 
   const validate = () => {
     const e = {};
@@ -591,10 +592,24 @@ function OrderModal({ onClose, initialDate }) {
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (ev) => {
+  const handleSubmit = async (ev) => {
     ev.preventDefault();
     if (!validate()) return;
-    setStep('success');
+    setStep('loading');
+    setServerError('');
+    try {
+      const res = await fetch('/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), birthDate: date }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Ошибка сервера');
+      setStep('success');
+    } catch (err) {
+      setServerError(err.message || 'Произошла ошибка. Попробуйте позже.');
+      setStep('error');
+    }
   };
 
   const MONTHS_SHORT = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
@@ -724,6 +739,29 @@ function OrderModal({ onClose, initialDate }) {
             </button>
             <p className="text-center text-gray-600 text-[10px]">Безопасная оплата · Готово за 5 минут</p>
           </form>
+        ) : step === 'loading' ? (
+          /* Загрузка */
+          <div className="px-6 py-10 flex flex-col items-center text-center gap-4">
+            <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
+            <div>
+              <p className="text-white text-base font-black mb-1">Составляем разбор...</p>
+              <p className="text-gray-500 text-sm">Анализируем матрицу и формируем PDF.<br />Это займёт около минуты.</p>
+            </div>
+          </div>
+        ) : step === 'error' ? (
+          /* Ошибка */
+          <div className="px-6 py-8 flex flex-col items-center text-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+              <X size={22} className="text-red-400" />
+            </div>
+            <div>
+              <p className="text-white text-xl font-black mb-1.5">Что-то пошло не так</p>
+              <p className="text-gray-400 text-sm">{serverError}</p>
+            </div>
+            <button onClick={() => setStep('form')} className="text-[#D4AF37] text-sm font-bold hover:underline">
+              ← Попробовать снова
+            </button>
+          </div>
         ) : (
           /* Успех */
           <div className="px-6 py-8 flex flex-col items-center text-center gap-4">
