@@ -122,7 +122,7 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: 'Numeros <razbor@numeros.kz>',
     to: email,
     subject: `Разбор совместимости: ${name1 || 'Первый'} & ${name2 || 'Второй'}`,
@@ -143,6 +143,12 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
     `,
     attachments: [{ filename: `numeros-sovmestimost.pdf`, content: pdfBuffer }],
   });
+
+  if (error) {
+    console.error('[sendEmail-compatibility] Resend error:', JSON.stringify(error));
+    throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+  }
+  console.log('[sendEmail-compatibility] Resend OK, id:', data?.id);
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────

@@ -151,7 +151,7 @@ async function sendEmail(name, email, pdfBuffer) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: 'Numeros <razbor@numeros.kz>',
     to: email,
     subject: `Ваш нумерологический разбор, ${name}`,
@@ -175,6 +175,12 @@ async function sendEmail(name, email, pdfBuffer) {
       content: pdfBuffer,
     }],
   });
+
+  if (error) {
+    console.error('[sendEmail] Resend error:', JSON.stringify(error));
+    throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+  }
+  console.log('[sendEmail] Resend OK, id:', data?.id);
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
