@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { calculateMatrix, buildBookContext } from '@/lib/matrixCalc';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -63,12 +65,12 @@ ${bookContext}
 }
 
 async function buildPDF(name, birthDate, matrix, analysis) {
-  const { renderToBuffer } = await import('@react-pdf/renderer');
   const { createElement } = await import('react');
+  const { renderToBuffer } = await import('@react-pdf/renderer');
   const { NumerologyPDF } = await import('@/lib/NumerologyPDF');
 
-  const element = createElement(NumerologyPDF, { name, birthDate, matrix, analysis });
-  const buffer = await renderToBuffer(element);
+  const doc = createElement(NumerologyPDF, { name, birthDate, matrix, analysis });
+  const buffer = await renderToBuffer(doc);
   return buffer;
 }
 
@@ -126,23 +128,36 @@ export async function POST(req) {
     }
 
     // 1. Calculate matrix
+    console.log('[order] 1. Calculating matrix for', birthDate);
     const matrix = calculateMatrix(birthDate);
 
     // 2. Load book data
-    const book = (await import('@/data/numerology-book.json')).default;
+    console.log('[order] 2. Loading book data');
+    const bookPath = join(process.cwd(), 'src/data/numerology-book.json');
+    const book = JSON.parse(readFileSync(bookPath, 'utf-8'));
 
     // 3. Generate GPT analysis
+    console.log('[order] 3. Calling GPT...');
     const analysis = await generateAnalysis(name, birthDate, matrix, book);
+    console.log('[order] 3. GPT done, sections:', analysis?.sections?.length);
 
     // 4. Build PDF
+    console.log('[order] 4. Building PDF...');
     const pdfBuffer = await buildPDF(name, birthDate, matrix, analysis);
+    console.log('[order] 4. PDF built, size:', pdfBuffer?.length);
 
     // 5. Send email
+    console.log('[order] 5. Sending email to', email);
     await sendEmail(name, email, pdfBuffer);
+    console.log('[order] 5. Email sent');
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[/api/order]', err);
-    return NextResponse.json({ error: 'Произошла ошибка. Попробуйте позже.' }, { status: 500 });
+    console.error('[/api/order] ERROR:', err?.message ?? err);
+    console.error('[/api/order] STACK:', err?.stack);
+    return NextResponse.json(
+      { error: err?.message || 'Произошла ошибка. Попробуйте позже.' },
+      { status: 500 }
+    );
   }
 }
