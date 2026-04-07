@@ -283,7 +283,7 @@ function ShareButton({ birthDate, matrixData, formatDate }) {
   const [status, setStatus] = useState('idle'); // idle | capturing | done | error
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://numeros.app';
-  const shareText = `Моя матрица Пифагора (${formatDate(birthDate)}): Характер ${matrixData.char.v}, Удача ${matrixData.luck.v}, Долг ${matrixData.duty.v}, Интерес ${matrixData.interest.v}. Рассчитайте свою на Numeros!`;
+  const shareText = `Вот моя матрица Пифагора — проверь бесплатно свою 👇\n${shareUrl}`;
 
   const captureMatrix = async () => {
     const { toPng } = await import('html-to-image');
