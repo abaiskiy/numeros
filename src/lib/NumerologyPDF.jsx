@@ -1,7 +1,16 @@
 import React from 'react';
+import path from 'path';
 import {
-  Document, Page, Text, View, StyleSheet,
+  Document, Page, Text, View, StyleSheet, Font,
 } from '@react-pdf/renderer';
+
+Font.register({
+  family: 'Roboto',
+  fonts: [
+    { src: path.join(process.cwd(), 'src/fonts/Roboto-Regular.ttf'), fontWeight: 400 },
+    { src: path.join(process.cwd(), 'src/fonts/Roboto-Bold.ttf'),    fontWeight: 700 },
+  ],
+});
 
 const GOLD  = '#C9A84C';
 const DARK  = '#0D0E14';
@@ -12,7 +21,7 @@ const GRAY  = '#888899';
 const s = StyleSheet.create({
   page: {
     backgroundColor: DARK,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Roboto',
     padding: 40,
     color: '#FFFFFF',
     fontSize: 10,
@@ -29,12 +38,12 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
-  logo: { fontSize: 18, fontFamily: 'Helvetica-Bold', color: GOLD, letterSpacing: 2 },
+  logo: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 700, color: GOLD, letterSpacing: 2 },
   headerSub: { fontSize: 8, color: GRAY },
 
   // Title block
   titleBlock: { marginBottom: 24 },
-  name: { fontSize: 22, fontFamily: 'Helvetica-Bold', marginBottom: 4 },
+  name: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 4 },
   subtitle: { fontSize: 10, color: GRAY },
 
   // Key numbers row
@@ -53,11 +62,11 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   keyLabel: { fontSize: 7, color: GRAY, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
-  keyValue: { fontSize: 20, fontFamily: 'Helvetica-Bold', color: GOLD },
+  keyValue: { fontSize: 20, fontFamily: 'Roboto', fontWeight: 700, color: GOLD },
 
   // Matrix grid
   matrixSection: { marginBottom: 24 },
-  sectionTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: GOLD, marginBottom: 10, letterSpacing: 0.5 },
+  sectionTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, color: GOLD, marginBottom: 10, letterSpacing: 0.5 },
   grid: { flexDirection: 'column', gap: 4 },
   gridRow: { flexDirection: 'row', gap: 4 },
   cell: {
@@ -76,7 +85,7 @@ const s = StyleSheet.create({
     backgroundColor: '#1C1A0F',
   },
   cellLabel: { fontSize: 6, color: GRAY, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
-  cellValue: { fontSize: 14, fontFamily: 'Helvetica-Bold' },
+  cellValue: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 700 },
   cellValueHL: { color: GOLD },
 
   // Analysis sections
@@ -89,7 +98,7 @@ const s = StyleSheet.create({
     padding: 14,
     marginBottom: 8,
   },
-  analysisTitle: { fontSize: 11, fontFamily: 'Helvetica-Bold', marginBottom: 6 },
+  analysisTitle: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 700, marginBottom: 6 },
   analysisTitleGold: { color: GOLD },
   analysisText: { fontSize: 9, color: '#C8C8D8', lineHeight: 1.7 },
 
@@ -104,7 +113,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: { fontSize: 8, color: GRAY },
-  footerBrand: { fontSize: 8, color: GOLD, fontFamily: 'Helvetica-Bold' },
+  footerBrand: { fontSize: 8, color: GOLD, fontFamily: 'Roboto', fontWeight: 700 },
 
   divider: { height: 1, backgroundColor: BORDER, marginVertical: 16 },
 });
