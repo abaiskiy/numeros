@@ -219,8 +219,6 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
         blurred ? 'blur-2xl opacity-40 pointer-events-none' : ''
       }`}
     >
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#D4AF37]/10 blur-[100px] rounded-full animate-pulse" />
-      <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full" />
 
       <div className="relative z-10 p-[1px] md:p-1 bg-gradient-to-br from-white/10 to-transparent rounded-3xl md:rounded-[40px]">
         <div className="bg-[#0D0E14] rounded-[28px] md:rounded-[36px] p-3 md:p-6">
