@@ -46,7 +46,7 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
 - Число судьбы: ${matrix.destiny}
 - Число души: ${matrix.soul}
 - Число кармы: ${matrix.karma}
-- Скрытое число: ${matrix.hidden}
+- Потенциал: ${matrix.hidden}
 - Личный год (${currentYear}): ${personalYear}
 
 ЛИНИИ:

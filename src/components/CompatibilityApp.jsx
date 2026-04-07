@@ -205,7 +205,7 @@ function MiniMatrix({ data, name }) {
           { l: 'Суд', v: data.destiny },
           { l: 'Душа', v: data.soul },
           { l: 'Карма', v: data.karma },
-          { l: 'Скр', v: data.hidden },
+          { l: 'Пот', v: data.hidden },
         ].map((k, i) => (
           <div key={i} className="flex flex-col items-center bg-[#D4AF37]/8 border border-[#D4AF37]/20 rounded-lg py-1.5">
             <span className="text-base font-black text-white">{k.v}</span>

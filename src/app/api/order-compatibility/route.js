@@ -33,12 +33,12 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
   const prompt = `Ты — профессиональный нумеролог. Составь детальный разбор совместимости двух людей.
 
 ЧЕЛОВЕК 1: ${name1 || 'Первый'} (${fmt(date1)})
-- Число судьбы: ${m1.destiny}, Число души: ${m1.soul}, Карма: ${m1.karma}, Скрытое: ${m1.hidden}
+- Число судьбы: ${m1.destiny}, Число души: ${m1.soul}, Карма: ${m1.karma}, Потенциал: ${m1.hidden}
 - Матрица: Характер(1)=${m1.char.v}[${m1.char.s}], Энергия(2)=${m1.energy.v}[${m1.energy.s}], Здоровье(4)=${m1.health.v}[${m1.health.s}], Логика(5)=${m1.logic.v}[${m1.logic.s}], Труд(6)=${m1.labor.v}[${m1.labor.s}], Удача(7)=${m1.luck.v}[${m1.luck.s}], Долг(8)=${m1.duty.v}[${m1.duty.s}], Память(9)=${m1.memory.v}[${m1.memory.s}]
 - Личные годы: ${py1Ctx}
 
 ЧЕЛОВЕК 2: ${name2 || 'Второй'} (${fmt(date2)})
-- Число судьбы: ${m2.destiny}, Число души: ${m2.soul}, Карма: ${m2.karma}, Скрытое: ${m2.hidden}
+- Число судьбы: ${m2.destiny}, Число души: ${m2.soul}, Карма: ${m2.karma}, Потенциал: ${m2.hidden}
 - Матрица: Характер(1)=${m2.char.v}[${m2.char.s}], Энергия(2)=${m2.energy.v}[${m2.energy.s}], Здоровье(4)=${m2.health.v}[${m2.health.s}], Логика(5)=${m2.logic.v}[${m2.logic.s}], Труд(6)=${m2.labor.v}[${m2.labor.s}], Удача(7)=${m2.luck.v}[${m2.luck.s}], Долг(8)=${m2.duty.v}[${m2.duty.s}], Память(9)=${m2.memory.v}[${m2.memory.s}]
 - Личные годы: ${py2Ctx}
 

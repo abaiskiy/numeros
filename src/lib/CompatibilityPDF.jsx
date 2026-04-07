@@ -238,7 +238,7 @@ function PersonCard({ name, date, m, isP2 }) {
   const dateFmt = new Date(date + 'T00:00:00').toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
   const nums = [
     { l: 'Судьба', v: m.destiny }, { l: 'Душа', v: m.soul },
-    { l: 'Карма', v: m.karma },   { l: 'Скрытое', v: m.hidden },
+    { l: 'Карма', v: m.karma },   { l: 'Потенциал', v: m.hidden },
   ];
   return (
     <View style={[s.personCard, isP2 ? s.personCardP2 : s.personCardP1]}>

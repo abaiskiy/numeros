@@ -375,7 +375,7 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
                   { l: 'Судьба',  v: d.destiny },
                   { l: 'Душа',    v: d.soul    },
                   { l: 'Карма',   v: d.karma   },
-                  { l: 'Скрытое', v: d.hidden  },
+                  { l: 'Потенциал', v: d.hidden  },
                 ].map((k) => (
                   <div key={k.l} className="flex flex-col items-center justify-center rounded-xl md:rounded-[14px] bg-[#D4AF37]/10 border border-[#D4AF37]/20 gap-0.5 md:gap-1 py-2 md:py-3">
                     <span className="text-base md:text-2xl font-black text-white leading-none">{k.v}</span>
@@ -553,7 +553,7 @@ function ShareButton({ birthDate, matrixData, formatDate }) {
 const benefits = [
   {
     title: 'Ваш Характер',
-    desc: 'Раскроем структуру личности: лидерские качества, воля и скрытые резервы психики.',
+    desc: 'Раскроем структуру личности: лидерские качества, воля и внутренние резервы психики.',
     icon: <Crown className="text-[#D4AF37]" size={32} />,
     shadow: 'shadow-[#D4AF37]/20',
   },
@@ -622,7 +622,7 @@ const faqs = [
   },
   {
     q: 'Что я получу в платном разборе?',
-    a: 'Полный PDF-отчёт объёмом более 25 страниц: детальный анализ каждого из 9 секторов матрицы, расшифровка ключевых чисел (Судьба, Душа, Карма, Скрытое), описание денежного кода, рекомендации по отношениям и совместимости, а также числовой прогноз на ближайшие 3 года.',
+    a: 'Полный PDF-отчёт объёмом более 25 страниц: детальный анализ каждого из 9 секторов матрицы, расшифровка ключевых чисел (Судьба, Душа, Карма, Потенциал), описание денежного кода, рекомендации по отношениям и совместимости, а также числовой прогноз на ближайшие 3 года.',
   },
   {
     q: 'Можно ли рассчитать матрицу для другого человека?',
@@ -853,7 +853,7 @@ function OrderModal({ onClose, initialDate }) {
 
             {/* Что входит */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 flex flex-col gap-2">
-              {['Анализ всех 9 секторов матрицы', 'Числа Судьбы, Души, Кармы и Скрытого', 'Денежный код и финансовый потенциал', 'Совет по отношениям и совместимости'].map(t => (
+              {['Анализ всех 9 секторов матрицы', 'Числа Судьбы, Души, Кармы и Потенциала', 'Денежный код и финансовый потенциал', 'Совет по отношениям и совместимости'].map(t => (
                 <div key={t} className="flex items-center gap-2.5 text-sm text-gray-300">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shrink-0" />
                   {t}

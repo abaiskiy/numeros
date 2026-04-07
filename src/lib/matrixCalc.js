@@ -54,7 +54,7 @@ export function calculateMatrix(dateStr) {
     destiny : A,
     soul    : B,
     karma   : C,
-    hidden  : D,
+    hidden  : D, // UI label: «Потенциал»
     char    : { digit: 1, v: val(1), s: status(1), h: hl(1) },
     health  : { digit: 4, v: val(4), s: status(4), h: hl(4) },
     luck    : { digit: 7, v: val(7), s: status(7), h: hl(7) },

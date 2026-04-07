@@ -340,7 +340,7 @@ function FullMatrix({ matrix: m }) {
               { l:'Судьба',  v: m.destiny },
               { l:'Душа',    v: m.soul },
               { l:'Карма',   v: m.karma },
-              { l:'Скрытое', v: m.hidden },
+              { l:'Потенциал', v: m.hidden },
             ].map(({ l, v }) => (
               <View key={l} style={s.matrixKeyItem}>
                 <Text style={s.matrixKeyItemVal}>{v}</Text>
@@ -675,7 +675,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
             { label: 'Число судьбы', value: matrix.destiny, desc: 'Жизненный путь'   },
             { label: 'Число души',   value: matrix.soul,    desc: 'Внутренний мир'    },
             { label: 'Число кармы',  value: matrix.karma,   desc: 'Уроки прошлого'    },
-            { label: 'Скрытое',      value: matrix.hidden,  desc: 'Тайный потенциал'  },
+            { label: 'Потенциал',    value: matrix.hidden,  desc: 'Раскрывается в росте'  },
           ].map(({ label, value, desc }) => (
             <View key={label} style={s.keyCard}>
               <Text style={s.keyLabel}>{label}</Text>
