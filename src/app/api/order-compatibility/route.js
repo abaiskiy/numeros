@@ -119,7 +119,10 @@ async function buildPDF(name1, date1, m1, name2, date2, m2, score, analysis, ext
 // ─── Send email ───────────────────────────────────────────────────────────────
 async function sendEmail(name1, name2, email, pdfBuffer) {
   const { Resend } = await import('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+  console.log('[sendEmail-compatibility] API key present:', !!apiKey, '| key prefix:', apiKey?.slice(0, 6));
+  console.log('[sendEmail-compatibility] PDF size bytes:', pdfBuffer?.length, '| to:', email);
+  const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   const { data, error } = await resend.emails.send({
@@ -141,7 +144,7 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
         <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
       </div>
     `,
-    attachments: [{ filename: `numeros-sovmestimost.pdf`, content: pdfBuffer }],
+    attachments: [{ filename: `numeros-sovmestimost.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer.toString('base64') : pdfBuffer }],
   });
 
   if (error) {

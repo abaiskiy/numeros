@@ -148,7 +148,10 @@ async function buildPDF(name, birthDate, matrix, analysis, extras) {
 
 async function sendEmail(name, email, pdfBuffer) {
   const { Resend } = await import('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+  console.log('[sendEmail] API key present:', !!apiKey, '| key prefix:', apiKey?.slice(0, 6));
+  console.log('[sendEmail] PDF size bytes:', pdfBuffer?.length, '| to:', email);
+  const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   const { data, error } = await resend.emails.send({
@@ -172,7 +175,7 @@ async function sendEmail(name, email, pdfBuffer) {
     `,
     attachments: [{
       filename: `numeros-razbor-${name.toLowerCase().replace(/\s+/g, '-')}.pdf`,
-      content: pdfBuffer,
+      content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer.toString('base64') : pdfBuffer,
     }],
   });
 
