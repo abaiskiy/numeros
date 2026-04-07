@@ -608,12 +608,12 @@ function OrderModal({ onClose, initialDate }) {
     }`;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
 
       {/* Панель */}
-      <div className="relative w-full sm:max-w-md bg-[#0D0E14] border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden">
+      <div className="relative w-full sm:max-w-md bg-[#0D0E14] border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-y-auto max-h-[92dvh] sm:max-h-[90dvh] mt-auto sm:my-auto">
 
         {/* Шапка */}
         <div className="relative px-6 pt-6 pb-5 border-b border-white/[0.07]">
