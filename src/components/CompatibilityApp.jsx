@@ -307,7 +307,20 @@ function CompatibilityOrderModal({ onClose, initialName1, initialDate1, initialN
             }`}
           >
             <option value="" disabled>{ph}</option>
-            {opts.map((o, i) => <option key={i} value={fld === 'month' ? i+1 : o}>{fld === 'month' ? o : o}</option>)}
+            {opts.map((o, i) => (
+              <option
+                key={i}
+                value={
+                  fld === 'month'
+                    ? String(i + 1).padStart(2, '0')
+                    : fld === 'day'
+                      ? String(o).padStart(2, '0')
+                      : o
+                }
+              >
+                {fld === 'month' ? o : o}
+              </option>
+            ))}
           </select>
         ))}
       </div>

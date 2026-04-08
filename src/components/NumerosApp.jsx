@@ -842,7 +842,18 @@ function OrderModal({ onClose, initialDate }) {
                   >
                     <option value="" disabled>{placeholder}</option>
                     {options.map((o, i) => (
-                      <option key={i} value={field === 'month' ? i + 1 : o}>{field === 'month' ? o : o}</option>
+                      <option
+                        key={i}
+                        value={
+                          field === 'month'
+                            ? String(i + 1).padStart(2, '0')
+                            : field === 'day'
+                              ? String(o).padStart(2, '0')
+                              : o
+                        }
+                      >
+                        {field === 'month' ? o : o}
+                      </option>
                     ))}
                   </select>
                 ))}
