@@ -25,7 +25,7 @@ export async function POST(req) {
     const description = DESCRIPTIONS[type] ?? DESCRIPTIONS.numerology;
     // Use a short numeric order ID (FreedomPay may cap at 32-bit int)
     const orderId     = String(Math.floor(Math.random() * 9000000) + 1000000);
-    const siteUrl     = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://numeros.kz';
+    const siteUrl     = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.numeros.kz';
     const isLocal     = siteUrl.includes('localhost');
     const isTest      = process.env.NODE_ENV !== 'production';
 

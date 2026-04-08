@@ -56,7 +56,7 @@ export async function POST(req) {
     return xmlResponse('error');
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://numeros.kz';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.numeros.kz';
 
   const orderPromise = (async () => {
     try {
