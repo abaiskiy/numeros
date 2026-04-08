@@ -690,15 +690,15 @@ function DateSelect({ value, onChange, showError }) {
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="flex gap-2">
-        <select value={day} onChange={e => setDay(e.target.value)} className={selectClass(missingDay)} style={{ colorScheme: 'dark' }}>
+        <select value={day} onChange={e => setDay(e.target.value)} className={selectClass(missingDay)}>
           <option value="" disabled>День</option>
           {days.map(d => <option key={d} value={d}>{d}</option>)}
         </select>
-        <select value={month} onChange={e => setMonth(e.target.value)} className={selectClass(missingMonth)} style={{ colorScheme: 'dark' }}>
+        <select value={month} onChange={e => setMonth(e.target.value)} className={selectClass(missingMonth)}>
           <option value="" disabled>Месяц</option>
           {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
         </select>
-        <select value={year} onChange={e => setYear(e.target.value)} className={selectClass(missingYear)} style={{ colorScheme: 'dark' }}>
+        <select value={year} onChange={e => setYear(e.target.value)} className={selectClass(missingYear)}>
           <option value="" disabled>Год</option>
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
@@ -836,7 +836,6 @@ function OrderModal({ onClose, initialDate }) {
                       if (field === 'day')   { setDate(`${parts[0]||''}-${parts[1]||''}-${String(val).padStart(2,'0')}`); }
                       setErrors(p => ({ ...p, date: false }));
                     }}
-                    style={{ colorScheme: 'dark' }}
                     className={`bg-white/[0.04] border rounded-2xl px-2 py-3.5 text-white text-sm font-semibold outline-none transition-all appearance-none text-center cursor-pointer ${
                       errors.date ? 'border-red-500/60' : 'border-white/10 focus:border-[#D4AF37]/50'
                     }`}

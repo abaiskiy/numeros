@@ -43,6 +43,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
+/* Native <select> on Windows (Chrome/Edge): dropdown list often uses a light
+   surface while options inherit body color (#fff) → invisible text. */
+select option {
+  background-color: #12131a;
+  color: #f0f0f5;
+}
+
+select option:disabled {
+  color: #6b7280;
+  background-color: #12131a;
+}
+
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

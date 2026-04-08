@@ -152,15 +152,15 @@ function DateSelect({ onChange, showError }) {
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex gap-2">
-        <select value={day}   onChange={e => setDay(e.target.value)}   className={cls(showError && !day)}   style={{ colorScheme: 'dark' }}>
+        <select value={day} onChange={e => setDay(e.target.value)} className={cls(showError && !day)}>
           <option value="" disabled>День</option>
           {days.map(d => <option key={d} value={d}>{d}</option>)}
         </select>
-        <select value={month} onChange={e => setMonth(e.target.value)} className={cls(showError && !month)} style={{ colorScheme: 'dark' }}>
+        <select value={month} onChange={e => setMonth(e.target.value)} className={cls(showError && !month)}>
           <option value="" disabled>Месяц</option>
           {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
         </select>
-        <select value={year}  onChange={e => setYear(e.target.value)}  className={cls(showError && !year)}  style={{ colorScheme: 'dark' }}>
+        <select value={year} onChange={e => setYear(e.target.value)} className={cls(showError && !year)}>
           <option value="" disabled>Год</option>
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
@@ -302,7 +302,6 @@ function CompatibilityOrderModal({ onClose, initialName1, initialDate1, initialN
               if (fld === 'day')   setVal(`${p[0]||''}-${p[1]||''}-${String(v).padStart(2,'0')}`);
               setErrors(e2 => ({ ...e2, [errKey]: false }));
             }}
-            style={{ colorScheme: 'dark' }}
             className={`bg-white/[0.04] border rounded-xl px-2 py-3 text-white text-xs font-semibold outline-none appearance-none text-center cursor-pointer ${
               errors[errKey] ? 'border-red-500/60' : 'border-white/10 focus:border-[#D4AF37]/50'
             }`}
