@@ -405,9 +405,11 @@ function CompatibilityOrderModal({ onClose, initialName1, initialDate1, initialN
               <div>
                 <p className="text-gray-400 text-xs mb-0.5">Стоимость разбора</p>
                 <div className="flex items-baseline gap-2">
+                  <span className="text-gray-600 text-sm line-through">5 980 ₸</span>
                   <span className="text-white text-xl font-black">2 990 ₸</span>
                 </div>
               </div>
+              <div className="bg-rose-500/15 border border-rose-500/30 rounded-xl px-3 py-1.5 text-rose-400 text-[10px] font-black uppercase tracking-wide">−50%</div>
             </div>
 
             <button type="submit" className="w-full inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300">
@@ -845,7 +847,9 @@ export default function CompatibilityApp() {
                     Получить разбор пары <ArrowRight size={15} />
                   </button>
                   <div className="flex items-baseline gap-1.5">
+                    <span className="text-gray-600 text-sm line-through">5 980 ₸</span>
                     <span className="text-white text-lg font-black">2 990 ₸</span>
+                    <span className="text-rose-400 text-xs font-bold">−50%</span>
                   </div>
                 </div>
               </div>
