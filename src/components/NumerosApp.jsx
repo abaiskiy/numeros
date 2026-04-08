@@ -882,12 +882,12 @@ function OrderModal({ onClose, initialDate }) {
               <div>
                 <p className="text-gray-400 text-xs mb-0.5">Стоимость разбора</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-gray-600 text-sm line-through">7 980 ₸</span>
+                  <span className="text-gray-600 text-sm line-through">9 990 ₸</span>
                   <span className="text-white text-xl font-black">3 990 ₸</span>
                 </div>
               </div>
               <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/30 rounded-xl px-3 py-1.5 text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">
-                −50%
+                −60%
               </div>
             </div>
 
@@ -1127,7 +1127,7 @@ export default function NumerosApp() {
                         <span className="text-gray-600 text-base font-semibold line-through">9 990 ₸</span>
                         <span className="text-white text-3xl font-black">3 990 ₸</span>
                       </div>
-                      <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">Скидка 50%</p>
+                      <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">Скидка 60%</p>
                       <button
                         onClick={() => setShowOrderModal(true)}
                         className={`${BTN_PRIMARY} w-full py-3.5 justify-center text-sm shadow-xl shadow-[#D4AF37]/20`}
