@@ -1008,19 +1008,30 @@ export default function NumerosApp() {
     <div className="min-h-screen bg-[#08090D] text-white overflow-x-hidden">
       <NavBar activePage="home" />
 
-      {/* ── Payment result banner ── */}
+      {/* ── Payment success overlay ── */}
       {paymentBanner === 'ok' && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] w-full max-w-lg px-4">
-          <div className="flex items-start gap-3 bg-[#0D1A0E] border border-emerald-500/40 rounded-2xl px-5 py-4 shadow-2xl">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 mt-0.5">
-              <Sparkles size={14} className="text-emerald-400" />
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+          <div className="relative w-full max-w-md bg-[#0D1A0E] border border-emerald-500/30 rounded-3xl px-8 py-10 shadow-2xl text-center">
+            <button onClick={() => setPaymentBanner(null)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition-colors">
+              <X size={20} />
+            </button>
+            <div className="w-20 h-20 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
+              <svg className="text-emerald-400 w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-black mb-0.5">Оплата прошла успешно!</p>
-              <p className="text-emerald-300/80 text-xs leading-relaxed">Разбор отправляется на вашу почту. Обычно это занимает до 5 минут.</p>
-            </div>
-            <button onClick={() => setPaymentBanner(null)} className="text-gray-500 hover:text-gray-300 transition-colors shrink-0">
-              <X size={16} />
+            <h2 className="text-white text-2xl font-black mb-3">Оплата прошла!</h2>
+            <p className="text-emerald-300/90 text-base leading-relaxed mb-2">
+              Ваш нумерологический разбор уже готовится.
+            </p>
+            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+              Через <span className="text-white font-bold">1–3 минуты</span> письмо с PDF-разбором придёт на вашу почту. Проверьте папку «Спам», если не увидите в основной.
+            </p>
+            <button
+              onClick={() => setPaymentBanner(null)}
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-3.5 rounded-2xl transition-colors text-sm uppercase tracking-wide"
+            >
+              Понятно
             </button>
           </div>
         </div>
