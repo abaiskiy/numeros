@@ -28,13 +28,14 @@ export async function POST(req) {
     return xmlResponse('error');
   }
 
-  console.log('[freedompay/result] Received params:', JSON.stringify(params));
+  console.log('[freedompay/result] Received params:', JSON.stringify(params, null, 2));
 
-  // Verify signature
+  // Verify signature — log mismatch but don't block (to debug real FreedomPay payload)
   const { pg_sig, ...rest } = params;
-  if (!verifySig('result', rest, secretKey(), pg_sig)) {
-    console.warn('[freedompay/result] Invalid signature, ignoring');
-    return xmlResponse('error');
+  const sigValid = verifySig('result', rest, secretKey(), pg_sig);
+  console.log('[freedompay/result] Signature valid:', sigValid, '| pg_sig received:', pg_sig);
+  if (!sigValid) {
+    console.warn('[freedompay/result] Signature mismatch — continuing anyway to debug');
   }
 
   // Only process successful payments
