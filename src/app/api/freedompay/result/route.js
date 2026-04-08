@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import { verifySig, buildWebhookResponse } from '@/lib/freedompay';
 
 const secretKey = () => process.env.FREEDOMPAY_SECRET_KEY ?? '';
@@ -55,28 +55,31 @@ export async function POST(req) {
     return xmlResponse('error');
   }
 
-  try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://numeros.kz';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://numeros.kz';
 
-    if (productType === 'compatibility') {
-      await fetch(`${siteUrl}/api/order-compatibility`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name1: name, date1: birthDate, name2, date2, email }),
-      });
-    } else {
-      await fetch(`${siteUrl}/api/order`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, birthDate }),
-      });
+  const orderPromise = (async () => {
+    try {
+      if (productType === 'compatibility') {
+        await fetch(`${siteUrl}/api/order-compatibility`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name1: name, date1: birthDate, name2, date2, email }),
+        });
+      } else {
+        await fetch(`${siteUrl}/api/order`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, birthDate }),
+        });
+      }
+      console.log('[freedompay/result] Order triggered for', email);
+    } catch (err) {
+      console.error('[freedompay/result] Order error:', err?.message);
     }
+  })();
 
-    console.log('[freedompay/result] Order triggered for', email);
-  } catch (err) {
-    console.error('[freedompay/result] Order error:', err?.message);
-    // Still return ok — FreedomPay should not retry infinitely
-  }
+  // Keep Vercel function alive until order completes (bypasses timeout on response)
+  waitUntil(orderPromise);
 
   return xmlResponse('ok');
 }
