@@ -740,14 +740,19 @@ function OrderModal({ onClose, initialDate }) {
     setStep('loading');
     setServerError('');
     try {
-      const res = await fetch('/api/order', {
+      const res = await fetch('/api/freedompay/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), birthDate: date }),
+        body: JSON.stringify({
+          type: 'numerology',
+          name: name.trim(),
+          email: email.trim(),
+          birthDate: date,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Ошибка сервера');
-      setStep('success');
+      window.location.href = data.redirectUrl;
     } catch (err) {
       setServerError(err.message || 'Произошла ошибка. Попробуйте позже.');
       setStep('error');
@@ -877,8 +882,8 @@ function OrderModal({ onClose, initialDate }) {
               <div>
                 <p className="text-gray-400 text-xs mb-0.5">Стоимость разбора</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-gray-600 text-sm line-through">9 990 ₸</span>
-                  <span className="text-white text-xl font-black">4 990 ₸</span>
+                  <span className="text-gray-600 text-sm line-through">7 980 ₸</span>
+                  <span className="text-white text-xl font-black">3 990 ₸</span>
                 </div>
               </div>
               <div className="bg-[#D4AF37]/15 border border-[#D4AF37]/30 rounded-xl px-3 py-1.5 text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">
@@ -896,8 +901,8 @@ function OrderModal({ onClose, initialDate }) {
           <div className="px-6 py-10 flex flex-col items-center text-center gap-4">
             <div className="w-12 h-12 rounded-full border-2 border-[#D4AF37]/30 border-t-[#D4AF37] animate-spin" />
             <div>
-              <p className="text-white text-base font-black mb-1">Составляем разбор...</p>
-              <p className="text-gray-500 text-sm">Анализируем матрицу и формируем PDF.<br />Это займёт около минуты.</p>
+              <p className="text-white text-base font-black mb-1">Перенаправляем на оплату...</p>
+              <p className="text-gray-500 text-sm">Вы будете перенаправлены на страницу<br />безопасной оплаты FreedomPay.</p>
             </div>
           </div>
         ) : step === 'error' ? (
@@ -947,6 +952,23 @@ export default function NumerosApp() {
   const [activeFaq, setActiveFaq] = useState(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(null);
+  const [paymentBanner, setPaymentBanner] = useState(null); // 'ok' | 'fail' | null
+
+  // Detect ?payment=ok / ?payment=fail after returning from FreedomPay
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const result = params.get('payment');
+    if (result === 'ok' || result === 'fail') {
+      setPaymentBanner(result);
+      params.delete('payment');
+      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+      if (result === 'ok') {
+        const t = setTimeout(() => setPaymentBanner(null), 10000);
+        return () => clearTimeout(t);
+      }
+    }
+  }, []);
 
   // Скроллим к нужной секции после того как view обновился и DOM перерисовался
   useEffect(() => {
@@ -985,6 +1007,40 @@ export default function NumerosApp() {
   return (
     <div className="min-h-screen bg-[#08090D] text-white overflow-x-hidden">
       <NavBar activePage="home" />
+
+      {/* ── Payment result banner ── */}
+      {paymentBanner === 'ok' && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] w-full max-w-lg px-4">
+          <div className="flex items-start gap-3 bg-[#0D1A0E] border border-emerald-500/40 rounded-2xl px-5 py-4 shadow-2xl">
+            <div className="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 mt-0.5">
+              <Sparkles size={14} className="text-emerald-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-black mb-0.5">Оплата прошла успешно!</p>
+              <p className="text-emerald-300/80 text-xs leading-relaxed">Разбор отправляется на вашу почту. Обычно это занимает до 5 минут.</p>
+            </div>
+            <button onClick={() => setPaymentBanner(null)} className="text-gray-500 hover:text-gray-300 transition-colors shrink-0">
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+      {paymentBanner === 'fail' && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] w-full max-w-lg px-4">
+          <div className="flex items-start gap-3 bg-[#1A0D0D] border border-red-500/40 rounded-2xl px-5 py-4 shadow-2xl">
+            <div className="w-8 h-8 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5">
+              <X size={14} className="text-red-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-black mb-0.5">Оплата не прошла</p>
+              <p className="text-red-300/80 text-xs leading-relaxed">Попробуйте ещё раз или свяжитесь с поддержкой.</p>
+            </div>
+            <button onClick={() => setPaymentBanner(null)} className="text-gray-500 hover:text-gray-300 transition-colors shrink-0">
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {(
         <div className="relative z-10">
