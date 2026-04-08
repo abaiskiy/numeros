@@ -1125,7 +1125,7 @@ export default function NumerosApp() {
                       <p className="text-gray-500 text-xs font-semibold">Стоимость разбора</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-gray-600 text-base font-semibold line-through">9 990 ₸</span>
-                        <span className="text-white text-3xl font-black">4 990 ₸</span>
+                        <span className="text-white text-3xl font-black">3 990 ₸</span>
                       </div>
                       <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-wide">Скидка 50%</p>
                       <button
