@@ -12,20 +12,26 @@ function xmlResponse(status) {
   });
 }
 
-/**
- * FreedomPay calls this URL (pg_result_url) after every payment attempt.
- * pg_result = '1' means success, '0' means failure.
- */
-export async function POST(req) {
+async function handleResult(req) {
   let params = {};
 
-  try {
-    // FreedomPay sends application/x-www-form-urlencoded
-    const formData = await req.formData();
-    formData.forEach((v, k) => { params[k] = String(v); });
-  } catch {
-    console.error('[freedompay/result] Failed to parse body');
-    return xmlResponse('error');
+  // FreedomPay may call via GET (query params) or POST (form body)
+  if (req.method === 'GET') {
+    const url = new URL(req.url);
+    url.searchParams.forEach((v, k) => { params[k] = v; });
+  } else {
+    try {
+      const formData = await req.formData();
+      formData.forEach((v, k) => { params[k] = String(v); });
+    } catch {
+      try {
+        const text = await req.text();
+        new URLSearchParams(text).forEach((v, k) => { params[k] = v; });
+      } catch {
+        console.error('[freedompay/result] Failed to parse body');
+        return xmlResponse('error');
+      }
+    }
   }
 
   console.log('[freedompay/result] Received params:', JSON.stringify(params, null, 2));
@@ -84,3 +90,9 @@ export async function POST(req) {
 
   return xmlResponse('ok');
 }
+
+/**
+ * FreedomPay calls pg_result_url via GET or POST depending on pg_request_method.
+ */
+export async function GET(req)  { return handleResult(req); }
+export async function POST(req) { return handleResult(req); }
