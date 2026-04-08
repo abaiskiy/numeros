@@ -74,6 +74,6 @@ export function buildFreedomPayUrl({
  */
 export function buildWebhookResponse(status, salt, secretKey) {
   const params = { pg_salt: salt, pg_status: status };
-  const sig = computeSig('payment_page', params, secretKey);
+  const sig = computeSig('result', params, secretKey);
   return `<?xml version="1.0" encoding="utf-8"?>\n<response>\n  <pg_status>${status}</pg_status>\n  <pg_salt>${salt}</pg_salt>\n  <pg_sig>${sig}</pg_sig>\n</response>`;
 }

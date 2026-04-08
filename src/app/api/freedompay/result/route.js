@@ -32,7 +32,7 @@ export async function POST(req) {
 
   // Verify signature
   const { pg_sig, ...rest } = params;
-  if (!verifySig('payment_page', rest, secretKey(), pg_sig)) {
+  if (!verifySig('result', rest, secretKey(), pg_sig)) {
     console.warn('[freedompay/result] Invalid signature, ignoring');
     return xmlResponse('error');
   }
