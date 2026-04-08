@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { verifySig, buildWebhookResponse } from '@/lib/freedompay';
-import { getOrder } from '@/lib/orders-store';
 
 const secretKey = () => process.env.FREEDOMPAY_SECRET_KEY ?? '';
 
@@ -44,13 +43,17 @@ export async function POST(req) {
     return xmlResponse('ok');
   }
 
-  const order = getOrder(params.pg_order_id);
-  if (!order) {
-    console.error('[freedompay/result] Order not found for pg_order_id:', params.pg_order_id);
+  const productType = params.product_type;
+  const email       = params.user_email;
+  const name        = params.user_name      ?? '';
+  const birthDate   = params.user_birthdate ?? '';
+  const name2       = params.user_name2     ?? '';
+  const date2       = params.user_date2     ?? '';
+
+  if (!email) {
+    console.error('[freedompay/result] No user_email in webhook params');
     return xmlResponse('error');
   }
-
-  const { type: productType, email, name, birthDate, name2, date2 } = order;
 
   try {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://numeros.kz';

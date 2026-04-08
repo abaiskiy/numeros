@@ -31,19 +31,28 @@ export async function POST(req) {
 
     const successBase = type === 'compatibility' ? `${siteUrl}/compatibility` : siteUrl;
 
-    // Store order data server-side — NOT passed in URL to avoid FreedomPay issues
-    saveOrder(orderId, { type, email, name: name ?? '', birthDate: birthDate ?? '', name2: name2 ?? '', date2: date2 ?? '' });
+    // Custom params forwarded by FreedomPay to pg_result_url webhook
+    const customParams = {
+      product_type:   type,
+      user_email:     email,
+      user_name:      name      ?? '',
+      user_birthdate: birthDate ?? '',
+      ...(type === 'compatibility' && {
+        user_name2: name2 ?? '',
+        user_date2: date2 ?? '',
+      }),
+    };
 
-    // Build payment.php redirect URL — only pg_* params, no custom params
     const redirectUrl = buildFreedomPayUrl({
       orderId,
       amount,
       currency:    'KZT',
       description,
-      successUrl:  isLocal ? undefined : `${successBase}?payment=ok`,
-      failureUrl:  isLocal ? undefined : `${successBase}?payment=fail`,
-      resultUrl:   isLocal ? undefined : `${siteUrl}/api/freedompay/result`,
+      successUrl:  `${successBase}?payment=ok`,
+      failureUrl:  `${successBase}?payment=fail`,
+      resultUrl:   `${siteUrl}/api/freedompay/result`,
       userEmail:   email,
+      customParams,
     });
 
     console.log('[freedompay/create] orderId:', orderId, 'redirectUrl built');
