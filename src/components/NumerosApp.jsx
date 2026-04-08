@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
+import SiteFooter from '@/components/SiteFooter';
 import {
   ArrowRight,
   TrendingUp,
@@ -1256,9 +1257,7 @@ export default function NumerosApp() {
         </div>
       )}
 
-      <footer className="py-20 text-center border-t border-white/5 opacity-40 text-[10px] uppercase tracking-[0.4em] font-black">
-        © 2026 NUMEROS • Премиальный нумерологический сервис
-      </footer>
+      <SiteFooter separator="•" />
 
       {/* ── Модал заказа разбора ── */}
       {showOrderModal && (

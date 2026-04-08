@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import SiteFooter from '@/components/SiteFooter';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
 import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield, X, FileText, Star, Calendar } from 'lucide-react';
@@ -817,9 +818,7 @@ export default function CompatibilityApp() {
         />
       )}
 
-      <footer className="py-16 text-center border-t border-white/5 opacity-40 text-[10px] uppercase tracking-[0.4em] font-black">
-        © 2026 NUMEROS · Премиальный нумерологический сервис
-      </footer>
+      <SiteFooter separator="·" />
     </div>
   );
 }
