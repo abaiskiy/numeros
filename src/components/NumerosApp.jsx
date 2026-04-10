@@ -1184,6 +1184,98 @@ export default function NumerosApp() {
             </div>
           </section>
 
+          {/* ── PDF Preview ── */}
+          <section className="py-16 md:py-24 px-6 max-w-6xl mx-auto">
+            <div className="text-center mb-10 md:mb-16">
+              <span className="inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4">
+                Что внутри разбора
+              </span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-4">
+                Посмотрите на реальный разбор
+              </h2>
+              <p className="text-gray-400 text-base max-w-xl mx-auto">
+                PDF содержит 15–20 страниц персонального анализа, составленного специально для вас
+              </p>
+            </div>
+
+            {/* Pages strip */}
+            <div className="relative">
+              {/* Fade edges */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0D0E14] to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0D0E14] to-transparent z-10 pointer-events-none" />
+
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory px-4">
+                {[
+                  { title: 'Психоматрица', icon: '⬡', lines: [70, 90, 55, 80, 65] },
+                  { title: 'Ваши цифры', icon: '∞', lines: [85, 60, 75, 50, 90] },
+                  { title: 'Характер и личность', icon: '◈', lines: [65, 80, 70, 85, 55] },
+                  { title: 'Денежный потенциал', icon: '◇', lines: [90, 55, 80, 65, 75] },
+                  { title: 'Кармические уроки', icon: '✦', lines: [60, 85, 50, 90, 70] },
+                  { title: 'Прогноз по годам', icon: '◎', lines: [75, 65, 85, 55, 80] },
+                ].map((page, i) => (
+                  <div
+                    key={i}
+                    className="shrink-0 snap-center w-52 md:w-64 bg-[#13141C] border border-white/[0.07] rounded-2xl overflow-hidden"
+                    style={{ aspectRatio: '3/4' }}
+                  >
+                    {/* Page header */}
+                    <div className="bg-[#D4AF37]/10 border-b border-white/[0.06] px-4 py-3 flex items-center justify-between">
+                      <div>
+                        <div className="text-[#D4AF37] text-[9px] font-black uppercase tracking-widest mb-0.5">NUMEROS</div>
+                        <div className="text-white text-[11px] font-bold">{page.title}</div>
+                      </div>
+                      <span className="text-[#D4AF37] text-xl opacity-60">{page.icon}</span>
+                    </div>
+
+                    {/* Blurred content */}
+                    <div className="p-4 flex flex-col gap-3 select-none pointer-events-none">
+                      {i === 0 ? (
+                        /* Matrix grid */
+                        <div className="grid grid-cols-3 gap-1.5 mb-2">
+                          {[8,2,6,5,7,3,9,1,4].map((n,j) => (
+                            <div key={j} className="aspect-square rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center">
+                              <span className="text-[#D4AF37] text-sm font-black blur-[3px]">{n}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* Text lines */
+                        <div className="flex flex-col gap-2 mt-1">
+                          {page.lines.map((w, j) => (
+                            <div key={j} className="flex flex-col gap-1">
+                              {j === 0 && <div className="h-1.5 rounded-full bg-[#D4AF37]/40 w-2/3 mb-1" />}
+                              <div className="h-2 rounded-full bg-white/10 blur-[2px]" style={{ width: `${w}%` }} />
+                              {j % 2 === 0 && <div className="h-2 rounded-full bg-white/6 blur-[2px]" style={{ width: `${w - 15}%` }} />}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Bottom badge */}
+                      <div className="mt-auto pt-2 border-t border-white/[0.05]">
+                        <div className="h-1.5 rounded-full bg-[#D4AF37]/20 w-1/2" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats row */}
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-10 md:mt-14">
+              {[
+                { value: '15–20', label: 'страниц анализа' },
+                { value: '8', label: 'разделов разбора' },
+                { value: 'PDF', label: 'удобный формат' },
+              ].map((s, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-2xl md:text-3xl font-black text-[#D4AF37] mb-1">{s.value}</div>
+                  <div className="text-gray-500 text-xs uppercase tracking-wider">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* ── Insights ── */}
           <section className="py-16 md:py-32 px-6 max-w-7xl mx-auto">
             <h2 className="text-3xl md:text-7xl font-extrabold tracking-tighter mb-8 md:mb-16 text-center">
