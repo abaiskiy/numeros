@@ -1264,7 +1264,7 @@ export default function NumerosApp() {
             {/* Stats row */}
             <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-10 md:mt-14">
               {[
-                { value: '15–20', label: 'страниц анализа' },
+                { value: '10', label: 'страниц анализа' },
                 { value: '8', label: 'разделов разбора' },
                 { value: 'PDF', label: 'удобный формат' },
               ].map((s, i) => (
@@ -1273,6 +1273,21 @@ export default function NumerosApp() {
                   <div className="text-gray-500 text-xs uppercase tracking-wider">{s.label}</div>
                 </div>
               ))}
+            </div>
+
+            {/* CTA */}
+            <div className="mt-12 flex flex-col items-center gap-4">
+              <button
+                onClick={() => setShowOrderModal(true)}
+                className={`${BTN_PRIMARY} px-10 py-4 text-sm shadow-2xl shadow-[#D4AF37]/20`}
+              >
+                Получить свой разбор <ArrowRight size={16} />
+              </button>
+              <div className="flex items-center gap-3 text-gray-500 text-xs">
+                <span className="text-gray-600 line-through">9 990 ₸</span>
+                <span className="text-white font-bold text-sm">3 990 ₸</span>
+                <span className="bg-[#D4AF37]/15 text-[#D4AF37] text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">−60%</span>
+              </div>
             </div>
           </section>
 
