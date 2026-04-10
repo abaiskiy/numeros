@@ -148,39 +148,49 @@ async function buildPDF(name, birthDate, matrix, analysis, extras) {
 
 async function sendEmail(name, email, pdfBuffer) {
   const { Resend } = await import('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+  console.log('[sendEmail] RESEND_API_KEY present:', !!apiKey, '| first 8 chars:', apiKey?.slice(0, 8));
+
+  const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const { data, error } = await resend.emails.send({
-    from: 'Numeros <razbor@numeros.kz>',
-    to: email,
-    subject: `Ваш нумерологический разбор, ${name}`,
-    html: `
-      <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
-        <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
-        <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
-        <h2 style="font-size:20px;margin:0 0 8px;">Привет, ${name}!</h2>
-        <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-          Ваш персональный нумерологический разбор готов. Он составлен на основе системы Александрова с применением психоматрицы Пифагора.
-        </p>
-        <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
-          <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Разбор во вложении</p>
-          <p style="color:#aaa;font-size:14px;margin:0;">В PDF вы найдёте: матрицу, разбор секторов, денежный потенциал, прогноз, пинаклы жизни, личные годы и кармические уроки.</p>
+  // Retry up to 3 times on failure
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const { data, error } = await resend.emails.send({
+      from: 'Numeros <razbor@numeros.kz>',
+      to: email,
+      subject: `Ваш нумерологический разбор, ${name}`,
+      html: `
+        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
+          <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
+          <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
+          <h2 style="font-size:20px;margin:0 0 8px;">Привет, ${name}!</h2>
+          <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
+            Ваш персональный нумерологический разбор готов. Он составлен на основе системы Александрова с применением психоматрицы Пифагора.
+          </p>
+          <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
+            <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Разбор во вложении</p>
+            <p style="color:#aaa;font-size:14px;margin:0;">В PDF вы найдёте: матрицу, разбор секторов, денежный потенциал, прогноз, пинаклы жизни, личные годы и кармические уроки.</p>
+          </div>
+          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
         </div>
-        <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
-      </div>
-    `,
-    attachments: [{
-      filename: `numeros-razbor-${name.toLowerCase().replace(/\s+/g, '-')}.pdf`,
-      content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer.toString('base64') : pdfBuffer,
-    }],
-  });
+      `,
+      attachments: [{
+        filename: `numeros-razbor-${name.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+        content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer),
+      }],
+    });
 
-  if (error) {
-    console.error('[sendEmail] Resend error:', JSON.stringify(error));
-    throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+    if (error) {
+      console.error(`[sendEmail] Attempt ${attempt} failed:`, JSON.stringify(error, null, 2));
+      if (attempt === 3) throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+      await new Promise(r => setTimeout(r, 2000 * attempt));
+      continue;
+    }
+
+    console.log('[sendEmail] Resend OK, id:', data?.id);
+    return;
   }
-  console.log('[sendEmail] Resend OK, id:', data?.id);
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────

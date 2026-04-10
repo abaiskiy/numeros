@@ -119,36 +119,45 @@ async function buildPDF(name1, date1, m1, name2, date2, m2, score, analysis, ext
 // ─── Send email ───────────────────────────────────────────────────────────────
 async function sendEmail(name1, name2, email, pdfBuffer) {
   const { Resend } = await import('resend');
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+  console.log('[sendEmail-compat] RESEND_API_KEY present:', !!apiKey, '| first 8 chars:', apiKey?.slice(0, 8));
+
+  const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const { data, error } = await resend.emails.send({
-    from: 'Numeros <razbor@numeros.kz>',
-    to: email,
-    subject: `Разбор совместимости: ${name1 || 'Первый'} & ${name2 || 'Второй'}`,
-    html: `
-      <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
-        <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
-        <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
-        <h2 style="font-size:20px;margin:0 0 8px;">Разбор готов!</h2>
-        <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-          Нумерологический разбор совместимости <strong style="color:#fff;">${name1 || 'первого'}</strong> и <strong style="color:#fff;">${name2 || 'второго'}</strong> прикреплён к этому письму.
-        </p>
-        <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
-          <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 PDF разбор во вложении</p>
-          <p style="color:#aaa;font-size:14px;margin:0;">6 сфер совместимости, языки любви, зелёные флаги и сигналы, личные годы и итоговый прогноз.</p>
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const { data, error } = await resend.emails.send({
+      from: 'Numeros <razbor@numeros.kz>',
+      to: email,
+      subject: `Разбор совместимости: ${name1 || 'Первый'} & ${name2 || 'Второй'}`,
+      html: `
+        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
+          <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
+          <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
+          <h2 style="font-size:20px;margin:0 0 8px;">Разбор готов!</h2>
+          <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
+            Нумерологический разбор совместимости <strong style="color:#fff;">${name1 || 'первого'}</strong> и <strong style="color:#fff;">${name2 || 'второго'}</strong> прикреплён к этому письму.
+          </p>
+          <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
+            <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 PDF разбор во вложении</p>
+            <p style="color:#aaa;font-size:14px;margin:0;">6 сфер совместимости, языки любви, зелёные флаги и сигналы, личные годы и итоговый прогноз.</p>
+          </div>
+          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
         </div>
-        <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
-      </div>
-    `,
-    attachments: [{ filename: `numeros-sovmestimost.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer.toString('base64') : pdfBuffer }],
-  });
+      `,
+      attachments: [{ filename: `numeros-sovmestimost.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer) }],
+    });
 
-  if (error) {
-    console.error('[sendEmail-compatibility] Resend error:', JSON.stringify(error));
-    throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+    if (error) {
+      console.error(`[sendEmail-compat] Attempt ${attempt} failed:`, JSON.stringify(error, null, 2));
+      if (attempt === 3) throw new Error(`Resend: ${error.message ?? JSON.stringify(error)}`);
+      await new Promise(r => setTimeout(r, 2000 * attempt));
+      continue;
+    }
+
+    console.log('[sendEmail-compat] Resend OK, id:', data?.id);
+    return;
   }
-  console.log('[sendEmail-compatibility] Resend OK, id:', data?.id);
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
