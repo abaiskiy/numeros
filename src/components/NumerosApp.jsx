@@ -959,15 +959,25 @@ export default function NumerosApp() {
     const params = new URLSearchParams(window.location.search);
     const result = params.get('payment');
     if (result === 'ok' || result === 'fail') {
-      setPaymentBanner(result);
+      // Clean URL immediately so it's gone on any remount
       params.delete('payment');
       const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
+
+      // Guard: show success popup only once per payment (survives tab switches)
       if (result === 'ok') {
-        const t = setTimeout(() => setPaymentBanner(null), 10000);
-        return () => clearTimeout(t);
+        if (!sessionStorage.getItem('numeros_payment_shown')) {
+          sessionStorage.setItem('numeros_payment_shown', '1');
+          setPaymentBanner('ok');
+        }
+      } else {
+        setPaymentBanner('fail');
       }
     }
+    // Clear the guard when component unmounts (page leave)
+    return () => {
+      sessionStorage.removeItem('numeros_payment_shown');
+    };
   }, []);
 
   // Скроллим к нужной секции после того как view обновился и DOM перерисовался

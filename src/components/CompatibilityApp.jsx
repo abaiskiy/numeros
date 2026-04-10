@@ -476,15 +476,22 @@ export default function CompatibilityApp() {
     const params = new URLSearchParams(window.location.search);
     const res = params.get('payment');
     if (res === 'ok' || res === 'fail') {
-      setPaymentBanner(res);
       params.delete('payment');
       const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
+
       if (res === 'ok') {
-        const t = setTimeout(() => setPaymentBanner(null), 10000);
-        return () => clearTimeout(t);
+        if (!sessionStorage.getItem('numeros_payment_shown')) {
+          sessionStorage.setItem('numeros_payment_shown', '1');
+          setPaymentBanner('ok');
+        }
+      } else {
+        setPaymentBanner('fail');
       }
     }
+    return () => {
+      sessionStorage.removeItem('numeros_payment_shown');
+    };
   }, []);
 
   useEffect(() => {
