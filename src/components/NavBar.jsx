@@ -56,9 +56,12 @@ export default function NavBar({ activePage = 'home' }) {
 
         {/* CTA */}
         <div className="hidden md:block">
-          <Link href="/" className={BTN_NAV}>
+          <button
+            className={BTN_NAV}
+            onClick={() => window.dispatchEvent(new CustomEvent('open-order-modal'))}
+          >
             Получить разбор
-          </Link>
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -83,9 +86,12 @@ export default function NavBar({ activePage = 'home' }) {
             FAQ
           </Link>
           <div className="pt-2 border-t border-white/10">
-            <Link href="/" onClick={() => setMenuOpen(false)} className={`${BTN_NAV} w-full justify-center`}>
+            <button
+              className={`${BTN_NAV} w-full justify-center`}
+              onClick={() => { setMenuOpen(false); window.dispatchEvent(new CustomEvent('open-order-modal')); }}
+            >
               Получить разбор
-            </Link>
+            </button>
           </div>
         </div>
       )}

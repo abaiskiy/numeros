@@ -120,8 +120,8 @@ function calculateMatrix(dateStr) {
 
 // Герой — Брэд Питт, 18.12.1963
 const DEMO_DATA = calculateMatrix('1963-12-18');
-// Пример в секции Insights — Анджелина Джоли, 04.06.1975
-const JOLIE_DATA = calculateMatrix('1975-06-04');
+// Пример в секции Insights — Баян Алагузова, 09.01.1974
+const BAYAN_DATA = calculateMatrix('1974-01-09');
 
 // ─── Famous people by destiny digit ──────────────────────────────────────────
 
@@ -592,18 +592,18 @@ const benefits = [
 
 const insights = [
   {
-    title: 'Здоровье 44',
-    text: 'Двойная четвёрка — физическая выносливость и внутренняя сила. Джоли готовится к ролям месяцами, трансформирует тело и разум. Эта энергия даёт способность преодолевать то, что ломает других.',
+    title: 'Характер 1111',
+    text: 'Четыре единицы — исключительная воля и самодостаточность. Баян Алагузова построила медиаимперию с нуля: продюсерский центр, телепроекты, кино, конкурсы красоты. Такой масштаб результатов — прямое отражение цифр, заложенных в дату рождения.',
     icon: <Target className="text-[#D4AF37]" size={20} />,
   },
   {
-    title: 'Труд 66',
-    text: 'Двойная шестёрка — символ заботы и ответственности. Шестеро детей, гуманитарные миссии в 30+ странах. Цифры матрицы объясняют, почему служение другим — не поступок, а часть её природы.',
+    title: 'Здоровье 444',
+    text: 'Тройная четвёрка — мощная физическая энергия и природная привлекательность. Именно эта клетка матрицы объясняет, почему в 50+ она выглядит и держит ритм работы так, как другим недоступно в 30.',
     icon: <TrendingUp className="text-[#D4AF37]" size={20} />,
   },
   {
-    title: 'Душа 5',
-    text: 'Число Души равно пяти — жажда свободы, перемен и острых ощущений. Экстремальные роли, смена стран, неожиданные решения — всё это не хаос, а внутренняя потребность жить на полную.',
+    title: 'Память 99',
+    text: 'Двойная девятка — глубокая интуиция и умение считывать людей. Успех в шоубизнесе строится не только на труде, но и на чутье: кого продвигать, во что вкладываться, когда действовать. Всё это видно в матрице.',
     icon: <ShieldCheck className="text-[#D4AF37]" size={20} />,
   },
 ];
@@ -979,6 +979,12 @@ export default function NumerosApp() {
     }
   }, [view, pendingScroll]);
 
+  useEffect(() => {
+    const handler = () => setShowOrderModal(true);
+    window.addEventListener('open-order-modal', handler);
+    return () => window.removeEventListener('open-order-modal', handler);
+  }, []);
+
   const scrollTo = (sectionId) => {
     if (view !== 'landing') {
       setView('landing');
@@ -1184,6 +1190,51 @@ export default function NumerosApp() {
             </div>
           </section>
 
+          {/* ── Insights ── */}
+          <section className="py-16 md:py-32 px-6 max-w-7xl mx-auto">
+            <h2 className="text-3xl md:text-7xl font-extrabold tracking-tighter mb-8 md:mb-16 text-center">
+              Как читать свои цифры?
+            </h2>
+            <div className="flex flex-col lg:flex-row items-start gap-8 md:gap-16">
+              {/* Матрица-пример */}
+              <div className="flex-1 w-full relative">
+                {/* Фото + подпись — выровнено по левому краю матрицы */}
+                <div className="flex items-center gap-4 mb-6 md:mb-8 pl-[15%]">
+                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden border border-[#D4AF37]/30 shrink-0 shadow-lg shadow-[#D4AF37]/10">
+                    <Image src="https://upload.wikimedia.org/wikipedia/commons/1/11/Bayan_Yessentayeva_%28cropped%29.png" alt="Баян Алагузова" fill className="object-cover object-top" sizes="64px" unoptimized />
+                  </div>
+                  <div>
+                    <p className="font-black text-white text-base md:text-lg leading-tight">Баян Алагузова</p>
+                    <p className="text-[#D4AF37] text-xs uppercase tracking-widest mt-0.5 font-bold">09.01.1974 · Пример разбора</p>
+                  </div>
+                </div>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 hidden">
+                  Баян Алагузова · 09.01.1974
+                </div>
+                <div className="origin-top scale-[0.7] w-full" style={{marginBottom: 'calc((0.7 - 1) * 100%)'}}>
+                  <ModernMatrixGrid size="large" data={BAYAN_DATA} />
+                </div>
+              </div>
+              {/* Карточки */}
+              <div className="flex-1 w-full space-y-4 md:space-y-6">
+                {insights.map((insight, idx) => (
+                  <div
+                    key={idx}
+                    className="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl border border-white/5 hover:border-[#D4AF37]/30 transition-all flex gap-4 md:gap-5"
+                  >
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
+                      {insight.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-base md:text-lg font-black mb-1 md:mb-2">{insight.title}</h4>
+                      <p className="text-gray-400 text-sm italic leading-relaxed">{insight.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* ── PDF Preview ── */}
           <section className="py-16 md:py-24 px-6 max-w-6xl mx-auto">
             <div className="text-center mb-10 md:mb-16">
@@ -1291,86 +1342,6 @@ export default function NumerosApp() {
             </div>
           </section>
 
-          {/* ── Insights ── */}
-          <section className="py-16 md:py-32 px-6 max-w-7xl mx-auto">
-            <h2 className="text-3xl md:text-7xl font-extrabold tracking-tighter mb-8 md:mb-16 text-center">
-              Как читать свои цифры?
-            </h2>
-            <div className="flex flex-col lg:flex-row items-start gap-8 md:gap-16">
-              {/* Матрица-пример */}
-              <div className="flex-1 w-full relative">
-                {/* Фото + подпись — выровнено по левому краю матрицы */}
-                <div className="flex items-center gap-4 mb-6 md:mb-8 pl-[15%]">
-                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden border border-[#D4AF37]/30 shrink-0 shadow-lg shadow-[#D4AF37]/10">
-                    <Image src="/avatar-angelina.jpg" alt="Анджелина Джоли" fill className="object-cover" sizes="64px" />
-                  </div>
-                  <div>
-                    <p className="font-black text-white text-base md:text-lg leading-tight">Анджелина Джоли</p>
-                    <p className="text-[#D4AF37] text-xs uppercase tracking-widest mt-0.5 font-bold">04.06.1975 · Пример разбора</p>
-                  </div>
-                </div>
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 hidden">
-                  Анджелина Джоли · 04.06.1975
-                </div>
-                <div className="origin-top scale-[0.7] w-full" style={{marginBottom: 'calc((0.7 - 1) * 100%)'}}>
-                  <ModernMatrixGrid size="large" data={JOLIE_DATA} />
-                </div>
-              </div>
-              {/* Карточки */}
-              <div className="flex-1 w-full space-y-4 md:space-y-6">
-                {insights.map((insight, idx) => (
-                  <div
-                    key={idx}
-                    className="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl border border-white/5 hover:border-[#D4AF37]/30 transition-all flex gap-4 md:gap-5"
-                  >
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
-                      {insight.icon}
-                    </div>
-                    <div>
-                      <h4 className="text-base md:text-lg font-black mb-1 md:mb-2">{insight.title}</h4>
-                      <p className="text-gray-400 text-sm italic leading-relaxed">{insight.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ── FAQ ── */}
-          <section
-            id="faq-section"
-            className="py-16 md:py-32 px-4 md:px-6 max-w-4xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-center mb-10 md:mb-20">
-              Часто задаваемые вопросы
-            </h2>
-            <div className="space-y-3 md:space-y-4">
-              {faqs.map((faq, idx) => (
-                <div
-                  key={idx}
-                  className="glass-card rounded-2xl md:rounded-3xl border border-white/5 overflow-hidden"
-                >
-                  <button
-                    onClick={() =>
-                      setActiveFaq(activeFaq === idx ? null : idx)
-                    }
-                    className="w-full px-5 py-4 md:px-8 md:py-7 flex items-center justify-between text-left gap-3"
-                  >
-                    <span className="text-sm md:text-lg font-bold leading-snug">{faq.q}</span>
-                    <span className="shrink-0 text-gray-400">
-                      {activeFaq === idx ? <Minus size={16} /> : <Plus size={16} />}
-                    </span>
-                  </button>
-                  {activeFaq === idx && (
-                    <div className="px-5 pb-5 md:px-8 md:pb-8 text-gray-400 text-sm md:text-base font-medium leading-relaxed">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* ── Testimonials ── */}
           <section id="testimonials-section" className="py-16 md:py-32">
             <div className="px-6 max-w-7xl mx-auto mb-8 md:mb-12">
@@ -1413,20 +1384,62 @@ export default function NumerosApp() {
             </div>
           </section>
 
+          {/* ── FAQ ── */}
+          <section
+            id="faq-section"
+            className="py-16 md:py-32 px-4 md:px-6 max-w-4xl mx-auto"
+          >
+            <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-center mb-10 md:mb-20">
+              Часто задаваемые вопросы
+            </h2>
+            <div className="space-y-3 md:space-y-4">
+              {faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="glass-card rounded-2xl md:rounded-3xl border border-white/5 overflow-hidden"
+                >
+                  <button
+                    onClick={() =>
+                      setActiveFaq(activeFaq === idx ? null : idx)
+                    }
+                    className="w-full px-5 py-4 md:px-8 md:py-7 flex items-center justify-between text-left gap-3"
+                  >
+                    <span className="text-sm md:text-lg font-bold leading-snug">{faq.q}</span>
+                    <span className="shrink-0 text-gray-400">
+                      {activeFaq === idx ? <Minus size={16} /> : <Plus size={16} />}
+                    </span>
+                  </button>
+                  {activeFaq === idx && (
+                    <div className="px-5 pb-5 md:px-8 md:pb-8 text-gray-400 text-sm md:text-base font-medium leading-relaxed">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* ── Final CTA ── */}
           <section className="py-20 md:py-40 px-6 text-center relative overflow-hidden">
-            <h2 className="text-3xl md:text-7xl font-extrabold mb-6 md:mb-10">
+            <h2 className="text-3xl md:text-7xl font-extrabold mb-4 md:mb-6">
               Узнайте свою судьбу
             </h2>
-            <form
-              onSubmit={handleCalculate}
-              className="max-w-md mx-auto flex flex-col gap-3 md:gap-5"
-            >
-              <DateSelect value={birthDate} onChange={(v) => { setBirthDate(v); if (v) setDateError(false); }} showError={dateError} />
-              <button className={`w-full ${BTN_PRIMARY} py-4 md:py-7`}>
-                Рассчитать матрицу
+            <p className="text-gray-400 text-base md:text-xl mb-8 md:mb-12 max-w-lg mx-auto">
+              Получите полный персональный разбор матрицы на email — за 5 минут
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <button
+                onClick={() => setShowOrderModal(true)}
+                className={`${BTN_PRIMARY} px-12 py-4 md:py-6 text-base shadow-2xl shadow-[#D4AF37]/20`}
+              >
+                Заказать разбор <ArrowRight size={18} />
               </button>
-            </form>
+              <div className="flex items-center gap-3 text-gray-500 text-xs">
+                <span className="text-gray-600 line-through">9 990 ₸</span>
+                <span className="text-white font-bold text-sm">3 990 ₸</span>
+                <span className="bg-[#D4AF37]/15 text-[#D4AF37] text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">−60%</span>
+              </div>
+            </div>
           </section>
         </div>
       )}

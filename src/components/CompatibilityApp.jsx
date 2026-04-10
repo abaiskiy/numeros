@@ -487,6 +487,12 @@ export default function CompatibilityApp() {
     }
   }, []);
 
+  useEffect(() => {
+    const handler = () => setShowOrderModal(true);
+    window.addEventListener('open-order-modal', handler);
+    return () => window.removeEventListener('open-order-modal', handler);
+  }, []);
+
   const handleCalculate = (e) => {
     e.preventDefault();
     if (!date1 || !date2) { setShowError(true); return; }
