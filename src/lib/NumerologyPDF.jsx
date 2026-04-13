@@ -200,6 +200,44 @@ const s = StyleSheet.create({
   pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingTop: 2.5, paddingBottom: 1.5, marginLeft: 6 },
   pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 'bold', color: C.dark, lineHeight: 1, textAlign: 'center' },
 
+  // ─── Archetype ────────────────────────────────────────────────────────────────
+  archetypeCard: { backgroundColor: '#0F0C1C', borderWidth: 1.5, borderColor: '#3A2A50', borderRadius: 14, padding: 18, marginBottom: 14, flexDirection: 'row', gap: 16 },
+  archetypeIconBox: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#1E1530', borderWidth: 1.5, borderColor: C.purple, alignItems: 'center', paddingTop: 14, flexShrink: 0 },
+  archetypeIcon: { fontSize: 24, color: C.purple, textAlign: 'center', lineHeight: 1 },
+  archetypeRight: { flex: 1 },
+  archetypeName: { fontSize: 16, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', marginBottom: 3 },
+  archetypeTagline: { fontSize: 9, color: C.purple, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 8, letterSpacing: 0.5 },
+  archetypeDesc: { fontSize: 9.5, color: '#C0B0D8', lineHeight: 1.72, marginBottom: 10 },
+  archetypeTraitsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 5 },
+  archetypeTrait: { backgroundColor: '#1E1530', borderWidth: 1, borderColor: '#3A2A50', borderRadius: 8, paddingHorizontal: 7, paddingTop: 3, paddingBottom: 1.5 },
+  archetypeTraitText: { fontSize: 7, color: '#C4A8E8', fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
+
+  // ─── Affirmations ─────────────────────────────────────────────────────────────
+  affirmationsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginBottom: 14 },
+  affirmationCard: { width: '48%', backgroundColor: '#0C1018', borderWidth: 1, borderColor: '#1E304A', borderLeftWidth: 3, borderLeftColor: C.blue, borderRadius: 8, padding: 11 },
+  affirmationNum: { fontSize: 7, color: C.blue, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  affirmationText: { fontSize: 9, color: '#B0C8E8', lineHeight: 1.65, fontFamily: 'Roboto', fontWeight: 'bold' },
+
+  // ─── Talismans ────────────────────────────────────────────────────────────────
+  talismanRow: { flexDirection: 'row', gap: 7, marginBottom: 10 },
+  talismanBlock: { flex: 1, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 12, alignItems: 'center' },
+  talismanBlockTitle: { fontSize: 6.5, color: C.gray, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 },
+  talismanChipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, justifyContent: 'center' },
+  talismanChip: { backgroundColor: '#1A1B26', borderWidth: 1, borderColor: C.border, borderRadius: 6, paddingHorizontal: 7, paddingTop: 3, paddingBottom: 1.5 },
+  talismanChipText: { fontSize: 8, color: C.grayLight, lineHeight: 1, textAlign: 'center' },
+  talismanDayBlock: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 10, padding: 12, alignItems: 'center', justifyContent: 'center', flex: 0.7 },
+  talismanDayLabel: { fontSize: 6.5, color: C.gold, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
+  talismanDayValue: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center' },
+  talismanNote: { fontSize: 8.5, color: C.gray, lineHeight: 1.65, textAlign: 'center', marginBottom: 14 },
+
+  // ─── Tips ─────────────────────────────────────────────────────────────────────
+  tipsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
+  tipCard: { width: '48%', borderRadius: 10, padding: 13, borderWidth: 1, marginBottom: 0 },
+  tipIconRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 7 },
+  tipIcon: { fontSize: 13 },
+  tipTitle: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold' },
+  tipBody: { fontSize: 9, lineHeight: 1.7 },
+
   // ─── Famous person ────────────────────────────────────────────────────────────
   famousCard: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 12, padding: 16, marginBottom: 14 },
   famousIntro: { fontSize: 9, color: C.grayLight, marginBottom: 14, lineHeight: 1.65 },
@@ -246,6 +284,119 @@ function Dots({ count }) {
   );
 }
 
+// ─── Archetype ────────────────────────────────────────────────────────────────
+const ARCHETYPE_ICONS = {
+  'Творец': '✦', 'Лидер': '◆', 'Целитель': '♡', 'Мудрец': '◎',
+  'Искатель': '◇', 'Хранитель': '◐', 'Вдохновитель': '★', 'Строитель': '◈', 'Мистик': '◑',
+};
+function ArchetypeSection({ archetype }) {
+  if (!archetype) return null;
+  const icon = ARCHETYPE_ICONS[archetype.name] ?? '◆';
+  return (
+    <View wrap={false} style={s.archetypeCard}>
+      <View style={s.archetypeIconBox}>
+        <Text style={s.archetypeIcon}>{icon}</Text>
+      </View>
+      <View style={s.archetypeRight}>
+        <Text style={s.archetypeName}>{archetype.name}</Text>
+        <Text style={s.archetypeTagline}>{archetype.tagline}</Text>
+        <Text style={s.archetypeDesc}>{archetype.description}</Text>
+        <View style={s.archetypeTraitsRow}>
+          {(archetype.traits || []).map((t, i) => (
+            <View key={i} style={s.archetypeTrait}>
+              <Text style={s.archetypeTraitText}>{t}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// ─── Affirmations ─────────────────────────────────────────────────────────────
+function AffirmationsSection({ affirmations }) {
+  if (!affirmations?.length) return null;
+  const NUMS = ['I', 'II', 'III', 'IV', 'V'];
+  return (
+    <View style={s.affirmationsGrid}>
+      {affirmations.map((text, i) => (
+        <View key={i} style={s.affirmationCard}>
+          <Text style={s.affirmationNum}>Аффирмация {NUMS[i] ?? i + 1}</Text>
+          <Text style={s.affirmationText}>{text}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+// ─── Talismans ────────────────────────────────────────────────────────────────
+function TalismansSection({ talismans }) {
+  if (!talismans) return null;
+  return (
+    <>
+      <View wrap={false} style={s.talismanRow}>
+        <View style={s.talismanBlock}>
+          <Text style={s.talismanBlockTitle}>Цвета</Text>
+          <View style={s.talismanChipRow}>
+            {(talismans.colors || []).map((c, i) => (
+              <View key={i} style={s.talismanChip}><Text style={s.talismanChipText}>{c}</Text></View>
+            ))}
+          </View>
+        </View>
+        <View style={s.talismanBlock}>
+          <Text style={s.talismanBlockTitle}>Камни</Text>
+          <View style={s.talismanChipRow}>
+            {(talismans.stones || []).map((c, i) => (
+              <View key={i} style={s.talismanChip}><Text style={s.talismanChipText}>{c}</Text></View>
+            ))}
+          </View>
+        </View>
+        <View style={s.talismanBlock}>
+          <Text style={s.talismanBlockTitle}>Числа удачи</Text>
+          <View style={s.talismanChipRow}>
+            {(talismans.numbers || []).map((n, i) => (
+              <View key={i} style={[s.talismanChip, { borderColor: C.goldBorder, backgroundColor: C.goldFaint }]}>
+                <Text style={[s.talismanChipText, { color: C.gold }]}>{n}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+        <View style={s.talismanDayBlock}>
+          <Text style={s.talismanDayLabel}>День</Text>
+          <Text style={s.talismanDayValue}>{talismans.day}</Text>
+        </View>
+      </View>
+      {talismans.note ? <Text style={s.talismanNote}>{talismans.note}</Text> : null}
+    </>
+  );
+}
+
+// ─── Practical tips ───────────────────────────────────────────────────────────
+const TIP_CONFIGS = [
+  { key: 'money',         icon: '◈', label: 'Деньги и финансы',      bg: '#0D1410', border: '#1A2A1A', accent: C.green   },
+  { key: 'relationships', icon: '♡', label: 'Отношения',              bg: '#100C14', border: '#201828', accent: C.rose    },
+  { key: 'health',        icon: '◎', label: 'Здоровье и энергия',     bg: '#080F14', border: '#142030', accent: C.blue    },
+  { key: 'career',        icon: '★', label: 'Карьера и реализация',   bg: '#10100A', border: '#28280A', accent: C.gold    },
+];
+function TipsSection({ tips }) {
+  if (!tips) return null;
+  return (
+    <View style={s.tipsGrid}>
+      {TIP_CONFIGS.map(({ key, icon, label, bg, border, accent }) => (
+        tips[key] ? (
+          <View key={key} style={[s.tipCard, { backgroundColor: bg, borderColor: border }]}>
+            <View style={s.tipIconRow}>
+              <Text style={[s.tipIcon, { color: accent }]}>{icon}</Text>
+              <Text style={[s.tipTitle, { color: accent }]}>{label}</Text>
+            </View>
+            <Text style={[s.tipBody, { color: C.text }]}>{tips[key]}</Text>
+          </View>
+        ) : null
+      ))}
+    </View>
+  );
+}
+
 // ─── Cover page ───────────────────────────────────────────────────────────────
 function CoverPage({ name, birthDate }) {
   const dateFmt = new Date(birthDate + 'T00:00:00')
@@ -259,9 +410,12 @@ function CoverPage({ name, birthDate }) {
     'Код отношений и прогноз',
     'Сильные стороны и зоны роста',
     'Кармические уроки',
-    'Анализ имени',
     'Пинаклы жизни',
     'Личные годы 5-летний прогноз',
+    'Архетип личности',
+    'Аффирмации',
+    'Талисманы и цвета',
+    'Практические рекомендации',
     'Знаменитости с вашей судьбой',
   ];
   return (
@@ -826,7 +980,32 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Footer name={name} />
       </Page>
 
-      {/* ── Page 7: Famous + Conclusion + QR ──────────────────────────────── */}
+      {/* ── Page 7: Archetype + Affirmations + Talismans + Tips ───────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name={name} />
+
+        <Text style={s.sectionLabel}>◆  АРХЕТИП ВАШЕЙ ЛИЧНОСТИ</Text>
+        <ArchetypeSection archetype={analysis.archetype} />
+
+        <View style={s.divider} />
+
+        <Text style={s.sectionLabel}>◆  ЛИЧНЫЕ АФФИРМАЦИИ</Text>
+        <AffirmationsSection affirmations={analysis.affirmations} />
+
+        <View style={s.divider} />
+
+        <Text style={s.sectionLabel}>◆  ТАЛИСМАНЫ, ЦВЕТА И ЧИСЛА</Text>
+        <TalismansSection talismans={analysis.talismans} />
+
+        <View style={s.divider} />
+
+        <Text style={s.sectionLabel}>◆  ПРАКТИЧЕСКИЕ РЕКОМЕНДАЦИИ</Text>
+        <TipsSection tips={analysis.tips} />
+
+        <Footer name={name} />
+      </Page>
+
+      {/* ── Page 8: Famous + Conclusion + QR ──────────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
