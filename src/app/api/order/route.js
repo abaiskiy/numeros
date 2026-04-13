@@ -223,10 +223,12 @@ async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
   const archetype  = analysis?.archetype?.name ?? '';
   const topStrength = analysis?.strengths?.[0] ?? '';
   const numCell = (label, val, color) =>
-    `<div style="flex:1;background:#14151C;border:1px solid #2A2B35;border-radius:10px;padding:12px 8px;text-align:center;min-width:80px;">
-      <div style="font-size:22px;font-weight:700;color:${color};margin-bottom:4px;">${val}</div>
-      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">${label}</div>
-    </div>`;
+    `<td style="width:25%;padding:0 4px;">
+      <div style="background:#14151C;border:1px solid #2A2B35;border-radius:10px;padding:12px 6px;text-align:center;">
+        <div style="font-size:22px;font-weight:700;color:${color};margin-bottom:4px;font-family:Inter,sans-serif;">${val}</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;font-family:Inter,sans-serif;">${label}</div>
+      </div>
+    </td>`;
 
   // Retry up to 3 times on failure
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -239,10 +241,16 @@ async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
 
           <!-- Header -->
           <div style="background:linear-gradient(135deg,#1C1A10,#0D0E14);padding:32px 32px 24px;border-bottom:1px solid #2A2B35;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-              <div style="width:36px;height:36px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#C9A84C;text-align:center;line-height:36px;">N</div>
-              <span style="font-size:18px;font-weight:700;color:#C9A84C;letter-spacing:3px;">NUMEROS</span>
-            </div>
+            <table cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+              <tr>
+                <td style="width:42px;vertical-align:middle;">
+                  <table cellpadding="0" cellspacing="0" style="width:36px;height:36px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;">
+                    <tr><td style="text-align:center;vertical-align:middle;font-size:16px;font-weight:700;color:#C9A84C;font-family:Inter,sans-serif;">N</td></tr>
+                  </table>
+                </td>
+                <td style="vertical-align:middle;font-size:18px;font-weight:700;color:#C9A84C;letter-spacing:3px;font-family:Inter,sans-serif;">NUMEROS</td>
+              </tr>
+            </table>
             <h1 style="margin:0 0 8px;font-size:22px;color:#fff;">${name}, ваш разбор готов!</h1>
             <p style="margin:0;font-size:14px;color:#888;">Персональный нумерологический разбор · ${dateStr}</p>
           </div>
@@ -250,12 +258,14 @@ async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
           <!-- Key numbers -->
           <div style="padding:24px 32px;">
             <p style="margin:0 0 16px;font-size:13px;color:#C9A84C;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Ваши ключевые числа</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
-              ${numCell('Судьба',    matrix.destiny, '#C9A84C')}
-              ${numCell('Душа',      matrix.soul,    '#C9A84C')}
-              ${numCell('Карма',     matrix.karma,   '#9B7FCA')}
-              ${numCell('Потенциал', matrix.hidden,  '#5B9BD5')}
-            </div>
+            <table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;">
+              <tr>
+                ${numCell('Судьба',    matrix.destiny, '#C9A84C')}
+                ${numCell('Душа',      matrix.soul,    '#C9A84C')}
+                ${numCell('Карма',     matrix.karma,   '#9B7FCA')}
+                ${numCell('Потенциал', matrix.hidden,  '#5B9BD5')}
+              </tr>
+            </table>
 
             ${archetype ? `
             <div style="background:#0F0C1C;border:1px solid #3A2A50;border-left:3px solid #9B7FCA;border-radius:10px;padding:14px 16px;margin-bottom:16px;">

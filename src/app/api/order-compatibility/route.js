@@ -225,14 +225,20 @@ async function sendEmail(name1, name2, email, pdfBuffer, score, analysis, couple
 
           <!-- Score block -->
           <div style="padding:24px 32px;">
-            <div style="background:#100A10;border:1px solid #2A1028;border-radius:14px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;">
-              <div style="width:72px;height:72px;border-radius:50%;border:3px solid ${levelColor};display:flex;align-items:center;justify-content:center;background:#08090D;flex-shrink:0;text-align:center;">
-                <span style="font-size:26px;font-weight:700;color:#fff;line-height:1;">${score}</span>
-              </div>
-              <div>
-                <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:${levelColor};">${levelLabel} совместимость</p>
-                <p style="margin:0;font-size:12px;color:#aaa;">Числа пары: ${coupleNum ?? '—'}</p>
-              </div>
+            <div style="background:#100A10;border:1px solid #2A1028;border-radius:14px;padding:20px;margin-bottom:20px;">
+              <table cellpadding="0" cellspacing="0" style="width:100%;">
+                <tr>
+                  <td style="width:80px;vertical-align:middle;">
+                    <table cellpadding="0" cellspacing="0" style="width:72px;height:72px;border-radius:50%;border:3px solid ${levelColor};background:#08090D;">
+                      <tr><td style="text-align:center;vertical-align:middle;font-size:26px;font-weight:700;color:#fff;font-family:Inter,sans-serif;">${score}</td></tr>
+                    </table>
+                  </td>
+                  <td style="vertical-align:middle;padding-left:16px;">
+                    <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:${levelColor};font-family:Inter,sans-serif;">${levelLabel} совместимость</p>
+                    <p style="margin:0;font-size:12px;color:#aaa;font-family:Inter,sans-serif;">Число пары: ${coupleNum ?? '—'}</p>
+                  </td>
+                </tr>
+              </table>
             </div>
 
             ${topGreenFlag ? `
