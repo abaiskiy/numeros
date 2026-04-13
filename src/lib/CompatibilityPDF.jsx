@@ -135,7 +135,7 @@ const s = StyleSheet.create({
   keyNumMatchText: { fontSize: 6.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'center', lineHeight: 1 },
   keyNumVals: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
   keyNumVal: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold' },
-  keyNumVsText: { fontSize: 10, color: C.gray },
+  keyNumVsText: { fontSize: 18, color: C.gray, fontFamily: 'Roboto', fontWeight: 'bold' },
   keyNumBody: { fontSize: 8.5, color: C.text, lineHeight: 1.7 },
 
   // List cards (strengths/tensions/flags)

@@ -243,9 +243,9 @@ async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
           <div style="background:linear-gradient(135deg,#1C1A10,#0D0E14);padding:32px 32px 24px;border-bottom:1px solid #2A2B35;">
             <table cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
               <tr>
-                <td style="width:42px;vertical-align:middle;">
-                  <table cellpadding="0" cellspacing="0" style="width:36px;height:36px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;">
-                    <tr><td style="text-align:center;vertical-align:middle;font-size:16px;font-weight:700;color:#C9A84C;font-family:Inter,sans-serif;">N</td></tr>
+                <td style="vertical-align:middle;padding-right:12px;">
+                  <table cellpadding="0" cellspacing="0" style="width:38px;height:38px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;">
+                    <tr><td style="text-align:center;vertical-align:middle;font-size:17px;font-weight:700;color:#C9A84C;font-family:Inter,sans-serif;">N</td></tr>
                   </table>
                 </td>
                 <td style="vertical-align:middle;font-size:18px;font-weight:700;color:#C9A84C;letter-spacing:3px;font-family:Inter,sans-serif;">NUMEROS</td>
