@@ -964,7 +964,7 @@ export default function NumerosApp() {
       const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
 
-      // Guard: show success popup only once per payment (survives tab switches)
+      // Guard: show success popup only once per payment session
       if (result === 'ok') {
         if (!sessionStorage.getItem('numeros_payment_shown')) {
           sessionStorage.setItem('numeros_payment_shown', '1');
@@ -974,10 +974,6 @@ export default function NumerosApp() {
         setPaymentBanner('fail');
       }
     }
-    // Clear the guard when component unmounts (page leave)
-    return () => {
-      sessionStorage.removeItem('numeros_payment_shown');
-    };
   }, []);
 
   // Скроллим к нужной секции после того как view обновился и DOM перерисовался
@@ -996,7 +992,7 @@ export default function NumerosApp() {
   }, []);
 
   useEffect(() => {
-    const handler = () => setView('landing');
+    const handler = () => { setView('landing'); setPaymentBanner(null); };
     window.addEventListener('navigate-home', handler);
     return () => window.removeEventListener('navigate-home', handler);
   }, []);

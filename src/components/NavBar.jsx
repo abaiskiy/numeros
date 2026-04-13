@@ -44,7 +44,7 @@ export default function NavBar({ activePage = 'home' }) {
 
         {/* Desktop Links */}
         <div className="hidden lg:flex gap-10 text-[13px] font-bold text-gray-400">
-          <Link href="/" className={linkClass('home')}>
+          <Link href="/" className={linkClass('home')} onClick={() => window.dispatchEvent(new CustomEvent('navigate-home'))}>
             Личная матрица
           </Link>
           <Link href="/compatibility" className={linkClass('compatibility')}>
@@ -77,7 +77,7 @@ export default function NavBar({ activePage = 'home' }) {
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="lg:hidden bg-[#08090D]/95 backdrop-blur-md border-t border-white/10 px-6 py-6 flex flex-col gap-5">
-          <Link href="/" onClick={() => setMenuOpen(false)} className={mobileLinkClass('home')}>
+          <Link href="/" onClick={() => { setMenuOpen(false); window.dispatchEvent(new CustomEvent('navigate-home')); }} className={mobileLinkClass('home')}>
             Личная матрица
           </Link>
           <Link href="/compatibility" onClick={() => setMenuOpen(false)} className={mobileLinkClass('compatibility')}>
