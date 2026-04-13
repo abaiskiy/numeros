@@ -21,6 +21,18 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
   const currentYear = new Date().getFullYear();
   const personalYear = String(d + m + currentYear).split('').reduce((s, x) => s + +x, 0);
 
+  // ── Fixed talismans from book (based on reduced destiny number) ────────────
+  const reduceSingle = (n) => {
+    let num = Math.abs(n);
+    while (num > 9) num = String(num).split('').reduce((s, x) => s + +x, 0);
+    return num;
+  };
+  const destinyKey  = String(reduceSingle(matrix.destiny));
+  const talismanRow = book.talismans?.[destinyKey] ?? null;
+  const fixedTalismans = talismanRow
+    ? { colors: talismanRow.colors, stones: talismanRow.stones, day: talismanRow.day, numbers: talismanRow.luckyNumbers, planet: talismanRow.planet }
+    : null;
+
   const nameCtx = nameNumerology
     ? `\nЧИСЛА ИМЕНИ «${name}»:\n- Число выражения: ${nameNumerology.expression}\n- Число души (гласные): ${nameNumerology.soulUrge}\n- Число личности (согласные): ${nameNumerology.personality}`
     : '';
@@ -150,11 +162,11 @@ ${bookContext}
     "Аффирмация 5"
   ],
   "talismans": {
-    "colors": ["Цвет 1", "Цвет 2", "Цвет 3"],
-    "stones": ["Камень 1", "Камень 2", "Камень 3"],
-    "numbers": [<число-талисман 1>, <число-талисман 2>, <число-талисман 3>],
-    "day": "Благоприятный день недели",
-    "note": "35-45 слов: почему именно эти талисманы, цвета, день подходят для числа судьбы ${matrix.destiny}. Обращение на Вы."
+    "colors": ${fixedTalismans ? JSON.stringify(fixedTalismans.colors) : '["Цвет 1", "Цвет 2", "Цвет 3"]'},
+    "stones": ${fixedTalismans ? JSON.stringify(fixedTalismans.stones) : '["Камень 1", "Камень 2", "Камень 3"]'},
+    "numbers": ${fixedTalismans ? JSON.stringify(fixedTalismans.numbers) : '[1, 2, 3]'},
+    "day": "${fixedTalismans ? fixedTalismans.day : 'Воскресенье'}",
+    "note": "35-45 слов: объясни, почему эти цвета (${fixedTalismans ? fixedTalismans.colors.join(', ') : ''}), камни (${fixedTalismans ? fixedTalismans.stones.join(', ') : ''}) и день (${fixedTalismans ? fixedTalismans.day : ''}) связаны с планетой ${fixedTalismans ? fixedTalismans.planet : ''} — покровителем числа судьбы ${destinyKey}. Обращение на Вы."
   },
   "tips": {
     "money": "2-3 конкретных практических совета по финансам и деньгам (35-45 слов). Обращение на Вы.",
@@ -174,7 +186,17 @@ ${bookContext}
     messages: [{ role: 'user', content: prompt }],
   });
 
-  return JSON.parse(resp.choices[0].message.content);
+  const analysis = JSON.parse(resp.choices[0].message.content);
+
+  // Always override talismans with fixed book values — GPT must not change them
+  if (fixedTalismans && analysis.talismans) {
+    analysis.talismans.colors  = fixedTalismans.colors;
+    analysis.talismans.stones  = fixedTalismans.stones;
+    analysis.talismans.numbers = fixedTalismans.numbers;
+    analysis.talismans.day     = fixedTalismans.day;
+  }
+
+  return analysis;
 }
 
 // ─── Build PDF ────────────────────────────────────────────────────────────────
