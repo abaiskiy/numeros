@@ -67,11 +67,18 @@ const s = StyleSheet.create({
   introText: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
 
   // Key numbers
-  keyRow: { flexDirection: 'row', gap: 7, marginBottom: 16 },
+  keyRow: { flexDirection: 'row', gap: 7, marginBottom: 10 },
   keyCard: { flex: 1, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 8, paddingVertical: 12, paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' },
   keyLabel: { fontSize: 6, color: C.gold, letterSpacing: 0.5, marginBottom: 6, textTransform: 'uppercase', opacity: 0.7, textAlign: 'center' },
   keyValue: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   keyDesc: { fontSize: 7, color: C.grayLight, marginTop: 6, textAlign: 'center' },
+  keyAnalysisGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginBottom: 10 },
+  keyAnalysisCard: { width: '48%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderLeftWidth: 3, borderLeftColor: C.gold, borderRadius: 9, padding: 12 },
+  keyAnalysisHeader: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 6 },
+  keyAnalysisNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', paddingTop: 5 },
+  keyAnalysisNumText: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
+  keyAnalysisTitle: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, flex: 1 },
+  keyAnalysisBody: { fontSize: 8.5, color: C.text, lineHeight: 1.72 },
 
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
 
@@ -284,6 +291,32 @@ function Dots({ count }) {
   );
 }
 
+// ─── Key numbers analysis ─────────────────────────────────────────────────────
+function KeyNumbersAnalysis({ matrix, keyNumbers }) {
+  if (!keyNumbers) return null;
+  const items = [
+    { label: 'Число судьбы',  value: matrix.destiny, text: keyNumbers.destiny   },
+    { label: 'Число души',    value: matrix.soul,    text: keyNumbers.soul      },
+    { label: 'Число кармы',   value: matrix.karma,   text: keyNumbers.karma     },
+    { label: 'Потенциал',     value: matrix.hidden,  text: keyNumbers.potential },
+  ];
+  return (
+    <View style={s.keyAnalysisGrid}>
+      {items.map(({ label, value, text }) => text ? (
+        <View key={label} style={s.keyAnalysisCard}>
+          <View style={s.keyAnalysisHeader}>
+            <View style={s.keyAnalysisNum}>
+              <Text style={s.keyAnalysisNumText}>{value}</Text>
+            </View>
+            <Text style={s.keyAnalysisTitle}>{label}</Text>
+          </View>
+          <Text style={s.keyAnalysisBody}>{text}</Text>
+        </View>
+      ) : null)}
+    </View>
+  );
+}
+
 // ─── Archetype ────────────────────────────────────────────────────────────────
 const ARCHETYPE_ICONS = {
   'Творец': '✦', 'Лидер': '◆', 'Целитель': '♡', 'Мудрец': '◎',
@@ -402,7 +435,7 @@ function CoverPage({ name, birthDate }) {
   const dateFmt = new Date(birthDate + 'T00:00:00')
     .toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
   const toc = [
-    'Ключевые числа судьбы',
+    'Ключевые числа и их разбор',
     'Психоматрица Пифагора',
     'Разбор всех 9 секторов',
     'Значимые комбинации',
@@ -826,10 +859,10 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Text style={s.sectionLabel}>◆  КЛЮЧЕВЫЕ ЧИСЛА</Text>
         <View wrap={false} style={s.keyRow}>
           {[
-            { label: 'Число судьбы', value: matrix.destiny, desc: 'Жизненный путь'   },
-            { label: 'Число души',   value: matrix.soul,    desc: 'Внутренний мир'    },
-            { label: 'Число кармы',  value: matrix.karma,   desc: 'Уроки прошлого'    },
-            { label: 'Потенциал',    value: matrix.hidden,  desc: 'Раскрывается в росте'  },
+            { label: 'Число судьбы', value: matrix.destiny, desc: 'Жизненный путь'        },
+            { label: 'Число души',   value: matrix.soul,    desc: 'Внутренний мир'         },
+            { label: 'Число кармы',  value: matrix.karma,   desc: 'Уроки прошлого'         },
+            { label: 'Потенциал',    value: matrix.hidden,  desc: 'Раскрывается в росте'   },
           ].map(({ label, value, desc }) => (
             <View key={label} style={s.keyCard}>
               <Text style={s.keyLabel}>{label}</Text>
@@ -838,6 +871,8 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
             </View>
           ))}
         </View>
+
+        <KeyNumbersAnalysis matrix={matrix} keyNumbers={analysis.keyNumbers} />
 
         <Footer name={name} />
       </Page>
