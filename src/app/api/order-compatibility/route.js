@@ -20,81 +20,140 @@ function calculateCompatibility(m1, m2) {
   return Math.min(99, Math.max(40, total));
 }
 
+// Sphere configs — fixed icons (safe ASCII/Cyrillic abbreviations) so PDF renders correctly
+const SPHERE_CONFIGS = [
+  { title: 'Романтика и страсть',    icon: 'Ро', color: 'rose'   },
+  { title: 'Семья и быт',            icon: 'Сб', color: 'amber'  },
+  { title: 'Интеллект и общение',    icon: 'Ин', color: 'blue'   },
+  { title: 'Финансы и цели',         icon: 'Фн', color: 'green'  },
+  { title: 'Доверие и поддержка',    icon: 'Дв', color: 'purple' },
+  { title: 'Духовный рост',          icon: 'Дх', color: 'teal'   },
+];
+
 // ─── GPT analysis ─────────────────────────────────────────────────────────────
 async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2, score, book, py1, py2) {
   const { default: OpenAI } = await import('openai');
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const fmt = (d) => new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const curYear = new Date().getFullYear();
 
   const py1Ctx = py1.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
   const py2Ctx = py2.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
 
-  const prompt = `Ты — профессиональный нумеролог. Составь детальный разбор совместимости двух людей.
+  // Build context from book for each person's digit strengths/weaknesses
+  const digitCtx = (m, name) => {
+    const q = book.quantitative ?? {};
+    return [1,2,3,4,5,6,7,8,9].map(d => {
+      const c = m.counts[d] || 0;
+      const cellData = q[String(d)];
+      if (!cellData) return null;
+      const { countKey } = { countKey: (n) => n >= 5 ? '5+' : String(n) };
+      return `${cellData.cellName}(${d}): ${c} шт. [${m[Object.keys(m).find(k => m[k]?.digit === d)]?.s ?? '—'}]`;
+    }).filter(Boolean).join(', ');
+  };
+
+  const destinyMatch = m1.destiny === m2.destiny;
+  const soulMatch    = m1.soul    === m2.soul;
+  const karmaMatch   = m1.karma   === m2.karma;
+
+  // Common digits (both have > 0)
+  const commonDigits = [1,2,3,4,5,6,7,8,9].filter(d => (m1.counts[d]||0) > 0 && (m2.counts[d]||0) > 0);
+  // Digits one has and other lacks
+  const only1 = [1,2,3,4,5,6,7,8,9].filter(d => (m1.counts[d]||0) > 0 && (m2.counts[d]||0) === 0);
+  const only2 = [1,2,3,4,5,6,7,8,9].filter(d => (m1.counts[d]||0) === 0 && (m2.counts[d]||0) > 0);
+
+  const prompt = `Ты — профессиональный нумеролог. Составь глубокий персонализированный разбор совместимости двух людей на основе их психоматриц Пифагора.
 
 ЧЕЛОВЕК 1: ${name1 || 'Первый'} (${fmt(date1)})
 - Число судьбы: ${m1.destiny}, Число души: ${m1.soul}, Карма: ${m1.karma}, Потенциал: ${m1.hidden}
-- Матрица: Характер(1)=${m1.char.v}[${m1.char.s}], Энергия(2)=${m1.energy.v}[${m1.energy.s}], Здоровье(4)=${m1.health.v}[${m1.health.s}], Логика(5)=${m1.logic.v}[${m1.logic.s}], Труд(6)=${m1.labor.v}[${m1.labor.s}], Удача(7)=${m1.luck.v}[${m1.luck.s}], Долг(8)=${m1.duty.v}[${m1.duty.s}], Память(9)=${m1.memory.v}[${m1.memory.s}]
+- Матрица: Характер(1)=${m1.char.v}[${m1.char.s}], Энергия(2)=${m1.energy.v}[${m1.energy.s}], Интерес(3)=${m1.interest.v}[${m1.interest.s}], Здоровье(4)=${m1.health.v}[${m1.health.s}], Логика(5)=${m1.logic.v}[${m1.logic.s}], Труд(6)=${m1.labor.v}[${m1.labor.s}], Удача(7)=${m1.luck.v}[${m1.luck.s}], Долг(8)=${m1.duty.v}[${m1.duty.s}], Память(9)=${m1.memory.v}[${m1.memory.s}]
+- Линии: Самооценка=${m1.selfEsteem}, Быт=${m1.household}, Талант=${m1.talent}, Цель=${m1.goal}, Семья=${m1.family}, Стабильность=${m1.stability}, Духовность=${m1.spirituality}, Темперамент=${m1.temperament}
 - Личные годы: ${py1Ctx}
 
 ЧЕЛОВЕК 2: ${name2 || 'Второй'} (${fmt(date2)})
 - Число судьбы: ${m2.destiny}, Число души: ${m2.soul}, Карма: ${m2.karma}, Потенциал: ${m2.hidden}
-- Матрица: Характер(1)=${m2.char.v}[${m2.char.s}], Энергия(2)=${m2.energy.v}[${m2.energy.s}], Здоровье(4)=${m2.health.v}[${m2.health.s}], Логика(5)=${m2.logic.v}[${m2.logic.s}], Труд(6)=${m2.labor.v}[${m2.labor.s}], Удача(7)=${m2.luck.v}[${m2.luck.s}], Долг(8)=${m2.duty.v}[${m2.duty.s}], Память(9)=${m2.memory.v}[${m2.memory.s}]
+- Матрица: Характер(1)=${m2.char.v}[${m2.char.s}], Энергия(2)=${m2.energy.v}[${m2.energy.s}], Интерес(3)=${m2.interest.v}[${m2.interest.s}], Здоровье(4)=${m2.health.v}[${m2.health.s}], Логика(5)=${m2.logic.v}[${m2.logic.s}], Труд(6)=${m2.labor.v}[${m2.labor.s}], Удача(7)=${m2.luck.v}[${m2.luck.s}], Долг(8)=${m2.duty.v}[${m2.duty.s}], Память(9)=${m2.memory.v}[${m2.memory.s}]
+- Линии: Самооценка=${m2.selfEsteem}, Быт=${m2.household}, Талант=${m2.talent}, Цель=${m2.goal}, Семья=${m2.family}, Стабильность=${m2.stability}, Духовность=${m2.spirituality}, Темперамент=${m2.temperament}
 - Личные годы: ${py2Ctx}
 
-ОБЩИЙ БАЛЛ СОВМЕСТИМОСТИ: ${score}/99
+СРАВНЕНИЕ МАТРИЦ:
+- Общий балл совместимости: ${score}/99
+- Совпадение числа судьбы: ${destinyMatch ? 'ДА' : 'НЕТ'} (${m1.destiny} и ${m2.destiny})
+- Совпадение числа души: ${soulMatch ? 'ДА' : 'НЕТ'} (${m1.soul} и ${m2.soul})
+- Совпадение кармы: ${karmaMatch ? 'ДА' : 'НЕТ'} (${m1.karma} и ${m2.karma})
+- Цифры у обоих: ${commonDigits.length > 0 ? commonDigits.join(', ') : 'нет общих'}
+- Только у ${name1 || 'первого'}: ${only1.length > 0 ? only1.join(', ') : 'нет уникальных'}
+- Только у ${name2 || 'второго'}: ${only2.length > 0 ? only2.join(', ') : 'нет уникальных'}
+- Текущий ${curYear}: ${name1} ЛГ-${py1[0]?.personalYear ?? '?'}, ${name2} ЛГ-${py2[0]?.personalYear ?? '?'}
 
-Составь разбор строго в формате JSON:
+Составь разбор строго в формате JSON. Поля title, icon, color в spheres — оставь точно как указано, заполни только score и content.
 {
-  "intro": "2-3 предложения — общее впечатление о союзе ${name1 || 'первого'} и ${name2 || 'второго'}",
+  "intro": "2-3 предложения — общее впечатление о союзе, упомяни конкретные числа. Обращение к обоим на Вы.",
   "overallLevel": "${score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы'}",
-  "overallDesc": "2-3 предложения — что означает этот уровень именно для них. Обращение на Вы к обоим.",
+  "overallDesc": "2-3 предложения — что означает балл ${score} именно для ${name1 || 'первого'} и ${name2 || 'второго'}, конкретно. Обращение на Вы.",
   "spheres": [
-    { "title": "Романтика и страсть", "icon": "♡", "score": <0-100>, "color": "rose", "content": "60-80 слов" },
-    { "title": "Семья и быт", "icon": "⌂", "score": <0-100>, "color": "amber", "content": "60-80 слов" },
-    { "title": "Интеллект и общение", "icon": "◇", "score": <0-100>, "color": "blue", "content": "60-80 слов" },
-    { "title": "Финансы и цели", "icon": "◈", "score": <0-100>, "color": "green", "content": "60-80 слов" },
-    { "title": "Доверие и поддержка", "icon": "◎", "score": <0-100>, "color": "purple", "content": "60-80 слов" },
-    { "title": "Духовный рост", "icon": "★", "score": <0-100>, "color": "teal", "content": "60-80 слов" }
+    { "title": "Романтика и страсть",  "icon": "Ро", "color": "rose",   "score": <0-100>, "content": "70-90 слов — опирайся на числа энергии(2) и темперамента. Конкретно об этой паре." },
+    { "title": "Семья и быт",          "icon": "Сб", "color": "amber",  "score": <0-100>, "content": "70-90 слов — опирайся на линию Быта и поле Долга(8). Конкретно." },
+    { "title": "Интеллект и общение",  "icon": "Ин", "color": "blue",   "score": <0-100>, "content": "70-90 слов — опирайся на Логику(5) и Память(9). Конкретно." },
+    { "title": "Финансы и цели",       "icon": "Фн", "color": "green",  "score": <0-100>, "content": "70-90 слов — опирайся на Труд(6) и Целеустремлённость. Конкретно." },
+    { "title": "Доверие и поддержка",  "icon": "Дв", "color": "purple", "score": <0-100>, "content": "70-90 слов — опирайся на Долг(8) и Духовность. Конкретно." },
+    { "title": "Духовный рост",        "icon": "Дх", "color": "teal",   "score": <0-100>, "content": "70-90 слов — опирайся на Духовность и линию Таланта. Конкретно." }
   ],
   "keyNumbers": {
-    "destiny": { "v1": ${m1.destiny}, "v2": ${m2.destiny}, "match": ${m1.destiny === m2.destiny}, "content": "40-60 слов — как взаимодействуют числа судьбы" },
-    "soul":    { "v1": ${m1.soul},    "v2": ${m2.soul},    "match": ${m1.soul === m2.soul},       "content": "40-60 слов — внутренняя гармония" },
-    "karma":   { "v1": ${m1.karma},   "v2": ${m2.karma},   "match": ${m1.karma === m2.karma},     "content": "40-60 слов — общие кармические уроки" }
+    "destiny": { "v1": ${m1.destiny}, "v2": ${m2.destiny}, "match": ${destinyMatch}, "content": "50-65 слов — как взаимодействуют именно эти числа судьбы, какая динамика в паре" },
+    "soul":    { "v1": ${m1.soul},    "v2": ${m2.soul},    "match": ${soulMatch},    "content": "50-65 слов — внутренняя эмоциональная гармония, совпадают ли глубинные ценности" },
+    "karma":   { "v1": ${m1.karma},   "v2": ${m2.karma},   "match": ${karmaMatch},   "content": "50-65 слов — общие кармические уроки и задачи в этом союзе" }
   },
   "loveLanguages": {
     "person1": {
-      "primary": "язык любви ${name1 || 'первого'} (слова, прикосновения, время, подарки или помощь)",
-      "description": "50 слов — как ${name1 || 'первый'} выражает и воспринимает любовь"
+      "primary": "язык любви ${name1 || 'первого'} — одно из: Слова признания / Прикосновения / Время / Подарки / Помощь",
+      "description": "55-65 слов — как ${name1 || 'первый'} выражает любовь, что для него важно, опирайся на число души ${m1.soul} и энергию(2)"
     },
     "person2": {
-      "primary": "язык любви ${name2 || 'второго'}",
-      "description": "50 слов — как ${name2 || 'второй'} выражает и воспринимает любовь"
+      "primary": "язык любви ${name2 || 'второго'} — одно из: Слова признания / Прикосновения / Время / Подарки / Помощь",
+      "description": "55-65 слов — как ${name2 || 'второй'} выражает любовь, опирайся на число души ${m2.soul} и энергию(2)"
     },
-    "compatibility": "40-50 слов — насколько совместимы их языки любви и как выстраивать гармонию"
+    "compatibility": "45-55 слов — совместимость их языков любви, практический совет как создать гармонию"
   },
-  "strengths": ["что пара усиливает друг в друге (4-5 пунктов, 15-25 слов каждый)"],
-  "tensions": ["точки напряжения (3-4 пункта, 15-25 слов) с советом как преодолеть"],
+  "strengths": [
+    "Сила 1: что конкретно усиливают друг в друге, ссылаясь на числа (20-30 слов)",
+    "Сила 2 (20-30 слов)",
+    "Сила 3 (20-30 слов)",
+    "Сила 4 (20-30 слов)",
+    "Сила 5 (20-30 слов)"
+  ],
+  "tensions": [
+    "Напряжение 1 + конкретный совет как проработать (20-30 слов)",
+    "Напряжение 2 + совет (20-30 слов)",
+    "Напряжение 3 + совет (20-30 слов)"
+  ],
   "greenFlags": [
-    "зелёный флаг союза 1 (10-15 слов)",
-    "зелёный флаг 2",
-    "зелёный флаг 3",
-    "зелёный флаг 4"
+    "Зелёный флаг 1 — конкретное преимущество союза (12-18 слов)",
+    "Зелёный флаг 2 (12-18 слов)",
+    "Зелёный флаг 3 (12-18 слов)",
+    "Зелёный флаг 4 (12-18 слов)"
   ],
   "dangerSignals": [
-    "сигнал внимания 1 — что отслеживать (10-15 слов)",
-    "сигнал 2",
-    "сигнал 3"
+    "Сигнал 1 — что может разрушить, как предотвратить (12-18 слов)",
+    "Сигнал 2 (12-18 слов)",
+    "Сигнал 3 (12-18 слов)"
   ],
   "bestYears": {
-    "content": "60-80 слов — благоприятные периоды для совместных решений на основе чисел"
+    "content": "70-90 слов — когда пике совместных возможностей с учётом личных лет ${py1[0]?.year ?? curYear}–${(py1[py1.length-1]?.year) ?? curYear+2}. Конкретные годы и что делать в эти периоды."
   },
-  "personalYearNote": "60-70 слов: как совпадают или контрастируют их личные годы сейчас и что это значит для отношений",
-  "recommendations": ["конкретный совет паре (4-5 пунктов, 20-30 слов)"],
-  "conclusion": "150-200 слов — итоговый вывод о союзе. Вдохновляющий, честный. Обращение на Вы."
+  "personalYearNote": "65-80 слов: ${name1} в ЛГ-${py1[0]?.personalYear ?? '?'}, ${name2} в ЛГ-${py2[0]?.personalYear ?? '?'} — что это значит для пары в ${curYear} году, конкретные рекомендации",
+  "recommendations": [
+    "Рекомендация 1 — конкретный практический совет (25-35 слов)",
+    "Рекомендация 2 (25-35 слов)",
+    "Рекомендация 3 (25-35 слов)",
+    "Рекомендация 4 (25-35 слов)",
+    "Рекомендация 5 (25-35 слов)"
+  ],
+  "conclusion": "160-200 слов — итоговый вывод о союзе ${name1 || 'первого'} и ${name2 || 'второго'}. Честный, вдохновляющий, конкретный. Упомяни числа. Обращение на Вы."
 }
 
-ВАЖНО: Пиши на русском. Обращайся на Вы. Упоминай имена. Будь конкретным.`;
+ВАЖНО: Пиши ТОЛЬКО на русском. Обращайся к паре на Вы. Упоминай имена и конкретные числа из матриц. Никаких placeholder-ов — только реальный анализ.`;
 
   const resp = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -103,7 +162,19 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
     messages: [{ role: 'user', content: prompt }],
   });
 
-  return JSON.parse(resp.choices[0].message.content);
+  const analysis = JSON.parse(resp.choices[0].message.content);
+
+  // Always override sphere icons & colors with fixed configs — GPT must not generate unicode
+  if (Array.isArray(analysis.spheres)) {
+    analysis.spheres = analysis.spheres.map((sphere, i) => ({
+      ...sphere,
+      title: SPHERE_CONFIGS[i]?.title ?? sphere.title,
+      icon:  SPHERE_CONFIGS[i]?.icon  ?? sphere.icon,
+      color: SPHERE_CONFIGS[i]?.color ?? sphere.color,
+    }));
+  }
+
+  return analysis;
 }
 
 // ─── Build PDF ────────────────────────────────────────────────────────────────

@@ -42,7 +42,7 @@ const s = StyleSheet.create({
   coverTop: { padding: 48, paddingBottom: 0 },
   coverLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 48 },
   coverLogoDot: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, borderColor: C.gold, backgroundColor: C.goldFaint, alignItems: 'center', justifyContent: 'center' },
-  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' },
+  coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
   coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 3 },
   coverBadge: { alignSelf: 'flex-start', backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 20, paddingHorizontal: 12, height: 18, justifyContent: 'center', marginBottom: 32 },
   coverBadgeText: { fontSize: 7.5, color: C.rose, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2, textAlign: 'center', lineHeight: 1 },
@@ -53,7 +53,7 @@ const s = StyleSheet.create({
   coverTitle: { fontSize: 12, color: C.grayLight, marginBottom: 48 },
   coverScoreBlock: { alignItems: 'center', paddingVertical: 48, borderTopWidth: 1, borderTopColor: C.border },
   coverScoreCircle: { width: 120, height: 120, borderRadius: 60, borderWidth: 3, borderColor: C.rose, alignItems: 'center', justifyContent: 'center', marginBottom: 12, backgroundColor: C.roseFaint },
-  coverScoreNum: { fontSize: 44, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  coverScoreNum: { fontSize: 44, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, lineHeight: 1, textAlign: 'center' },
   coverScoreLabel: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, marginBottom: 8 },
   coverScoreDesc: { fontSize: 9.5, color: C.grayLight, textAlign: 'center', maxWidth: 280 },
   coverToc: { padding: 48, paddingTop: 0, flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
@@ -73,8 +73,9 @@ const s = StyleSheet.create({
   footerL: { fontSize: 7.5, color: C.gray },
   footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
-  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
-  sectionLabelGold: { color: C.gold },
+  sectionLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 12, marginTop: 2 },
+  sectionLabelBar: { width: 3, height: 7, borderRadius: 2 },
+  sectionLabelText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2, lineHeight: 1 },
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
 
   // Intro
@@ -92,7 +93,7 @@ const s = StyleSheet.create({
   personDate: { fontSize: 8, color: C.gray, marginBottom: 10 },
   personNums: { flexDirection: 'row', gap: 5, flexWrap: 'wrap' },
   personNumItem: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 7, paddingVertical: 7, borderWidth: 1 },
-  personNumVal: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold' },
+  personNumVal: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
   personNumLbl: { fontSize: 6, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
 
   // Mini matrix
@@ -104,12 +105,12 @@ const s = StyleSheet.create({
   miniCellHL: { borderColor: C.p1, backgroundColor: C.goldFaint },
   miniCellHLP2: { borderColor: C.p2, backgroundColor: C.p2faint },
   miniCellLabel: { fontSize: 5, color: C.gray, textTransform: 'uppercase' },
-  miniCellValue: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  miniCellValue: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, lineHeight: 1, textAlign: 'center' },
 
   // Score overview
   scoreOverview: { alignItems: 'center', marginBottom: 18 },
   scoreBigCircle: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: C.rose, alignItems: 'center', justifyContent: 'center', backgroundColor: C.roseFaint, marginBottom: 8 },
-  scoreBigNum: { fontSize: 36, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  scoreBigNum: { fontSize: 36, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, lineHeight: 1, textAlign: 'center' },
   scoreLevelText: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 'bold', color: C.rose, marginBottom: 4 },
   scoreLevelDesc: { fontSize: 9, color: C.grayLight, textAlign: 'center', maxWidth: 300 },
 
@@ -275,6 +276,16 @@ function Footer({ name1, name2 }) {
   );
 }
 
+function SectionLabel({ text, gold }) {
+  const color = gold ? C.gold : C.rose;
+  return (
+    <View style={s.sectionLabelRow}>
+      <View style={[s.sectionLabelBar, { backgroundColor: color }]} />
+      <Text style={[s.sectionLabelText, { color }]}>{text}</Text>
+    </View>
+  );
+}
+
 // ─── Love Languages ───────────────────────────────────────────────────────────
 function LoveLanguagesSection({ loveLanguages, n1, n2 }) {
   if (!loveLanguages) return null;
@@ -313,7 +324,7 @@ function FlagsSection({ greenFlags, dangerSignals }) {
   return (
     <View wrap={false} style={s.flagsRow}>
       <View style={[s.flagsCol, { backgroundColor: C.greenFaint, borderColor: C.greenBorder }]}>
-        <Text style={[s.flagsColTitle, { color: C.green }]}>✓  Зелёные флаги</Text>
+        <Text style={[s.flagsColTitle, { color: C.green }]}>Зелёные флаги</Text>
         {(greenFlags || []).map((item, i) => (
           <View key={i} style={s.flagItem}>
             <View style={[s.flagBullet, { backgroundColor: C.green }]} />
@@ -322,7 +333,7 @@ function FlagsSection({ greenFlags, dangerSignals }) {
         ))}
       </View>
       <View style={[s.flagsCol, { backgroundColor: '#0F0A0A', borderColor: '#2A1515' }]}>
-        <Text style={[s.flagsColTitle, { color: '#D46060' }]}>◌  Сигналы внимания</Text>
+        <Text style={[s.flagsColTitle, { color: '#D46060' }]}>Сигналы внимания</Text>
         {(dangerSignals || []).map((item, i) => (
           <View key={i} style={s.flagItem}>
             <View style={[s.flagBullet, { backgroundColor: '#D46060' }]} />
@@ -359,7 +370,7 @@ function PersonalYearsComparison({ py1, py2, n1, n2, note }) {
               <Text style={[s.pyCompNum, { color: C.p2 }]}>{y2?.personalYear ?? '?'}</Text>
             </View>
             <View style={s.pyCompMid}>
-              {match && <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' }}>★ Совпадение!</Text>}
+              {match && <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold' }}>= Совпадение!</Text>}
             </View>
             <View style={{ flex: 3 }}>
               <Text style={s.pyCompMatch} numberOfLines={2}>{y.meaning}</Text>
@@ -437,7 +448,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
           <View style={s.coverBadge}><Text style={s.coverBadgeText}>НУМЕРОЛОГИЧЕСКАЯ СОВМЕСТИМОСТЬ</Text></View>
           <View style={s.coverNamesRow}>
             <Text style={s.coverName1}>{n1}</Text>
-            <Text style={s.coverHeart}>♡</Text>
+            <Text style={[s.coverHeart, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>&</Text>
             <Text style={s.coverName2}>{n2}</Text>
           </View>
           <Text style={s.coverTitle}>Персональный разбор совместимости</Text>
@@ -476,10 +487,12 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
           </View>
         ) : null}
 
-        <Text style={[s.sectionLabel, s.sectionLabelGold]}>◆  МАТРИЦЫ И КЛЮЧЕВЫЕ ЧИСЛА</Text>
-        <View style={s.personsRow}>
-          <PersonCard name={n1} date={date1} m={m1} isP2={false} />
-          <PersonCard name={n2} date={date2} m={m2} isP2={true} />
+        <View wrap={false}>
+          <SectionLabel text="МАТРИЦЫ И КЛЮЧЕВЫЕ ЧИСЛА" gold />
+          <View style={s.personsRow}>
+            <PersonCard name={n1} date={date1} m={m1} isP2={false} />
+            <PersonCard name={n2} date={date2} m={m2} isP2={true} />
+          </View>
         </View>
 
         <View wrap={false} style={{ backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
@@ -500,14 +513,14 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
       {/* ── Page 3: Spheres ───────────────────────────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
-        <Text style={s.sectionLabel}>◆  СОВМЕСТИМОСТЬ ПО 6 СФЕРАМ</Text>
+        <SectionLabel text="СОВМЕСТИМОСТЬ ПО 6 СФЕРАМ" />
         {spheres.map((sphere, i) => {
           const col = SPHERE_COLORS[sphere.color] ?? SPHERE_COLORS.rose;
           return (
             <View key={i} wrap={false} style={[s.sphereCard, { backgroundColor: col.bg, borderColor: col.border }]}>
               <View style={s.sphereHeader}>
-                <View style={[s.sphereIconBox, { backgroundColor: C.dark }]}>
-                  <Text style={[s.sphereIcon, { color: col.icon }]}>{sphere.icon}</Text>
+                <View style={[s.sphereIconBox, { backgroundColor: C.dark, justifyContent: 'center', alignItems: 'center' }]}>
+                  <Text style={[s.sphereIcon, { color: col.icon, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 11, lineHeight: 1, textAlign: 'center' }]}>{sphere.icon}</Text>
                 </View>
                 <View style={s.sphereTitleWrap}>
                   <Text style={[s.sphereTitle, { color: col.icon }]}>{sphere.title}</Text>
@@ -528,13 +541,17 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
 
-        <Text style={s.sectionLabel}>◆  ЯЗЫКИ ЛЮБВИ</Text>
-        <LoveLanguagesSection loveLanguages={loveLanguages} n1={n1} n2={n2} />
+        <View wrap={false}>
+          <SectionLabel text="ЯЗЫКИ ЛЮБВИ" />
+          <LoveLanguagesSection loveLanguages={loveLanguages} n1={n1} n2={n2} />
+        </View>
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ЗЕЛЁНЫЕ ФЛАГИ И СИГНАЛЫ ВНИМАНИЯ</Text>
-        <FlagsSection greenFlags={greenFlags} dangerSignals={dangerSignals} />
+        <View wrap={false}>
+          <SectionLabel text="ЗЕЛЁНЫЕ ФЛАГИ И СИГНАЛЫ ВНИМАНИЯ" />
+          <FlagsSection greenFlags={greenFlags} dangerSignals={dangerSignals} />
+        </View>
 
         <Footer name1={n1} name2={n2} />
       </Page>
@@ -543,14 +560,14 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name1={n1} name2={n2} />
 
-        <Text style={s.sectionLabel}>◆  КЛЮЧЕВЫЕ ЧИСЛА — СРАВНЕНИЕ</Text>
+        <SectionLabel text="КЛЮЧЕВЫЕ ЧИСЛА — СРАВНЕНИЕ" />
         {Object.entries(keyNums).map(([key, kn]) => {
           const labels = { destiny: 'Число судьбы', soul: 'Число души', karma: 'Число кармы' };
           return (
             <View key={key} wrap={false} style={[s.keyNumCard, { backgroundColor: kn.match ? C.goldFaint : C.card, borderColor: kn.match ? C.goldBorder : C.border, marginBottom: 8 }]}>
               <View style={s.keyNumHeader}>
                 <Text style={s.keyNumLabel}>{labels[key] || key}</Text>
-                {kn.match && <View style={s.keyNumMatchBadge}><Text style={s.keyNumMatchText}>★ Совпадение!</Text></View>}
+                {kn.match && <View style={s.keyNumMatchBadge}><Text style={s.keyNumMatchText}>= Совпадение!</Text></View>}
               </View>
               <View style={s.keyNumVals}>
                 <Text style={[s.keyNumVal, { color: C.p1 }]}>{kn.v1}</Text>
@@ -564,26 +581,30 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  СИЛЬНЫЕ СТОРОНЫ СОЮЗА</Text>
-        <View wrap={false} style={[s.listCard, { backgroundColor: C.greenFaint, borderColor: C.greenBorder }]}>
-          {strengths.map((item, i) => (
-            <View key={i} style={s.listItem}>
-              <View style={[s.listDot, { backgroundColor: C.green }]} />
-              <Text style={[s.listText, { color: '#C0D8A0' }]}>{item}</Text>
-            </View>
-          ))}
+        <View wrap={false}>
+          <SectionLabel text="СИЛЬНЫЕ СТОРОНЫ СОЮЗА" />
+          <View style={[s.listCard, { backgroundColor: C.greenFaint, borderColor: C.greenBorder }]}>
+            {strengths.map((item, i) => (
+              <View key={i} style={s.listItem}>
+                <View style={[s.listDot, { backgroundColor: C.green }]} />
+                <Text style={[s.listText, { color: '#C0D8A0' }]}>{item}</Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ТОЧКИ НАПРЯЖЕНИЯ</Text>
-        <View wrap={false} style={[s.listCard, { backgroundColor: '#0F0A0A', borderColor: '#2A1010' }]}>
-          {tensions.map((item, i) => (
-            <View key={i} style={s.listItem}>
-              <View style={[s.listDot, { backgroundColor: '#D46060' }]} />
-              <Text style={[s.listText, { color: '#E0A8A8' }]}>{item}</Text>
-            </View>
-          ))}
+        <View wrap={false}>
+          <SectionLabel text="ТОЧКИ НАПРЯЖЕНИЯ" />
+          <View style={[s.listCard, { backgroundColor: '#0F0A0A', borderColor: '#2A1010' }]}>
+            {tensions.map((item, i) => (
+              <View key={i} style={s.listItem}>
+                <View style={[s.listDot, { backgroundColor: '#D46060' }]} />
+                <Text style={[s.listText, { color: '#E0A8A8' }]}>{item}</Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         <Footer name1={n1} name2={n2} />
@@ -595,34 +616,40 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
 
         {py1.length > 0 && (
           <>
-            <Text style={s.sectionLabel}>◆  ЛИЧНЫЕ ГОДЫ ПАРЫ</Text>
-            <PersonalYearsComparison py1={py1} py2={py2} n1={n1} n2={n2} note={personalYearNote} />
+            <View wrap={false}>
+              <SectionLabel text="ЛИЧНЫЕ ГОДЫ ПАРЫ" />
+              <PersonalYearsComparison py1={py1} py2={py2} n1={n1} n2={n2} note={personalYearNote} />
+            </View>
             <View style={s.divider} />
           </>
         )}
 
-        <Text style={s.sectionLabel}>◆  БЛАГОПРИЯТНЫЕ ПЕРИОДЫ</Text>
-        <View wrap={false} style={[s.listCard, { backgroundColor: C.tealFaint, borderColor: C.tealBorder, marginBottom: 14 }]}>
-          <Text style={{ fontSize: 9.5, color: '#A0D8D0', lineHeight: 1.78 }}>{bestYears.content}</Text>
+        <View wrap={false}>
+          <SectionLabel text="БЛАГОПРИЯТНЫЕ ПЕРИОДЫ" />
+          <View style={[s.listCard, { backgroundColor: C.tealFaint, borderColor: C.tealBorder, marginBottom: 14 }]}>
+            <Text style={{ fontSize: 9.5, color: '#A0D8D0', lineHeight: 1.78 }}>{bestYears.content}</Text>
+          </View>
         </View>
 
         <View style={s.divider} />
 
-        <Text style={[s.sectionLabel, s.sectionLabelGold]}>◆  РЕКОМЕНДАЦИИ ПАРЕ</Text>
-        <View wrap={false} style={s.recCard}>
-          {recs.map((rec, i) => (
-            <View key={i} style={s.recItem}>
-              <View style={s.recNum}><Text style={s.recNumText}>{i + 1}</Text></View>
-              <Text style={s.recText}>{rec}</Text>
-            </View>
-          ))}
+        <View wrap={false}>
+          <SectionLabel text="РЕКОМЕНДАЦИИ ПАРЕ" gold />
+          <View style={s.recCard}>
+            {recs.map((rec, i) => (
+              <View key={i} style={s.recItem}>
+                <View style={s.recNum}><Text style={s.recNumText}>{i + 1}</Text></View>
+                <Text style={s.recText}>{rec}</Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         <View style={s.divider} />
 
-        <Text style={[s.sectionLabel, s.sectionLabelGold]}>◆  ИТОГ</Text>
         <View wrap={false} style={s.conclusionCard}>
-          <Text style={s.conclusionTitle}>♡  Ваш союз</Text>
+          <SectionLabel text="ИТОГ" gold />
+          <Text style={s.conclusionTitle}>Ваш союз</Text>
           <Text style={s.conclusionBody}>{a.conclusion}</Text>
         </View>
 
