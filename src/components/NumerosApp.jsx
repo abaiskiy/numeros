@@ -995,6 +995,12 @@ export default function NumerosApp() {
     return () => window.removeEventListener('open-order-modal', handler);
   }, []);
 
+  useEffect(() => {
+    const handler = () => setView('landing');
+    window.addEventListener('navigate-home', handler);
+    return () => window.removeEventListener('navigate-home', handler);
+  }, []);
+
   const scrollTo = (sectionId) => {
     if (view !== 'landing') {
       setView('landing');

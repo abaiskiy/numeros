@@ -29,7 +29,11 @@ export default function NavBar({ activePage = 'home' }) {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
         {/* Лого */}
-        <Link href="/" className="text-2xl font-black tracking-tighter flex items-center gap-2 group">
+        <Link
+          href="/"
+          className="text-2xl font-black tracking-tighter flex items-center gap-2 group"
+          onClick={() => window.dispatchEvent(new CustomEvent('navigate-home'))}
+        >
           <div className="w-10 h-10 rounded-full border border-[#D4AF37]/50 flex items-center justify-center bg-gradient-to-tr from-[#D4AF37]/20 to-transparent group-hover:rotate-180 transition-transform duration-700">
             <Gem size={18} className="text-[#D4AF37]" />
           </div>
