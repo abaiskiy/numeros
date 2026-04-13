@@ -479,19 +479,8 @@ export default function CompatibilityApp() {
       params.delete('payment');
       const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
-
-      if (res === 'ok') {
-        if (!sessionStorage.getItem('numeros_payment_shown')) {
-          sessionStorage.setItem('numeros_payment_shown', '1');
-          setPaymentBanner('ok');
-        }
-      } else {
-        setPaymentBanner('fail');
-      }
+      setPaymentBanner(res);
     }
-    return () => {
-      sessionStorage.removeItem('numeros_payment_shown');
-    };
   }, []);
 
   useEffect(() => {

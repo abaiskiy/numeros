@@ -959,20 +959,11 @@ export default function NumerosApp() {
     const params = new URLSearchParams(window.location.search);
     const result = params.get('payment');
     if (result === 'ok' || result === 'fail') {
-      // Clean URL immediately so it's gone on any remount
+      // Clean URL immediately — prevents popup on manual refresh
       params.delete('payment');
       const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
       window.history.replaceState({}, '', newUrl);
-
-      // Guard: show success popup only once per payment session
-      if (result === 'ok') {
-        if (!sessionStorage.getItem('numeros_payment_shown')) {
-          sessionStorage.setItem('numeros_payment_shown', '1');
-          setPaymentBanner('ok');
-        }
-      } else {
-        setPaymentBanner('fail');
-      }
+      setPaymentBanner(result);
     }
   }, []);
 
