@@ -722,6 +722,7 @@ function OrderModal({ onClose, initialDate }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [date, setDate] = useState(initialDate || '');
+  const [gender, setGender] = useState('female');
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
 
@@ -748,6 +749,7 @@ function OrderModal({ onClose, initialDate }) {
           name: name.trim(),
           email: email.trim(),
           birthDate: date,
+          gender,
         }),
       });
       const data = await res.json();
@@ -808,6 +810,24 @@ function OrderModal({ onClose, initialDate }) {
                 className={inputCls(errors.name)}
               />
               {errors.name && <p className="text-red-400 text-xs font-semibold">Введите ваше имя</p>}
+            </div>
+
+            {/* Пол */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] uppercase tracking-[0.15em] font-black text-gray-500">Ваш пол</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[{v:'female',label:'Женщина'},{v:'male',label:'Мужчина'}].map(({v,label}) => (
+                  <button
+                    key={v} type="button"
+                    onClick={() => setGender(v)}
+                    className={`py-3 rounded-2xl text-sm font-semibold border transition-all ${
+                      gender === v
+                        ? 'bg-[#D4AF37]/15 border-[#D4AF37]/60 text-[#D4AF37]'
+                        : 'bg-white/[0.04] border-white/10 text-gray-400 hover:border-white/20'
+                    }`}
+                  >{label}</button>
+                ))}
+              </div>
             </div>
 
             {/* Email */}

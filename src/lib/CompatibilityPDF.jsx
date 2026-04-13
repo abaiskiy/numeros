@@ -205,6 +205,42 @@ const s = StyleSheet.create({
   conclusionBody: { fontSize: 10, color: C.text, lineHeight: 1.82 },
   outroCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14 },
   outroText: { fontSize: 9, color: C.gray, lineHeight: 1.7, textAlign: 'center' },
+
+  // Conflict zones
+  conflictCard: { backgroundColor: '#100808', borderWidth: 1.5, borderColor: '#3A1818', borderRadius: 12, padding: 14, marginBottom: 10 },
+  conflictBody: { fontSize: 9.5, color: '#C09090', lineHeight: 1.75, marginBottom: 10 },
+  conflictTriggersRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 10 },
+  conflictTrigger: { backgroundColor: '#1E0C0C', borderWidth: 1, borderColor: '#3A1818', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
+  conflictTriggerText: { fontSize: 8, color: '#E09090', lineHeight: 1 },
+  conflictResCard: { backgroundColor: '#0C100A', borderWidth: 1, borderColor: '#1E3014', borderLeftWidth: 3, borderLeftColor: '#8ABF5A', borderRadius: 8, padding: 11 },
+  conflictResLabel: { fontSize: 7, color: '#8ABF5A', fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  conflictResText: { fontSize: 9, color: '#A0C088', lineHeight: 1.65 },
+
+  // Personal months
+  pmRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
+  pmPersonCard: { flex: 1, backgroundColor: '#0A0F18', borderWidth: 1, borderColor: '#1E3050', borderRadius: 10, padding: 12 },
+  pmPersonHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 7 },
+  pmPersonNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#0E1A2E', borderWidth: 1.5, borderColor: C.blue, alignItems: 'center', justifyContent: 'center' },
+  pmPersonNumText: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.blue, textAlign: 'center', lineHeight: 1 },
+  pmPersonNameText: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: '#A8C8F0' },
+  pmPersonLabelText: { fontSize: 7.5, color: '#5A7A9A', marginTop: 1 },
+  pmPersonBody: { fontSize: 8.5, color: '#8AABCC', lineHeight: 1.7 },
+  pmTogetherCard: { backgroundColor: '#0A100F', borderWidth: 1, borderColor: '#1A302A', borderLeftWidth: 3, borderLeftColor: C.teal, borderRadius: 8, padding: 11 },
+  pmTogetherLabel: { fontSize: 7, color: C.teal, fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  pmTogetherText: { fontSize: 9, color: '#90C8C0', lineHeight: 1.65 },
+
+  // Joint project
+  jpCard: { backgroundColor: '#080E10', borderWidth: 1.5, borderColor: '#1A3020', borderRadius: 12, padding: 14, marginBottom: 10 },
+  jpSuitBadge: { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, marginBottom: 8 },
+  jpSuitText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1 },
+  jpBody: { fontSize: 9.5, color: '#A0C8B0', lineHeight: 1.75, marginBottom: 10 },
+  jpRolesRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
+  jpRoleCard: { flex: 1, backgroundColor: '#0C1A14', borderWidth: 1, borderColor: '#1E3828', borderRadius: 8, padding: 10 },
+  jpRoleName: { fontSize: 7.5, color: '#6ABA8A', fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  jpRoleText: { fontSize: 9, color: '#90C8A8', lineHeight: 1.6 },
+  jpSpheresRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 5 },
+  jpSpherePill: { backgroundColor: '#0C1A14', borderWidth: 1, borderColor: '#1E3828', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 4 },
+  jpSpherePillText: { fontSize: 8, color: '#8AE0B0', fontFamily: 'Roboto', fontWeight: 'bold' },
 });
 
 // ─── Colour map for spheres ───────────────────────────────────────────────────
@@ -421,6 +457,98 @@ function FavorableDatesSection({ dates, coupleNum }) {
   );
 }
 
+// ─── Conflict zones ───────────────────────────────────────────────────────────
+function ConflictZonesSection({ conflictZones }) {
+  if (!conflictZones) return null;
+  return (
+    <View style={s.conflictCard}>
+      {conflictZones.content ? <Text style={s.conflictBody}>{conflictZones.content}</Text> : null}
+      {conflictZones.triggers?.length > 0 && (
+        <View style={s.conflictTriggersRow}>
+          {conflictZones.triggers.map((t, i) => (
+            <View key={i} style={s.conflictTrigger}><Text style={s.conflictTriggerText}>{t}</Text></View>
+          ))}
+        </View>
+      )}
+      {conflictZones.resolution ? (
+        <View style={s.conflictResCard}>
+          <Text style={s.conflictResLabel}>Как снять напряжение</Text>
+          <Text style={s.conflictResText}>{conflictZones.resolution}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+// ─── Personal months comparison ───────────────────────────────────────────────
+function PersonalMonthsSection({ personalMonths, pm1, pm2, n1, n2 }) {
+  if (!personalMonths && !pm1) return null;
+  const p1num = personalMonths?.person1?.number ?? pm1?.number ?? '?';
+  const p1lbl = personalMonths?.person1?.label  ?? pm1?.label  ?? '';
+  const p1body = personalMonths?.person1?.content ?? '';
+  const p2num = personalMonths?.person2?.number ?? pm2?.number ?? '?';
+  const p2lbl = personalMonths?.person2?.label  ?? pm2?.label  ?? '';
+  const p2body = personalMonths?.person2?.content ?? '';
+  const together = personalMonths?.together ?? '';
+  return (
+    <View>
+      <View style={s.pmRow}>
+        {[{name: n1, num: p1num, lbl: p1lbl, body: p1body}, {name: n2, num: p2num, lbl: p2lbl, body: p2body}].map((p, i) => (
+          <View key={i} style={s.pmPersonCard}>
+            <View style={s.pmPersonHeader}>
+              <View style={s.pmPersonNum}><Text style={s.pmPersonNumText}>{p.num}</Text></View>
+              <View>
+                <Text style={s.pmPersonNameText}>{p.name}</Text>
+                <Text style={s.pmPersonLabelText}>{p.lbl}</Text>
+              </View>
+            </View>
+            {p.body ? <Text style={s.pmPersonBody}>{p.body}</Text> : null}
+          </View>
+        ))}
+      </View>
+      {together ? (
+        <View style={s.pmTogetherCard}>
+          <Text style={s.pmTogetherLabel}>Совместный ритм</Text>
+          <Text style={s.pmTogetherText}>{together}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+// ─── Joint project section ────────────────────────────────────────────────────
+function JointProjectSection({ jointProject, n1, n2 }) {
+  if (!jointProject) return null;
+  const suitable = jointProject.suitable;
+  return (
+    <View style={s.jpCard}>
+      <View style={[s.jpSuitBadge, { backgroundColor: suitable ? '#0C1A0C' : '#1A0C0C', borderWidth: 1, borderColor: suitable ? '#1E5A1E' : '#5A1E1E' }]}>
+        <Text style={[s.jpSuitText, { color: suitable ? '#8AE0A0' : '#E08A8A' }]}>
+          {suitable ? 'Совместный проект — подходит' : 'Совместный проект — осторожно'}
+        </Text>
+      </View>
+      {jointProject.content ? <Text style={s.jpBody}>{jointProject.content}</Text> : null}
+      {(jointProject.roles?.person1 || jointProject.roles?.person2) && (
+        <View style={s.jpRolesRow}>
+          {[{name: n1, role: jointProject.roles?.person1}, {name: n2, role: jointProject.roles?.person2}].map((r, i) => (
+            <View key={i} style={s.jpRoleCard}>
+              <Text style={s.jpRoleName}>{r.name}</Text>
+              <Text style={s.jpRoleText}>{r.role}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+      {jointProject.bestSpheres?.length > 0 && (
+        <View style={s.jpSpheresRow}>
+          {jointProject.bestSpheres.map((sp, i) => (
+            <View key={i} style={s.jpSpherePill}><Text style={s.jpSpherePillText}>{sp}</Text></View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
 // ─── QR section ───────────────────────────────────────────────────────────────
 function QRSection({ qrDataUrl }) {
   return (
@@ -455,6 +583,12 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
   const qrDataUrl     = extras?.qrDataUrl       ?? null;
   const favorableDates = extras?.favorableDates ?? [];
   const coupleNum     = extras?.coupleNum       ?? null;
+  const pm1           = extras?.pm1             ?? null;
+  const pm2           = extras?.pm2             ?? null;
+
+  const conflictZones = a.conflictZones  ?? null;
+  const jointProject  = a.jointProject   ?? null;
+  const personalMonths = a.personalMonths ?? null;
 
   const levelLabel = score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы';
   const levelColor = score >= 85 ? C.gold : score >= 70 ? '#86efac' : score >= 55 ? C.blue : '#fca5a5';
@@ -470,6 +604,9 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
     'Зелёные флаги и сигналы',
     'Ключевые числа — сравнение',
     'Сильные стороны союза',
+    'Конфликтные зоны пары',
+    'Личные месяцы сейчас',
+    'Совместный проект/бизнес',
     'Личные годы пары',
     'Благоприятные периоды',
     'Благоприятные даты',
@@ -647,6 +784,37 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
             ))}
           </View>
         </View>
+
+        <Footer name1={n1} name2={n2} />
+      </Page>
+
+      {/* ── Page 5.5: Conflict zones + Personal months + Joint project ───── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name1={n1} name2={n2} />
+
+        {conflictZones && (
+          <>
+            <View wrap={false}>
+              <SectionLabel text="КОНФЛИКТНЫЕ ЗОНЫ ПАРЫ" />
+              <ConflictZonesSection conflictZones={conflictZones} />
+            </View>
+            <View style={s.divider} />
+          </>
+        )}
+
+        <View wrap={false}>
+          <SectionLabel text="ЛИЧНЫЕ МЕСЯЦЫ — ЧТО СЕЙЧАС" />
+          <PersonalMonthsSection personalMonths={personalMonths} pm1={pm1} pm2={pm2} n1={n1} n2={n2} />
+        </View>
+
+        <View style={s.divider} />
+
+        {jointProject && (
+          <View wrap={false}>
+            <SectionLabel text="СОВМЕСТНЫЙ ПРОЕКТ И БИЗНЕС" />
+            <JointProjectSection jointProject={jointProject} n1={n1} n2={n2} />
+          </View>
+        )}
 
         <Footer name1={n1} name2={n2} />
       </Page>

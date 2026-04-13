@@ -352,6 +352,40 @@ export function getFamousByDestiny(destiny) {
   return FAMOUS_BY_DIGIT[n] ?? FAMOUS_BY_DIGIT[1];
 }
 
+// ─── Personal Month ───────────────────────────────────────────────────────────
+
+const PERSONAL_MONTH_MEANING = {
+  1: { label: 'Новые начала',        theme: 'Время запускать проекты, принимать решения и делать первые шаги.' },
+  2: { label: 'Союзы и терпение',    theme: 'Месяц для партнёрства, переговоров и укрепления связей. Не торопите события.' },
+  3: { label: 'Творчество и общение',theme: 'Расцветают идеи, социальная активность и самовыражение.' },
+  4: { label: 'Труд и фундамент',    theme: 'Месяц строить, планировать и закладывать основы.' },
+  5: { label: 'Перемены и свобода',  theme: 'Ожидайте неожиданного. Время для изменений, путешествий и новых знакомств.' },
+  6: { label: 'Дом и ответственность',theme: 'Фокус на семье, отношениях, заботе о близких.' },
+  7: { label: 'Анализ и внутренний поиск', theme: 'Месяц для рефлексии, учёбы, уединения и духовного роста.' },
+  8: { label: 'Власть и финансы',    theme: 'Лучший месяц для деловых решений, переговоров о деньгах и карьерных шагов.' },
+  9: { label: 'Завершение и отпускание', theme: 'Время закрывать циклы, прощаться с лишним и готовиться к обновлению.' },
+};
+
+/**
+ * Returns current personal month number and its meaning.
+ * personalMonth = reduce(personalYear + currentCalendarMonth)
+ */
+export function getPersonalMonth(birthDate, referenceDate = new Date()) {
+  const [y, mo, d] = birthDate.split('-').map(Number);
+  const currentYear  = referenceDate.getFullYear();
+  const currentMonth = referenceDate.getMonth() + 1;
+
+  const pyRaw = d + mo + currentYear;
+  const personalYear = String(pyRaw).split('').reduce((s, x) => s + +x, 0);
+  const pyReduced    = reduceToSingle(personalYear);
+
+  const pmRaw     = pyReduced + currentMonth;
+  const pmReduced = reduceToSingle(pmRaw);
+
+  const meaning = PERSONAL_MONTH_MEANING[pmReduced] ?? PERSONAL_MONTH_MEANING[1];
+  return { number: pmReduced, personalYear: pyReduced, currentMonth, ...meaning };
+}
+
 // ─── Favorable dates for a couple ────────────────────────────────────────────
 
 const DAY_NUM_MEANING = {

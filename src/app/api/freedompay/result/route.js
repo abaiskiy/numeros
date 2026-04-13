@@ -54,6 +54,7 @@ async function handleResult(req) {
   const email       = params.user_email;
   const name        = params.user_name      ?? '';
   const birthDate   = params.user_birthdate ?? '';
+  const gender      = params.user_gender    ?? 'female';
   const name2       = params.user_name2     ?? '';
   const date2       = params.user_date2     ?? '';
 
@@ -76,7 +77,7 @@ async function handleResult(req) {
         await fetch(`${siteUrl}/api/order`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, birthDate }),
+          body: JSON.stringify({ name, email, birthDate, gender }),
         });
       }
       console.log('[freedompay/result] Order triggered for', email);

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { calculateMatrix, getPersonalYears, getFavorableDates } from '@/lib/matrixCalc';
+import { calculateMatrix, getPersonalYears, getFavorableDates, getPersonalMonth } from '@/lib/matrixCalc';
 
 // ─── Compatibility score (same logic as frontend) ─────────────────────────────
 function calculateCompatibility(m1, m2) {
@@ -40,6 +40,8 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
 
   const py1Ctx = py1.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
   const py2Ctx = py2.map(p => `${p.year}: ЛГ-${p.personalYear}`).join(', ');
+  const pm1 = getPersonalMonth(date1);
+  const pm2 = getPersonalMonth(date2);
 
   // Build context from book for each person's digit strengths/weaknesses
   const digitCtx = (m, name) => {
@@ -143,6 +145,22 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
     "content": "70-90 слов — когда пике совместных возможностей с учётом личных лет ${py1[0]?.year ?? curYear}–${(py1[py1.length-1]?.year) ?? curYear+2}. Конкретные годы и что делать в эти периоды."
   },
   "personalYearNote": "65-80 слов: ${name1} в ЛГ-${py1[0]?.personalYear ?? '?'}, ${name2} в ЛГ-${py2[0]?.personalYear ?? '?'} — что это значит для пары в ${curYear} году, конкретные рекомендации",
+  "personalMonths": {
+    "person1": { "number": ${pm1.number}, "label": "${pm1.label}", "content": "40-50 слов: что сейчас переживает ${name1} в личном месяце ${pm1.number} и как это влияет на пару" },
+    "person2": { "number": ${pm2.number}, "label": "${pm2.label}", "content": "40-50 слов: что сейчас переживает ${name2} в личном месяце ${pm2.number} и как это влияет на пару" },
+    "together": "40-50 слов: как совпадение/расхождение личных месяцев влияет на их взаимодействие прямо сейчас, что важно учесть"
+  },
+  "conflictZones": {
+    "content": "80-100 слов: честный анализ — в каких ситуациях эта пара чаще всего конфликтует, какие триггеры, почему это происходит с точки зрения их чисел. Без осуждения, конкретно.",
+    "triggers": ["триггер 1 (8-12 слов)", "триггер 2 (8-12 слов)", "триггер 3 (8-12 слов)"],
+    "resolution": "50-60 слов: 2-3 конкретных инструмента для разрядки конфликтов именно для этой пары"
+  },
+  "jointProject": {
+    "suitable": <true или false — подходит ли эта пара для совместного бизнеса/дела>,
+    "content": "70-90 слов: честный анализ совместимости в деловой и творческой сфере — что получится, что нет, на каких ролях каждый лучше. Опирайся на числа судьбы и линии матрицы.",
+    "roles": { "person1": "роль ${name1} в совместном проекте (5-8 слов)", "person2": "роль ${name2} в совместном проекте (5-8 слов)" },
+    "bestSpheres": ["сфера 1 для совместного дела (3-5 слов)", "сфера 2 (3-5 слов)", "сфера 3 (3-5 слов)"]
+  },
   "recommendations": [
     "Рекомендация 1 — конкретный практический совет (25-35 слов)",
     "Рекомендация 2 (25-35 слов)",
@@ -314,8 +332,10 @@ export async function POST(req) {
     const reduceSingle = (n) => { let x = Math.abs(n); while (x > 9) x = String(x).split('').reduce((s,d)=>s+ +d,0); return x; };
     const favorableDates = getFavorableDates(date1, date2, m1, m2, 90, 12);
     const coupleNum = reduceSingle(reduceSingle(m1.destiny) + reduceSingle(m2.destiny));
+    const pm1 = getPersonalMonth(date1);
+    const pm2 = getPersonalMonth(date2);
 
-    const extras = { personalYears1: py1, personalYears2: py2, qrDataUrl, favorableDates, coupleNum };
+    const extras = { personalYears1: py1, personalYears2: py2, qrDataUrl, favorableDates, coupleNum, pm1, pm2 };
 
     console.log('[order-compatibility] 4. Loading book');
     const book = JSON.parse(readFileSync(join(process.cwd(), 'src/data/numerology-book.json'), 'utf-8'));

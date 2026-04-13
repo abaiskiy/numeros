@@ -4,12 +4,12 @@ import { join } from 'path';
 import {
   calculateMatrix, buildBookContext, detectCombinations,
   calculatePinnacles, getPersonalYears, getKarmicLessons,
-  calculateNameNumerology, getFamousByDestiny,
+  calculateNameNumerology, getFamousByDestiny, getPersonalMonth,
 } from '@/lib/matrixCalc';
 
 // ─── GPT analysis ─────────────────────────────────────────────────────────────
 
-async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations) {
+async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations, gender = 'female') {
   const { default: OpenAI } = await import('openai');
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -20,6 +20,11 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
   const [y, m, d] = birthDate.split('-').map(Number);
   const currentYear = new Date().getFullYear();
   const personalYear = String(d + m + currentYear).split('').reduce((s, x) => s + +x, 0);
+  const personalMonthData = getPersonalMonth(birthDate);
+  const genderLabel = gender === 'male' ? 'мужчина' : 'женщина';
+  const genderTone  = gender === 'male'
+    ? 'Пиши в мужском роде. Акцент на действии, достижениях, карьере, статусе, логике.'
+    : 'Пиши в женском роде. Акцент на интуиции, отношениях, самореализации, внутреннем мире, семье.';
 
   // ── Fixed talismans from book (based on reduced destiny number) ────────────
   const reduceSingle = (n) => {
@@ -41,7 +46,8 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
     ? `\nКАРМИЧЕСКИЕ УРОКИ (отсутствующие цифры): ${karmicLessons.map(l => l.digit).join(', ')}`
     : '\nКАРМИЧЕСКИЕ УРОКИ: все цифры присутствуют — кармических долгов нет';
 
-  const prompt = `Ты — профессиональный нумеролог. Составь подробный персональный нумерологический разбор для ${name} (дата рождения: ${dateFormatted}).
+  const prompt = `Ты — профессиональный нумеролог. Составь подробный персональный нумерологический разбор для ${name} (дата рождения: ${dateFormatted}, ${genderLabel}).
+${genderTone}
 
 МАТРИЦА ПИФАГОРА:
 - Характер (1): ${matrix.char.v} [${matrix.char.s}]
@@ -60,6 +66,7 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
 - Число кармы: ${matrix.karma}
 - Потенциал: ${matrix.hidden}
 - Личный год (${currentYear}): ${personalYear}
+- Личный месяц (${personalMonthData.currentMonth}/${currentYear}): ${personalMonthData.number} — «${personalMonthData.label}». ${personalMonthData.theme}
 
 ЛИНИИ МАТРИЦЫ (сумма цифр в линии):
 - Самооценка (1-2-3): ${matrix.selfEsteem}
@@ -112,7 +119,9 @@ ${bookContext}
   "money": {
     "score": <число от 1 до 10>,
     "title": "Денежный потенциал",
-    "content": "100-150 слов: финансовые таланты, путь к деньгам, советы. Обращение на Вы."
+    "content": "100-130 слов: финансовые таланты, природный путь к деньгам, как зарабатывает лучше всего этот тип числа. Обращение на Вы.",
+    "blocks": "50-60 слов: типичные денежные блоки и убеждения, которые мешают ${name} зарабатывать больше — честно и конкретно. Обращение на Вы.",
+    "strategy": "50-60 слов: конкретная стратегия роста дохода под число судьбы ${matrix.destiny} — 2-3 практических шага. Обращение на Вы."
   },
   "relationships": {
     "title": "Код отношений",
@@ -123,6 +132,23 @@ ${bookContext}
     "personalYear": ${personalYear},
     "title": "Прогноз на ${currentYear} год",
     "content": "100-150 слов: что несёт личный год ${personalYear} для ${name}. Обращение на Вы."
+  },
+  "personalMonth": {
+    "number": ${personalMonthData.number},
+    "label": "${personalMonthData.label}",
+    "content": "80-100 слов: что означает личный месяц ${personalMonthData.number} («${personalMonthData.label}») для ${name} прямо сейчас — конкретные события, на что обратить внимание, что использовать, чего избегать в этом месяце. Обращение на Вы."
+  },
+  "career": {
+    "title": "Карьера и предназначение",
+    "professions": ["профессия/сфера 1", "профессия/сфера 2", "профессия/сфера 3", "профессия/сфера 4", "профессия/сфера 5"],
+    "content": "100-130 слов: на основе числа судьбы ${matrix.destiny}, числа души ${matrix.soul} и линии таланта (${matrix.talent}) — в каких сферах ${name} реализуется максимально, что даётся природно, какой стиль работы наиболее продуктивен. Конкретные рекомендации. Обращение на Вы.",
+    "anticareer": "40-50 слов: в каких сферах или ролях ${name} будет чувствовать себя не на месте и почему. Обращение на Вы."
+  },
+  "shadow": {
+    "title": "Теневая сторона",
+    "content": "80-100 слов: деструктивные паттерны, внутренние страхи и слабости, которые могут проявляться у ${name} — без осуждения, честно. Это обратная сторона сильных качеств. Обращение на Вы.",
+    "fears": ["страх/паттерн 1 (5-8 слов)", "страх/паттерн 2", "страх/паттерн 3"],
+    "growth": "40-50 слов: как работать с тенью — практический совет. Обращение на Вы."
   },
   "strengths": [
     "конкретная сильная сторона 1 (15-20 слов)",
@@ -177,7 +203,7 @@ ${bookContext}
   "conclusion": "150-200 слов: главные выводы, сильные стороны, рекомендации, вдохновляющее напутствие. Обращение на Вы."
 }
 
-ВАЖНО: Пиши на русском. Обращайся на Вы. Будь конкретным и вдохновляющим.`;
+ВАЖНО: Пиши на русском. Обращайся на Вы. ${genderTone} Будь честным — указывай и сильные стороны, и слабые, и страхи, и ограничения. Это делает разбор живым и доверительным.`;
 
   const resp = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -311,7 +337,7 @@ async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
 
 export async function POST(req) {
   try {
-    const { name, email, birthDate } = await req.json();
+    const { name, email, birthDate, gender = 'female' } = await req.json();
 
     if (!name || !email || !birthDate) {
       return NextResponse.json({ error: 'Заполните все поля' }, { status: 400 });
@@ -326,6 +352,7 @@ export async function POST(req) {
     const karmicLessons  = getKarmicLessons(matrix.counts);
     const nameNumerology = calculateNameNumerology(name);
     const famous         = getFamousByDestiny(matrix.destiny);
+    const personalMonth  = getPersonalMonth(birthDate);
 
     console.log('[order] 3. Generating QR code...');
     const QRCode   = (await import('qrcode')).default;
@@ -334,7 +361,7 @@ export async function POST(req) {
       color: { dark: '#C9A84C', light: '#0D0E14' },
     });
 
-    const extras = { pinnacles, personalYears, karmicLessons, nameNumerology, famous, qrDataUrl };
+    const extras = { pinnacles, personalYears, karmicLessons, nameNumerology, famous, qrDataUrl, personalMonth, gender };
 
     console.log('[order] 4. Loading book data');
     const bookPath = join(process.cwd(), 'src/data/numerology-book.json');
@@ -344,7 +371,7 @@ export async function POST(req) {
     console.log('[order] 4a. Detected combinations:', foundCombinations.map(c => c.label).join('; '));
 
     console.log('[order] 5. Calling GPT...');
-    const analysis = await generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations);
+    const analysis = await generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations, gender);
     console.log('[order] 5. GPT done');
 
     console.log('[order] 6. Building PDF...');

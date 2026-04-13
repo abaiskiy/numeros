@@ -43,8 +43,8 @@ const s = StyleSheet.create({
   coverBadgeText: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2, textAlign: 'center', lineHeight: 1 },
   coverName: { fontSize: 30, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, marginBottom: 8, lineHeight: 1.2 },
   coverDate: { fontSize: 12, color: C.grayLight },
-  coverMid: { padding: 48, paddingTop: 30, paddingBottom: 30, flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  coverTocItem: { flexDirection: 'row', alignItems: 'center', gap: 8, width: '47%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 9, paddingHorizontal: 12, paddingVertical: 9 },
+  coverMid: { padding: 36, paddingTop: 20, paddingBottom: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 5 },
+  coverTocItem: { flexDirection: 'row', alignItems: 'center', gap: 6, width: '47%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 },
   coverTocNum: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center' },
   coverTocNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   coverTocText: { fontSize: 9, color: C.grayLight, flex: 1 },
@@ -281,6 +281,46 @@ const s = StyleSheet.create({
   conclusionBody: { fontSize: 10, color: C.text, lineHeight: 1.82 },
   outroCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14 },
   outroText: { fontSize: 9, color: C.gray, lineHeight: 1.7, textAlign: 'center' },
+
+  // ─── Personal month ───────────────────────────────────────────────────────────
+  pmCard: { backgroundColor: '#0A0F18', borderWidth: 1.5, borderColor: '#1E3050', borderRadius: 14, padding: 16, flexDirection: 'row', gap: 14, marginBottom: 14 },
+  pmNumBox: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#0E1A2E', borderWidth: 2, borderColor: C.blue, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  pmNum: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 'bold', color: C.blue, textAlign: 'center', lineHeight: 1 },
+  pmRight: { flex: 1 },
+  pmLabel: { fontSize: 8, color: C.blue, fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  pmTitle: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: '#A8C8F0', marginBottom: 6 },
+  pmBody: { fontSize: 9, color: '#9BAFC8', lineHeight: 1.72 },
+
+  // ─── Career section ───────────────────────────────────────────────────────────
+  careerGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 },
+  careerPill: { backgroundColor: '#0C1A14', borderWidth: 1, borderColor: '#1E3A28', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
+  careerPillText: { fontSize: 8.5, color: '#8AE0B0', fontFamily: 'Roboto', fontWeight: 'bold' },
+  careerBody: { fontSize: 9.5, color: C.text, lineHeight: 1.72, marginBottom: 10 },
+  careerAntiCard: { backgroundColor: '#150A0A', borderWidth: 1, borderColor: '#3A1818', borderLeftWidth: 3, borderLeftColor: '#D45A5A', borderRadius: 8, padding: 12 },
+  careerAntiLabel: { fontSize: 7, color: '#D45A5A', fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
+  careerAntiText: { fontSize: 9, color: '#C09090', lineHeight: 1.65 },
+
+  // ─── Shadow section ───────────────────────────────────────────────────────────
+  shadowCard: { backgroundColor: '#100808', borderWidth: 1.5, borderColor: '#3A1818', borderRadius: 14, padding: 16, marginBottom: 14 },
+  shadowHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  shadowIconBox: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#1E0C0C', borderWidth: 1.5, borderColor: '#5A2020', alignItems: 'center', justifyContent: 'center' },
+  shadowIcon: { fontSize: 14, color: '#D45A5A', fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'center', lineHeight: 1 },
+  shadowTitle: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: '#E89090' },
+  shadowBody: { fontSize: 9.5, color: '#C09090', lineHeight: 1.75, marginBottom: 10 },
+  shadowFearsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 },
+  shadowFear: { backgroundColor: '#1E0C0C', borderWidth: 1, borderColor: '#3A1818', borderRadius: 7, paddingHorizontal: 8, paddingVertical: 4 },
+  shadowFearText: { fontSize: 8, color: '#E09090', lineHeight: 1 },
+  shadowGrowthCard: { backgroundColor: '#0C100A', borderWidth: 1, borderColor: '#1E3014', borderLeftWidth: 3, borderLeftColor: '#8ABF5A', borderRadius: 8, padding: 12 },
+  shadowGrowthLabel: { fontSize: 7, color: '#8ABF5A', fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
+  shadowGrowthText: { fontSize: 9, color: '#A0C088', lineHeight: 1.65 },
+
+  // ─── Money deep ───────────────────────────────────────────────────────────────
+  moneyBlockCard: { backgroundColor: '#150808', borderWidth: 1, borderColor: '#3A1818', borderLeftWidth: 3, borderLeftColor: '#D45A5A', borderRadius: 8, padding: 12, marginBottom: 8 },
+  moneyBlockLabel: { fontSize: 7, color: '#D45A5A', fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
+  moneyBlockText: { fontSize: 9, color: '#C09090', lineHeight: 1.65 },
+  moneyStratCard: { backgroundColor: '#0C1208', borderWidth: 1, borderColor: '#1E3014', borderLeftWidth: 3, borderLeftColor: '#8ABF5A', borderRadius: 8, padding: 12 },
+  moneyStratLabel: { fontSize: 7, color: '#8ABF5A', fontFamily: 'Roboto', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 5 },
+  moneyStratText: { fontSize: 9, color: '#A0C088', lineHeight: 1.65 },
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -492,6 +532,77 @@ function TipsSection({ tips }) {
   );
 }
 
+// ─── Personal month section ───────────────────────────────────────────────────
+function PersonalMonthSection({ personalMonth, analysis }) {
+  const pm = analysis?.personalMonth;
+  if (!pm && !personalMonth) return null;
+  const number = pm?.number ?? personalMonth?.number ?? '?';
+  const label  = pm?.label  ?? personalMonth?.label  ?? '';
+  const body   = pm?.content ?? personalMonth?.theme ?? '';
+  const months = ['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  const monthName = personalMonth?.currentMonth ? months[personalMonth.currentMonth] : '';
+  return (
+    <View style={s.pmCard}>
+      <View style={s.pmNumBox}><Text style={s.pmNum}>{number}</Text></View>
+      <View style={s.pmRight}>
+        <Text style={s.pmLabel}>Личный месяц{monthName ? ` · ${monthName}` : ''}</Text>
+        <Text style={s.pmTitle}>{label}</Text>
+        <Text style={s.pmBody}>{body}</Text>
+      </View>
+    </View>
+  );
+}
+
+// ─── Career section ───────────────────────────────────────────────────────────
+function CareerSection({ career }) {
+  if (!career) return null;
+  return (
+    <View>
+      {career.professions?.length > 0 && (
+        <View style={s.careerGrid}>
+          {career.professions.map((p, i) => (
+            <View key={i} style={s.careerPill}><Text style={s.careerPillText}>{p}</Text></View>
+          ))}
+        </View>
+      )}
+      {career.content ? <Text style={s.careerBody}>{career.content}</Text> : null}
+      {career.anticareer ? (
+        <View style={s.careerAntiCard}>
+          <Text style={s.careerAntiLabel}>Не ваши роли</Text>
+          <Text style={s.careerAntiText}>{career.anticareer}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+// ─── Shadow section ───────────────────────────────────────────────────────────
+function ShadowSection({ shadow }) {
+  if (!shadow) return null;
+  return (
+    <View style={s.shadowCard}>
+      <View style={s.shadowHeader}>
+        <View style={s.shadowIconBox}><Text style={s.shadowIcon}>!</Text></View>
+        <Text style={s.shadowTitle}>Теневая сторона</Text>
+      </View>
+      {shadow.content ? <Text style={s.shadowBody}>{shadow.content}</Text> : null}
+      {shadow.fears?.length > 0 && (
+        <View style={s.shadowFearsRow}>
+          {shadow.fears.map((f, i) => (
+            <View key={i} style={s.shadowFear}><Text style={s.shadowFearText}>{f}</Text></View>
+          ))}
+        </View>
+      )}
+      {shadow.growth ? (
+        <View style={s.shadowGrowthCard}>
+          <Text style={s.shadowGrowthLabel}>Как работать с тенью</Text>
+          <Text style={s.shadowGrowthText}>{shadow.growth}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 // ─── Cover page ───────────────────────────────────────────────────────────────
 function CoverPage({ name, birthDate }) {
   const dateFmt = new Date(birthDate + 'T00:00:00')
@@ -504,11 +615,13 @@ function CoverPage({ name, birthDate }) {
     'Значимые комбинации',
     'Денежный потенциал',
     'Код отношений и прогноз',
+    'Личный месяц — что сейчас',
     'Сильные стороны и зоны роста',
     'Кармические уроки',
     'Пинаклы жизни',
     'Личные годы 5-летний прогноз',
-    'Архетип личности',
+    'Архетип и теневая сторона',
+    'Карьера и предназначение',
     'Аффирмации и талисманы',
     'Практические рекомендации',
     'Знаменитости с вашей судьбой',
@@ -899,6 +1012,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
   const nameNumerology = extras?.nameNumerology ?? null;
   const famous         = extras?.famous ?? [];
   const qrDataUrl      = extras?.qrDataUrl ?? null;
+  const personalMonth  = extras?.personalMonth ?? null;
 
   const birthYear = birthDate ? parseInt(birthDate.split('-')[0], 10) : null;
 
@@ -1015,6 +1129,18 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
           </View>
           <Text style={[s.specialBody, { color: '#B0C898' }]}>{money.content}</Text>
         </View>
+        {money.blocks ? (
+          <View style={s.moneyBlockCard}>
+            <Text style={s.moneyBlockLabel}>Денежные блоки</Text>
+            <Text style={s.moneyBlockText}>{money.blocks}</Text>
+          </View>
+        ) : null}
+        {money.strategy ? (
+          <View style={[s.moneyStratCard, { marginTop: 8 }]}>
+            <Text style={s.moneyStratLabel}>Стратегия роста дохода</Text>
+            <Text style={s.moneyStratText}>{money.strategy}</Text>
+          </View>
+        ) : null}
         </View>
 
         <View style={s.divider} />
@@ -1054,6 +1180,16 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
           <Text style={[s.specialBody, { color: '#A0D8D0' }]}>{forecast.content}</Text>
         </View>
         </View>
+
+        {personalMonth && (
+          <>
+            <View style={s.divider} />
+            <View wrap={false}>
+              <SectionLabel>ЛИЧНЫЙ МЕСЯЦ — ЧТО СЕЙЧАС</SectionLabel>
+              <PersonalMonthSection personalMonth={personalMonth} analysis={analysis} />
+            </View>
+          </>
+        )}
 
         <Footer name={name} />
       </Page>
@@ -1116,13 +1252,20 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Footer name={name} />
       </Page>
 
-      {/* ── Page 7: Archetype + Affirmations + Talismans + Tips ───────────── */}
+      {/* ── Page 7: Archetype + Shadow + Affirmations + Talismans ───────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
         <View wrap={false}>
           <SectionLabel>АРХЕТИП ВАШЕЙ ЛИЧНОСТИ</SectionLabel>
           <ArchetypeSection archetype={analysis.archetype} />
+        </View>
+
+        <View style={s.divider} />
+
+        <View wrap={false}>
+          <SectionLabel>ТЕНЕВАЯ СТОРОНА</SectionLabel>
+          <ShadowSection shadow={analysis.shadow} />
         </View>
 
         <View style={s.divider} />
@@ -1137,6 +1280,18 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <View wrap={false}>
           <SectionLabel>ТАЛИСМАНЫ, ЦВЕТА И ЧИСЛА</SectionLabel>
           <TalismansSection talismans={analysis.talismans} />
+        </View>
+
+        <Footer name={name} />
+      </Page>
+
+      {/* ── Page 8: Career + Tips ──────────────────────────────────────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name={name} />
+
+        <View wrap={false}>
+          <SectionLabel>КАРЬЕРА И ПРЕДНАЗНАЧЕНИЕ</SectionLabel>
+          <CareerSection career={analysis.career} />
         </View>
 
         <View style={s.divider} />

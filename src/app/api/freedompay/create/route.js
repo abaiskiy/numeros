@@ -15,7 +15,7 @@ const DESCRIPTIONS = {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { type = 'numerology', name, email, birthDate, name2, date2 } = body;
+    const { type = 'numerology', name, email, birthDate, name2, date2, gender } = body;
 
     if (!email) {
       return NextResponse.json({ error: 'Email обязателен' }, { status: 400 });
@@ -37,6 +37,7 @@ export async function POST(req) {
       user_email:     email,
       user_name:      name      ?? '',
       user_birthdate: birthDate ?? '',
+      user_gender:    gender    ?? 'female',
       ...(type === 'compatibility' && {
         user_name2: name2 ?? '',
         user_date2: date2 ?? '',
