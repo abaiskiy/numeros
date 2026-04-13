@@ -207,6 +207,17 @@ const s = StyleSheet.create({
   pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingTop: 2.5, paddingBottom: 1.5, marginLeft: 6 },
   pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 'bold', color: C.dark, lineHeight: 1, textAlign: 'center' },
 
+  // ─── Lines section ────────────────────────────────────────────────────────────
+  linesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
+  lineCard: { width: '48%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 12, marginBottom: 0 },
+  lineHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 7 },
+  lineNumBadge: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 6, paddingHorizontal: 7, paddingTop: 3, paddingBottom: 1.5, minWidth: 24, alignItems: 'center' },
+  lineNumText: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, lineHeight: 1, textAlign: 'center' },
+  lineTitleBlock: { flex: 1 },
+  lineTitle: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
+  lineDigits: { fontSize: 6.5, color: C.gray, marginTop: 1 },
+  lineBody: { fontSize: 8.5, color: C.text, lineHeight: 1.72 },
+
   // ─── Archetype ────────────────────────────────────────────────────────────────
   archetypeCard: { backgroundColor: '#0F0C1C', borderWidth: 1.5, borderColor: '#3A2A50', borderRadius: 14, padding: 18, marginBottom: 14, flexDirection: 'row', gap: 16 },
   archetypeIconBox: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#1E1530', borderWidth: 1.5, borderColor: C.purple, alignItems: 'center', paddingTop: 14, flexShrink: 0 },
@@ -287,6 +298,44 @@ function Dots({ count }) {
       {[0,1,2,3,4].map(i => (
         <View key={i} style={[s.dot, i < count && s.dotFill]} />
       ))}
+    </View>
+  );
+}
+
+// ─── Lines section ────────────────────────────────────────────────────────────
+const LINE_META = [
+  { key: 'selfEsteem',   label: 'Самооценка',         digits: '1 · 2 · 3', matrixKey: 'selfEsteem'   },
+  { key: 'household',    label: 'Быт',                digits: '4 · 5 · 6', matrixKey: 'household'    },
+  { key: 'talent',       label: 'Талант',             digits: '7 · 8 · 9', matrixKey: 'talent'       },
+  { key: 'goal',         label: 'Цель',               digits: '1 · 4 · 7', matrixKey: 'goal'         },
+  { key: 'family',       label: 'Семья',              digits: '2 · 5 · 8', matrixKey: 'family'       },
+  { key: 'stability',    label: 'Стабильность',       digits: '3 · 6 · 9', matrixKey: 'stability'    },
+  { key: 'spirituality', label: 'Духовность',         digits: '1 · 5 · 9', matrixKey: 'spirituality' },
+  { key: 'temperament',  label: 'Темперамент',        digits: '3 · 5 · 7', matrixKey: 'temperament'  },
+];
+function LinesSection({ matrix, lines }) {
+  if (!lines) return null;
+  return (
+    <View style={s.linesGrid}>
+      {LINE_META.map(({ key, label, digits, matrixKey }) => {
+        const text = lines[key];
+        const value = matrix[matrixKey];
+        if (!text) return null;
+        return (
+          <View key={key} style={s.lineCard}>
+            <View style={s.lineHeader}>
+              <View style={s.lineNumBadge}>
+                <Text style={s.lineNumText}>{value}</Text>
+              </View>
+              <View style={s.lineTitleBlock}>
+                <Text style={s.lineTitle}>{label}</Text>
+                <Text style={s.lineDigits}>{digits}</Text>
+              </View>
+            </View>
+            <Text style={s.lineBody}>{text}</Text>
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -437,6 +486,7 @@ function CoverPage({ name, birthDate }) {
   const toc = [
     'Ключевые числа и их разбор',
     'Психоматрица Пифагора',
+    'Линии матрицы — 8 чисел',
     'Разбор всех 9 секторов',
     'Значимые комбинации',
     'Денежный потенциал',
@@ -446,8 +496,7 @@ function CoverPage({ name, birthDate }) {
     'Пинаклы жизни',
     'Личные годы 5-летний прогноз',
     'Архетип личности',
-    'Аффирмации',
-    'Талисманы и цвета',
+    'Аффирмации и талисманы',
     'Практические рекомендации',
     'Знаменитости с вашей судьбой',
   ];
@@ -889,7 +938,20 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Footer name={name} />
       </Page>
 
-      {/* ── Page 3+: Cell analysis + Combinations ─────────────────────────── */}
+      {/* ── Page 4: Lines analysis ──────────────────────────────────────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name={name} />
+        <Text style={s.sectionLabel}>◆  ЛИНИИ МАТРИЦЫ — ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА</Text>
+        <View style={{ marginBottom: 10 }}>
+          <Text style={{ fontSize: 9, color: C.grayLight, lineHeight: 1.65 }}>
+            Линии психоматрицы — это суммы трёх связанных ячеек. Они раскрывают скрытые грани характера: самооценку, таланты, целеустремлённость, духовность и темперамент.
+          </Text>
+        </View>
+        <LinesSection matrix={matrix} lines={analysis.lines} />
+        <Footer name={name} />
+      </Page>
+
+      {/* ── Page 5: Cell analysis + Combinations ─────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
         <Text style={s.sectionLabel}>◆  РАЗБОР СЕКТОРОВ МАТРИЦЫ</Text>
