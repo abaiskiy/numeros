@@ -79,29 +79,29 @@ const s = StyleSheet.create({
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
 
   // Intro
-  introCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderLeftWidth: 3, borderLeftColor: C.rose, borderRadius: 10, padding: 14, marginBottom: 18 },
-  introText: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
+  introCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderLeftWidth: 3, borderLeftColor: C.rose, borderRadius: 10, padding: 10, marginBottom: 12 },
+  introText: { fontSize: 9, color: C.text, lineHeight: 1.65 },
 
   // Two people side by side
-  personsRow: { flexDirection: 'row', gap: 10, marginBottom: 18 },
-  personCard: { flex: 1, borderRadius: 10, padding: 14, borderWidth: 1 },
+  personsRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  personCard: { flex: 1, borderRadius: 10, padding: 10, borderWidth: 1 },
   personCardP1: { backgroundColor: C.p1faint, borderColor: C.p1border },
   personCardP2: { backgroundColor: C.p2faint, borderColor: C.p2border },
-  personName: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 10 },
+  personName: { fontSize: 12, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 6 },
   personNameP1: { color: C.p1 },
   personNameP2: { color: C.p2 },
-  personDate: { fontSize: 8, color: C.gray, marginBottom: 10 },
-  personNums: { flexDirection: 'row', gap: 5, flexWrap: 'wrap' },
-  personNumItem: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 7, paddingVertical: 7, borderWidth: 1 },
-  personNumVal: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
-  personNumLbl: { fontSize: 6, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
+  personDate: { fontSize: 7.5, color: C.gray, marginBottom: 7 },
+  personNums: { flexDirection: 'row', gap: 4, flexWrap: 'wrap' },
+  personNumItem: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 6, paddingVertical: 5, borderWidth: 1 },
+  personNumVal: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
+  personNumLbl: { fontSize: 5.5, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 2 },
 
   // Mini matrix
-  miniMatrixWrap: { marginTop: 10 },
-  miniMatrixTitle: { fontSize: 6.5, color: C.gray, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 },
-  miniGrid: { flexDirection: 'column', gap: 3 },
-  miniRow: { flexDirection: 'row', gap: 3 },
-  miniCell: { flex: 1, backgroundColor: '#0D0E14', borderWidth: 1, borderColor: C.border, borderRadius: 5, paddingVertical: 5, alignItems: 'center', justifyContent: 'center', gap: 1 },
+  miniMatrixWrap: { marginTop: 8 },
+  miniMatrixTitle: { fontSize: 6, color: C.gray, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
+  miniGrid: { flexDirection: 'column', gap: 2 },
+  miniRow: { flexDirection: 'row', gap: 2 },
+  miniCell: { flex: 1, backgroundColor: '#0D0E14', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 4, alignItems: 'center', justifyContent: 'center', gap: 1 },
   miniCellHL: { borderColor: C.p1, backgroundColor: C.goldFaint },
   miniCellHLP2: { borderColor: C.p2, backgroundColor: C.p2faint },
   miniCellLabel: { fontSize: 5, color: C.gray, textTransform: 'uppercase' },
@@ -179,6 +179,18 @@ const s = StyleSheet.create({
   recNum: { width: 18, height: 18, borderRadius: 9, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   recNumText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, lineHeight: 1, textAlign: 'center' },
   recText: { flex: 1, fontSize: 9.5, color: C.text, lineHeight: 1.7 },
+
+  // Favorable dates
+  datesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  dateCard: { width: '31%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 8, padding: 9 },
+  dateCardSpecial: { backgroundColor: C.goldFaint, borderColor: C.goldBorder },
+  dateNum: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, lineHeight: 1, textAlign: 'center', marginBottom: 3 },
+  dateNumSpecial: { color: C.gold },
+  dateDateText: { fontSize: 8.5, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, textAlign: 'center', marginBottom: 3 },
+  dateLabelText: { fontSize: 7, color: C.gold, textAlign: 'center', marginBottom: 4 },
+  dateTipText: { fontSize: 6.5, color: C.gray, lineHeight: 1.5, textAlign: 'center' },
+  coupleNumNote: { backgroundColor: C.roseFaint, borderWidth: 1, borderColor: C.roseBorder, borderRadius: 8, padding: 10, marginBottom: 10 },
+  coupleNumNoteText: { fontSize: 8.5, color: '#E8B8D5', lineHeight: 1.65, textAlign: 'center' },
 
   // QR
   qrSection: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 14, marginBottom: 10 },
@@ -383,6 +395,32 @@ function PersonalYearsComparison({ py1, py2, n1, n2, note }) {
   );
 }
 
+// ─── Favorable dates ──────────────────────────────────────────────────────────
+function FavorableDatesSection({ dates, coupleNum }) {
+  if (!dates || dates.length === 0) return null;
+  return (
+    <View>
+      {coupleNum ? (
+        <View style={s.coupleNumNote}>
+          <Text style={s.coupleNumNoteText}>
+            Число вашей пары — {coupleNum}. Дни, отмеченные золотом, особенно сильны для вас двоих.
+          </Text>
+        </View>
+      ) : null}
+      <View style={s.datesGrid}>
+        {dates.map((d, i) => (
+          <View key={i} style={[s.dateCard, d.special && s.dateCardSpecial]}>
+            <Text style={[s.dateNum, d.special && s.dateNumSpecial]}>{d.dayNum}</Text>
+            <Text style={s.dateDateText}>{d.date}</Text>
+            <Text style={s.dateLabelText}>{d.label}</Text>
+            <Text style={s.dateTipText}>{d.tip}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 // ─── QR section ───────────────────────────────────────────────────────────────
 function QRSection({ qrDataUrl }) {
   return (
@@ -412,9 +450,11 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
   const dangerSignals = a.dangerSignals ?? [];
   const personalYearNote = a.personalYearNote ?? '';
 
-  const py1 = extras?.personalYears1 ?? [];
-  const py2 = extras?.personalYears2 ?? [];
-  const qrDataUrl = extras?.qrDataUrl ?? null;
+  const py1           = extras?.personalYears1  ?? [];
+  const py2           = extras?.personalYears2  ?? [];
+  const qrDataUrl     = extras?.qrDataUrl       ?? null;
+  const favorableDates = extras?.favorableDates ?? [];
+  const coupleNum     = extras?.coupleNum       ?? null;
 
   const levelLabel = score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы';
   const levelColor = score >= 85 ? C.gold : score >= 70 ? '#86efac' : score >= 55 ? C.blue : '#fca5a5';
@@ -432,6 +472,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
     'Сильные стороны союза',
     'Личные годы пары',
     'Благоприятные периоды',
+    'Благоприятные даты',
     'Рекомендации и итог',
   ];
 
@@ -653,17 +694,31 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
           <Text style={s.conclusionBody}>{a.conclusion}</Text>
         </View>
 
-        <QRSection qrDataUrl={qrDataUrl} />
-
-        <View wrap={false} style={s.outroCard}>
-          <Text style={s.outroText}>
-            Разбор составлен по системе психоматрицы Пифагора{'\n'}
-            numeros.kz
-          </Text>
-        </View>
-
         <Footer name1={n1} name2={n2} />
       </Page>
+
+      {/* ── Page 7: Favorable dates ────────────────────────────────────────── */}
+      {favorableDates.length > 0 && (
+        <Page size="A4" style={[s.page, s.contentPage]}>
+          <PageHeader name1={n1} name2={n2} />
+
+          <View wrap={false}>
+            <SectionLabel text="БЛАГОПРИЯТНЫЕ ДАТЫ ДЛЯ ПАРЫ" gold />
+            <FavorableDatesSection dates={favorableDates} coupleNum={coupleNum} />
+          </View>
+
+          <View wrap={false} style={[s.outroCard, { marginTop: 16 }]}>
+            <Text style={s.outroText}>
+              Разбор составлен по системе психоматрицы Пифагора{'\n'}
+              numeros.kz
+            </Text>
+          </View>
+
+          <QRSection qrDataUrl={qrDataUrl} />
+
+          <Footer name1={n1} name2={n2} />
+        </Page>
+      )}
 
     </Document>
   );

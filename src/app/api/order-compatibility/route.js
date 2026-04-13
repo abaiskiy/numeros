@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { calculateMatrix, getPersonalYears } from '@/lib/matrixCalc';
+import { calculateMatrix, getPersonalYears, getFavorableDates } from '@/lib/matrixCalc';
 
 // ─── Compatibility score (same logic as frontend) ─────────────────────────────
 function calculateCompatibility(m1, m2) {
@@ -188,7 +188,7 @@ async function buildPDF(name1, date1, m1, name2, date2, m2, score, analysis, ext
 }
 
 // ─── Send email ───────────────────────────────────────────────────────────────
-async function sendEmail(name1, name2, email, pdfBuffer) {
+async function sendEmail(name1, name2, email, pdfBuffer, score, analysis, coupleNum, nextDate) {
   const { Resend } = await import('resend');
   const apiKey = process.env.RESEND_API_KEY;
   console.log('[sendEmail-compat] RESEND_API_KEY present:', !!apiKey, '| first 8 chars:', apiKey?.slice(0, 8));
@@ -196,27 +196,69 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
   const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+  const n1 = name1 || 'Первый';
+  const n2 = name2 || 'Второй';
+
+  const levelLabel = score >= 85 ? 'Исключительная' : score >= 70 ? 'Высокая' : score >= 55 ? 'Хорошая' : 'Требует работы';
+  const levelColor = score >= 85 ? '#C9A84C' : score >= 70 ? '#86efac' : score >= 55 ? '#5B9BD5' : '#fca5a5';
+
+  const topStrength = analysis?.strengths?.[0] ?? '';
+  const topGreenFlag = analysis?.greenFlags?.[0] ?? '';
+
   for (let attempt = 1; attempt <= 3; attempt++) {
     const { data, error } = await resend.emails.send({
       from: 'Numeros <razbor@numeros.kz>',
       to: email,
-      subject: `Разбор совместимости: ${name1 || 'Первый'} & ${name2 || 'Второй'}`,
+      subject: `Разбор совместимости ${n1} & ${n2} готов`,
       html: `
-        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
-          <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
-          <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
-          <h2 style="font-size:20px;margin:0 0 8px;">Разбор готов!</h2>
-          <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-            Нумерологический разбор совместимости <strong style="color:#fff;">${name1 || 'первого'}</strong> и <strong style="color:#fff;">${name2 || 'второго'}</strong> прикреплён к этому письму.
-          </p>
-          <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
-            <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 PDF разбор во вложении</p>
-            <p style="color:#aaa;font-size:14px;margin:0;">6 сфер совместимости, языки любви, зелёные флаги и сигналы, личные годы и итоговый прогноз.</p>
+        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:0;max-width:560px;margin:auto;border-radius:16px;overflow:hidden;">
+
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg,#12080F,#0D0E14);padding:32px 32px 24px;border-bottom:1px solid #2A1025;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+              <div style="width:36px;height:36px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;font-size:16px;font-weight:700;color:#C9A84C;text-align:center;line-height:36px;">N</div>
+              <span style="font-size:18px;font-weight:700;color:#C9A84C;letter-spacing:3px;">NUMEROS</span>
+            </div>
+            <h1 style="margin:0 0 6px;font-size:20px;color:#fff;">${n1} & ${n2}</h1>
+            <p style="margin:0;font-size:14px;color:#888;">Нумерологический разбор совместимости · ${dateStr}</p>
           </div>
-          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Психоматрица Пифагора</p>
+
+          <!-- Score block -->
+          <div style="padding:24px 32px;">
+            <div style="background:#100A10;border:1px solid #2A1028;border-radius:14px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;">
+              <div style="width:72px;height:72px;border-radius:50%;border:3px solid ${levelColor};display:flex;align-items:center;justify-content:center;background:#08090D;flex-shrink:0;text-align:center;">
+                <span style="font-size:26px;font-weight:700;color:#fff;line-height:1;">${score}</span>
+              </div>
+              <div>
+                <p style="margin:0 0 4px;font-size:16px;font-weight:700;color:${levelColor};">${levelLabel} совместимость</p>
+                <p style="margin:0;font-size:12px;color:#aaa;">Числа пары: ${coupleNum ?? '—'}</p>
+              </div>
+            </div>
+
+            ${topGreenFlag ? `
+            <div style="background:#0A100A;border:1px solid #1E2A12;border-left:3px solid #8ABF5A;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#8ABF5A;text-transform:uppercase;letter-spacing:1px;">Сила вашего союза</p>
+              <p style="margin:0;font-size:13px;color:#B0D090;line-height:1.6;">${topGreenFlag}</p>
+            </div>` : ''}
+
+            ${nextDate ? `
+            <div style="background:#1C1A10;border:1px solid #3A3218;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#C9A84C;text-transform:uppercase;letter-spacing:1px;">Ближайшая благоприятная дата</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#fff;">${nextDate.date} <span style="font-size:12px;font-weight:400;color:#C9A84C;">— ${nextDate.label}</span></p>
+              <p style="margin:4px 0 0;font-size:12px;color:#888;">${nextDate.tip}</p>
+            </div>` : ''}
+
+            <!-- PDF notice -->
+            <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
+              <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Полный разбор во вложении</p>
+              <p style="color:#aaa;font-size:13px;margin:0;line-height:1.6;">6 сфер совместимости, языки любви, зелёные флаги и сигналы внимания, сравнение ключевых чисел, личные годы пары и все благоприятные даты на 90 дней.</p>
+            </div>
+
+            <p style="color:#555;font-size:11px;margin:0;text-align:center;">numeros.kz · Психоматрица Пифагора · ${dateStr}</p>
+          </div>
         </div>
       `,
-      attachments: [{ filename: `numeros-sovmestimost.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer) }],
+      attachments: [{ filename: `numeros-sovmestimost-${n1.toLowerCase()}-${n2.toLowerCase()}.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer) }],
     });
 
     if (error) {
@@ -256,7 +298,12 @@ export async function POST(req) {
       color: { dark: '#C9A84C', light: '#0D0E14' },
     });
 
-    const extras = { personalYears1: py1, personalYears2: py2, qrDataUrl };
+    // Compute favorable dates and couple number
+    const reduceSingle = (n) => { let x = Math.abs(n); while (x > 9) x = String(x).split('').reduce((s,d)=>s+ +d,0); return x; };
+    const favorableDates = getFavorableDates(date1, date2, m1, m2, 90, 12);
+    const coupleNum = reduceSingle(reduceSingle(m1.destiny) + reduceSingle(m2.destiny));
+
+    const extras = { personalYears1: py1, personalYears2: py2, qrDataUrl, favorableDates, coupleNum };
 
     console.log('[order-compatibility] 4. Loading book');
     const book = JSON.parse(readFileSync(join(process.cwd(), 'src/data/numerology-book.json'), 'utf-8'));
@@ -270,7 +317,8 @@ export async function POST(req) {
     console.log('[order-compatibility] 6. PDF built:', pdfBuffer?.length);
 
     console.log('[order-compatibility] 7. Sending email to', email);
-    await sendEmail(name1, name2, email, pdfBuffer);
+    const nextDate = favorableDates[0] ?? null;
+    await sendEmail(name1, name2, email, pdfBuffer, score, analysis, coupleNum, nextDate);
     console.log('[order-compatibility] 7. Done');
 
     return NextResponse.json({ ok: true });

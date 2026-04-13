@@ -212,7 +212,7 @@ async function buildPDF(name, birthDate, matrix, analysis, extras) {
 
 // ─── Send email ───────────────────────────────────────────────────────────────
 
-async function sendEmail(name, email, pdfBuffer) {
+async function sendEmail(name, email, pdfBuffer, matrix, analysis) {
   const { Resend } = await import('resend');
   const apiKey = process.env.RESEND_API_KEY;
   console.log('[sendEmail] RESEND_API_KEY present:', !!apiKey, '| first 8 chars:', apiKey?.slice(0, 8));
@@ -220,25 +220,63 @@ async function sendEmail(name, email, pdfBuffer) {
   const resend = new Resend(apiKey);
   const dateStr = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+  const archetype  = analysis?.archetype?.name ?? '';
+  const topStrength = analysis?.strengths?.[0] ?? '';
+  const numCell = (label, val, color) =>
+    `<div style="flex:1;background:#14151C;border:1px solid #2A2B35;border-radius:10px;padding:12px 8px;text-align:center;min-width:80px;">
+      <div style="font-size:22px;font-weight:700;color:${color};margin-bottom:4px;">${val}</div>
+      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">${label}</div>
+    </div>`;
+
   // Retry up to 3 times on failure
   for (let attempt = 1; attempt <= 3; attempt++) {
     const { data, error } = await resend.emails.send({
       from: 'Numeros <razbor@numeros.kz>',
       to: email,
-      subject: `Ваш нумерологический разбор, ${name}`,
+      subject: `Ваш нумерологический разбор готов, ${name}`,
       html: `
-        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:40px;max-width:560px;margin:auto;border-radius:16px;">
-          <h1 style="color:#C9A84C;font-size:24px;margin:0 0 8px;">NUMEROS</h1>
-          <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
-          <h2 style="font-size:20px;margin:0 0 8px;">Привет, ${name}!</h2>
-          <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-            Ваш персональный нумерологический разбор готов. Он составлен на основе психоматрицы Пифагора.
-          </p>
-          <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
-            <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Разбор во вложении</p>
-            <p style="color:#aaa;font-size:14px;margin:0;">В PDF вы найдёте: матрицу, разбор секторов, денежный потенциал, прогноз, пинаклы жизни, личные годы и кармические уроки.</p>
+        <div style="background:#0D0E14;color:#fff;font-family:Inter,sans-serif;padding:0;max-width:560px;margin:auto;border-radius:16px;overflow:hidden;">
+
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg,#1C1A10,#0D0E14);padding:32px 32px 24px;border-bottom:1px solid #2A2B35;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+              <div style="width:36px;height:36px;border-radius:50%;border:1px solid #C9A84C;background:#1C1A10;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#C9A84C;text-align:center;line-height:36px;">N</div>
+              <span style="font-size:18px;font-weight:700;color:#C9A84C;letter-spacing:3px;">NUMEROS</span>
+            </div>
+            <h1 style="margin:0 0 8px;font-size:22px;color:#fff;">${name}, ваш разбор готов!</h1>
+            <p style="margin:0;font-size:14px;color:#888;">Персональный нумерологический разбор · ${dateStr}</p>
           </div>
-          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Психоматрица Пифагора</p>
+
+          <!-- Key numbers -->
+          <div style="padding:24px 32px;">
+            <p style="margin:0 0 16px;font-size:13px;color:#C9A84C;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Ваши ключевые числа</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+              ${numCell('Судьба',    matrix.destiny, '#C9A84C')}
+              ${numCell('Душа',      matrix.soul,    '#C9A84C')}
+              ${numCell('Карма',     matrix.karma,   '#9B7FCA')}
+              ${numCell('Потенциал', matrix.hidden,  '#5B9BD5')}
+            </div>
+
+            ${archetype ? `
+            <div style="background:#0F0C1C;border:1px solid #3A2A50;border-left:3px solid #9B7FCA;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#9B7FCA;text-transform:uppercase;letter-spacing:1px;">Ваш архетип</p>
+              <p style="margin:0;font-size:16px;font-weight:700;color:#C4A8E8;">${archetype}</p>
+            </div>` : ''}
+
+            ${topStrength ? `
+            <div style="background:#0A100A;border:1px solid #1E2A12;border-left:3px solid #8ABF5A;border-radius:10px;padding:14px 16px;margin-bottom:24px;">
+              <p style="margin:0 0 4px;font-size:11px;color:#8ABF5A;text-transform:uppercase;letter-spacing:1px;">Главная сила</p>
+              <p style="margin:0;font-size:13px;color:#B0D090;line-height:1.6;">${topStrength}</p>
+            </div>` : ''}
+
+            <!-- PDF attachment notice -->
+            <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
+              <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Полный разбор во вложении</p>
+              <p style="color:#aaa;font-size:13px;margin:0;line-height:1.6;">В PDF: матрица Пифагора, разбор всех 9 секторов, значимые комбинации, денежный потенциал, код отношений, прогноз, пиннаклы, личные годы, архетип, аффирмации и талисманы.</p>
+            </div>
+
+            <p style="color:#555;font-size:11px;margin:0;text-align:center;">numeros.kz · Психоматрица Пифагора · ${dateStr}</p>
+          </div>
         </div>
       `,
       attachments: [{
@@ -304,7 +342,7 @@ export async function POST(req) {
     console.log('[order] 6. PDF built, size:', pdfBuffer?.length);
 
     console.log('[order] 7. Sending email to', email);
-    await sendEmail(name, email, pdfBuffer);
+    await sendEmail(name, email, pdfBuffer, matrix, analysis);
     console.log('[order] 7. Done');
 
     return NextResponse.json({ ok: true });

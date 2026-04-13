@@ -351,3 +351,65 @@ export function getFamousByDestiny(destiny) {
   const n = reduceToSingle(Math.abs(destiny));
   return FAMOUS_BY_DIGIT[n] ?? FAMOUS_BY_DIGIT[1];
 }
+
+// ─── Favorable dates for a couple ────────────────────────────────────────────
+
+const DAY_NUM_MEANING = {
+  1: { label: 'Новые начала',        tip: 'Идеально для важных решений, первого шага, старта совместных проектов' },
+  2: { label: 'Гармония и союз',     tip: 'Лучший день для разговоров по душам, признаний и договорённостей' },
+  3: { label: 'Радость и творчество',tip: 'Для свиданий, путешествий, совместного творчества и праздников' },
+  4: { label: 'Стабильность',        tip: 'Для планирования, серьёзных договорённостей, финансовых решений' },
+  5: { label: 'Перемены и свобода',  tip: 'Для новых впечатлений, путешествий, неожиданных шагов' },
+  6: { label: 'Любовь и забота',     tip: 'Для укрепления отношений, романтики, разговоров о семье' },
+  7: { label: 'Духовность',          tip: 'Для глубоких бесед, совместной медитации, рефлексии об отношениях' },
+  8: { label: 'Сила и успех',        tip: 'Для важных совместных решений, достижений, публичных шагов' },
+  9: { label: 'Завершение',          tip: 'Для прощения, подведения итогов, перехода на новый уровень' },
+};
+
+/**
+ * Returns up to `limit` favorable dates for a couple in the next `daysAhead` days.
+ * A date is "favorable" when its universal day number matches any of the couple's
+ * power numbers (reduced destiny, soul of either person).
+ */
+export function getFavorableDates(date1, date2, m1, m2, daysAhead = 90, limit = 12) {
+  const r = (n) => reduceToSingle(Math.abs(n));
+
+  // Couple's "power numbers" — unique reduced values
+  const powerNums = new Set([
+    r(m1.destiny), r(m2.destiny),
+    r(m1.soul),    r(m2.soul),
+  ]);
+
+  // Also add the sum of both destinies reduced (couple number)
+  const coupleNum = r(r(m1.destiny) + r(m2.destiny));
+  powerNums.add(coupleNum);
+
+  const results = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let i = 1; i <= daysAhead && results.length < limit; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    const dd = date.getDate();
+    const mm = date.getMonth() + 1;
+    const yy = date.getFullYear();
+    const dayNum = r(dd + mm + yy);
+
+    if (powerNums.has(dayNum)) {
+      const meaning = DAY_NUM_MEANING[dayNum];
+      results.push({
+        date:    date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+        dateISO: date.toISOString().slice(0, 10),
+        dayNum,
+        label:   meaning?.label ?? '',
+        tip:     meaning?.tip   ?? '',
+        // mark couple number dates as extra special
+        special: dayNum === coupleNum,
+      });
+    }
+  }
+
+  return results;
+}
