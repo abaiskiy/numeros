@@ -68,15 +68,15 @@ const s = StyleSheet.create({
 
   // Key numbers
   keyRow: { flexDirection: 'row', gap: 7, marginBottom: 16 },
-  keyCard: { flex: 1, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 8, alignItems: 'center' },
-  keyLabel: { fontSize: 6, color: C.gold, letterSpacing: 0.5, marginBottom: 5, textTransform: 'uppercase', opacity: 0.7 },
-  keyValue: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
-  keyDesc: { fontSize: 7, color: C.grayLight, marginTop: 3 },
+  keyCard: { flex: 1, backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 8, paddingVertical: 12, paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' },
+  keyLabel: { fontSize: 6, color: C.gold, letterSpacing: 0.5, marginBottom: 6, textTransform: 'uppercase', opacity: 0.7, textAlign: 'center' },
+  keyValue: { fontSize: 22, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
+  keyDesc: { fontSize: 7, color: C.grayLight, marginTop: 6, textAlign: 'center' },
 
   divider: { height: 1, backgroundColor: C.border, marginVertical: 14 },
 
   // ─── Full matrix ─────────────────────────────────────────────────────────────
-  matrixWrap: { backgroundColor: C.dark, borderRadius: 14, padding: 10, borderWidth: 1, borderColor: C.border, marginBottom: 0 },
+  matrixWrap: { backgroundColor: C.dark, borderRadius: 14, padding: 10, borderWidth: 1, borderColor: C.border, marginBottom: 0, breakInside: 'avoid' },
   matrixTopRow: { flexDirection: 'row', gap: 5, marginBottom: 5 },
   matrixKeyBlock: { flex: 3, backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 8, padding: 8 },
   matrixKeyBlockLabel: { fontSize: 5.5, color: C.gray, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 },
@@ -159,7 +159,7 @@ const s = StyleSheet.create({
   karmicCard: { backgroundColor: '#0D0818', borderWidth: 1, borderColor: '#2A1840', borderLeftWidth: 3, borderLeftColor: C.purple, borderRadius: 10, padding: 13, marginBottom: 8 },
   karmicHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   karmicNumCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#1E1030', borderWidth: 1, borderColor: '#3A2055', alignItems: 'center', justifyContent: 'center' },
-  karmicNum: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple },
+  karmicNum: { fontSize: 13, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple, textAlign: 'center', lineHeight: 1 },
   karmicTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', flex: 1 },
   karmicBody: { fontSize: 9.5, color: '#C0A8D8', lineHeight: 1.72 },
   karmicNoLessons: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 10, padding: 13, marginBottom: 10 },
@@ -183,7 +183,7 @@ const s = StyleSheet.create({
   pinnacleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: C.border },
   pinnacleRowLast: { borderBottomWidth: 0 },
   pinnacleNumCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.goldFaint, borderWidth: 1.5, borderColor: C.goldBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  pinnacleNum: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
+  pinnacleNum: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   pinnacleInfo: { flex: 1 },
   pinnacleLabel: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, marginBottom: 3 },
   pinnacleAge: { fontSize: 8.5, color: C.gray },
@@ -195,7 +195,7 @@ const s = StyleSheet.create({
   pyRowLast: { borderBottomWidth: 0 },
   pyYear: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.grayLight, width: 38 },
   pyNumCircle: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#1A1B26', borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center', marginRight: 10, flexShrink: 0 },
-  pyNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
+  pyNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   pyMeaning: { flex: 1, fontSize: 9, color: C.text, lineHeight: 1.55 },
   pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 6 },
   pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 'bold', color: C.dark },
@@ -206,7 +206,7 @@ const s = StyleSheet.create({
   famousRow: { flexDirection: 'row', gap: 10 },
   famousItem: { flex: 1, backgroundColor: '#100E08', borderWidth: 1, borderColor: C.goldBorder, borderRadius: 9, padding: 12, alignItems: 'center' },
   famousCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.goldFaint, borderWidth: 1.5, borderColor: C.gold, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  famousInitial: { fontSize: 18, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold },
+  famousInitial: { fontSize: 16, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   famousName: { fontSize: 9.5, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, textAlign: 'center', marginBottom: 3 },
   famousField: { fontSize: 8, color: C.gold, textAlign: 'center' },
 
@@ -659,7 +659,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
       {/* ── Cover ─────────────────────────────────────────────────────────── */}
       <CoverPage name={name} birthDate={birthDate} />
 
-      {/* ── Page 2: Intro + Key numbers + Full matrix ─────────────────────── */}
+      {/* ── Page 2: Intro + Key numbers ────────────────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
@@ -685,10 +685,17 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
           ))}
         </View>
 
-        <View style={s.divider} />
+        <Footer name={name} />
+      </Page>
+
+      {/* ── Page 3: Full matrix (dedicated page) ───────────────────────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name={name} />
 
         <Text style={s.sectionLabel}>◆  ПСИХОМАТРИЦА ПИФАГОРА</Text>
-        <FullMatrix matrix={matrix} />
+        <View wrap={false}>
+          <FullMatrix matrix={matrix} />
+        </View>
 
         <Footer name={name} />
       </Page>
