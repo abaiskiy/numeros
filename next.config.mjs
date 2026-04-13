@@ -10,6 +10,14 @@ const nextConfig = {
       },
     ],
   },
+  // Браузеры по умолчанию бьют в /favicon.ico; iOS — в /apple-touch-icon.png.
+  // Next генерирует /icon.png и /apple-icon.png из app/icon.svg.
+  async redirects() {
+    return [
+      { source: '/favicon.ico', destination: '/icon.png', permanent: false },
+      { source: '/apple-touch-icon.png', destination: '/apple-icon.png', permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
