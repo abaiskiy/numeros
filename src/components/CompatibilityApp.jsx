@@ -837,11 +837,11 @@ export default function CompatibilityApp() {
                   <span className="text-[#D4AF37] italic font-light">глубже?</span>
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed mb-5 max-w-md">
-                  Бесплатный расчёт даёт общий балл. Полный разбор — это 5 страниц PDF с анализом по 6 сферам, сравнением матриц, точками напряжения и персональными рекомендациями.
+                  Бесплатный расчёт даёт общий балл. Полный разбор — это 10+ страниц PDF с анализом по 6 сферам, сравнением матриц, точками напряжения и персональными рекомендациями.
                 </p>
                 <div className="grid grid-cols-2 gap-2 mb-6">
                   {[
-                    { icon: <FileText size={13} />, text: '5 страниц детального PDF' },
+                    { icon: <FileText size={13} />, text: '10+ страниц детального PDF' },
                     { icon: <Star size={13} />, text: 'Анализ по 6 сферам жизни' },
                     { icon: <Heart size={13} />, text: 'Сильные стороны и напряжения' },
                     { icon: <Calendar size={13} />, text: 'Прогноз и лучшие периоды' },
