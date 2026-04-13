@@ -284,7 +284,7 @@ function CoverPage({ name, birthDate }) {
         ))}
       </View>
       <View style={s.coverBottom}>
-        <Text style={s.coverBottomL}>numeros.kz · Система А.Ф. Александрова</Text>
+        <Text style={s.coverBottomL}>numeros.kz · Психоматрица Пифагора</Text>
         <Text style={s.coverBottomR}>NUMEROS.KZ</Text>
       </View>
     </Page>
@@ -841,7 +841,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         <View wrap={false} style={s.outroCard}>
           <Text style={s.outroText}>
-            Разбор составлен по системе А.Ф. Александрова · Психоматрица Пифагора{'\n'}
+            Разбор составлен по системе психоматрицы Пифагора{'\n'}
             Нумерология — инструмент самопознания. Используйте знания во благо.{'\n'}
             numeros.kz
           </Text>

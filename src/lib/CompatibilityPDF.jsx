@@ -461,7 +461,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
         </View>
 
         <View style={s.coverBottom}>
-          <Text style={s.coverBottomL}>numeros.kz · Система А.Ф. Александрова</Text>
+          <Text style={s.coverBottomL}>numeros.kz · Психоматрица Пифагора</Text>
           <Text style={s.coverBottomR}>NUMEROS.KZ</Text>
         </View>
       </Page>
@@ -630,7 +630,7 @@ export function CompatibilityPDF({ name1, date1, m1, name2, date2, m2, score, an
 
         <View wrap={false} style={s.outroCard}>
           <Text style={s.outroText}>
-            Разбор составлен по системе А.Ф. Александрова · Психоматрица Пифагора{'\n'}
+            Разбор составлен по системе психоматрицы Пифагора{'\n'}
             numeros.kz
           </Text>
         </View>

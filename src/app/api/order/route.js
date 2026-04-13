@@ -166,13 +166,13 @@ async function sendEmail(name, email, pdfBuffer) {
           <p style="color:#888;font-size:14px;margin:0 0 24px;">numeros.kz</p>
           <h2 style="font-size:20px;margin:0 0 8px;">Привет, ${name}!</h2>
           <p style="color:#aaa;font-size:15px;line-height:1.6;margin:0 0 24px;">
-            Ваш персональный нумерологический разбор готов. Он составлен на основе системы Александрова с применением психоматрицы Пифагора.
+            Ваш персональный нумерологический разбор готов. Он составлен на основе психоматрицы Пифагора.
           </p>
           <div style="background:#14151C;border:1px solid #2A2B35;border-radius:12px;padding:20px;margin-bottom:24px;">
             <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 Разбор во вложении</p>
             <p style="color:#aaa;font-size:14px;margin:0;">В PDF вы найдёте: матрицу, разбор секторов, денежный потенциал, прогноз, пинаклы жизни, личные годы и кармические уроки.</p>
           </div>
-          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
+          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Психоматрица Пифагора</p>
         </div>
       `,
       attachments: [{

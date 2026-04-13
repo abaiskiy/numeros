@@ -142,7 +142,7 @@ async function sendEmail(name1, name2, email, pdfBuffer) {
             <p style="color:#C9A84C;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;letter-spacing:1px;">📎 PDF разбор во вложении</p>
             <p style="color:#aaa;font-size:14px;margin:0;">6 сфер совместимости, языки любви, зелёные флаги и сигналы, личные годы и итоговый прогноз.</p>
           </div>
-          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Система нумерологии Александрова</p>
+          <p style="color:#666;font-size:12px;margin:0;">Составлено ${dateStr} · Психоматрица Пифагора</p>
         </div>
       `,
       attachments: [{ filename: `numeros-sovmestimost.pdf`, content: Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer) }],
