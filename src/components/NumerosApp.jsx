@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
@@ -634,23 +634,222 @@ const faqs = [
 const testimonials = [
   {
     name: 'Айгерим О.',
-    text: 'Это не просто расчет, это инструкция к жизни. Узнала о себе то, что чувствовала интуитивно.',
-    role: 'Психолог',
+    role: 'Психолог, Алматы',
+    destiny: 7,
+    rating: 5,
+    text: 'Описание числа характера — будто списано с меня. Разбор теневой стороны поразил честностью, не ожидала такой глубины. Теперь понимаю, почему некоторые паттерны повторяются годами.',
     avatar: '/avatar-aigerim.jpg',
   },
   {
     name: 'Оксана Б.',
-    text: 'Использую матрицу для анализа кандидатов. Помогает понять мотивацию человека.',
-    role: 'HR Директор',
+    role: 'HR-директор, Астана',
+    destiny: 4,
+    rating: 5,
+    text: 'Использую матрицу для анализа кандидатов уже 3 месяца. Точность попаданий в характер — 9 из 10. Раздел "Карьера и предназначение" показал такие профессии, которые я сама давно рассматривала.',
     avatar: '/avatar-oksana.jpg',
   },
   {
     name: 'Динара К.',
-    text: 'Интерфейс очень красивый, а содержание разбора еще лучше. Рахмет за глубину!',
-    role: 'Маркетолог',
+    role: 'Маркетолог, Алматы',
+    destiny: 3,
+    rating: 5,
+    text: 'Раздел совместимости с мужем открыл глаза на наши конфликты. Теперь я понимаю его реакции — это просто его число, не злой умысел. Отношения стали намного мягче.',
     avatar: '/avatar-dinara.jpg',
   },
+  {
+    name: 'Жанар М.',
+    role: 'Предприниматель, Шымкент',
+    destiny: 8,
+    rating: 5,
+    text: 'Денежный блок описан настолько точно — я не могла поверить. Стратегию из раздела "Рост дохода" взяла как руководство к действию. Рекомендую каждой женщине.',
+    avatar: '/avatar-zhanar.jpg',
+  },
 ];
+
+// ─── useCountUp hook ──────────────────────────────────────────────────────────
+function useCountUp(target, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true); },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    const steps = 60;
+    const step = target / steps;
+    let current = 0;
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { setCount(target); clearInterval(interval); }
+      else setCount(Math.floor(current));
+    }, duration / steps);
+    return () => clearInterval(interval);
+  }, [started, target, duration]);
+
+  return [count, ref];
+}
+
+// ─── PDF Preview Strip ────────────────────────────────────────────────────────
+const PDF_PAGES = [
+  { title: 'Обложка разбора', tag: 'Персональный', color: '#C9A84C', content: 'cover' },
+  { title: 'Ключевые числа', tag: 'Судьба · Душа · Карма', color: '#9B7FCA', content: 'numbers' },
+  { title: 'Психоматрица', tag: '9 секторов', color: '#C9A84C', content: 'matrix' },
+  { title: 'Характер и личность', tag: 'Глубокий анализ', color: '#5B9BD5', content: 'lines' },
+  { title: 'Денежный потенциал', tag: 'Финансовый код', color: '#8ABF5A', content: 'lines' },
+  { title: 'Личный месяц', tag: 'Что делать сейчас', color: '#3ABFB3', content: 'lines' },
+  { title: 'Архетип личности', tag: 'Творец · Лидер · Мудрец', color: '#9B7FCA', content: 'lines' },
+  { title: 'Теневая сторона', tag: 'Честный разбор', color: '#D48EC0', content: 'lines' },
+  { title: 'Карьера', tag: 'Предназначение', color: '#8ABF5A', content: 'lines' },
+  { title: 'Аффирмации', tag: '5 личных аффирмаций', color: '#C9A84C', content: 'affirm' },
+];
+
+function PDFPreviewStrip({ onOrder }) {
+  const stripRef = useRef(null);
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    let running = true;
+    let pos = 0;
+    const speed = 0.6;
+    const tick = () => {
+      if (!running) return;
+      pos += speed;
+      if (pos >= el.scrollWidth / 2) pos = 0;
+      el.scrollLeft = pos;
+      requestAnimationFrame(tick);
+    };
+    const raf = requestAnimationFrame(tick);
+    const pause = () => { running = false; };
+    const resume = () => { running = true; requestAnimationFrame(tick); };
+    el.addEventListener('mouseenter', pause);
+    el.addEventListener('mouseleave', resume);
+    el.addEventListener('touchstart', pause, { passive: true });
+    el.addEventListener('touchend', resume, { passive: true });
+    return () => {
+      running = false;
+      cancelAnimationFrame(raf);
+      el.removeEventListener('mouseenter', pause);
+      el.removeEventListener('mouseleave', resume);
+    };
+  }, []);
+
+  const pages = [...PDF_PAGES, ...PDF_PAGES];
+
+  return (
+    <div
+      ref={stripRef}
+      className="flex gap-4 overflow-x-auto pb-2 select-none"
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', cursor: 'grab' }}
+    >
+      {pages.map((page, i) => (
+        <div
+          key={i}
+          className="shrink-0 w-44 md:w-52 bg-[#12131A] border border-white/[0.07] rounded-2xl overflow-hidden"
+          style={{ aspectRatio: '210/297' }}
+        >
+          {/* Page header */}
+          <div className="px-3 py-2.5 flex items-center justify-between border-b border-white/[0.06]" style={{ background: `${page.color}12` }}>
+            <div>
+              <div className="text-[7px] font-black uppercase tracking-widest mb-0.5" style={{ color: page.color }}>NUMEROS</div>
+              <div className="text-white text-[10px] font-bold leading-tight">{page.title}</div>
+            </div>
+            <div className="text-[8px] font-bold px-1.5 py-0.5 rounded-md" style={{ color: page.color, background: `${page.color}20` }}>{i % 10 + 1}</div>
+          </div>
+
+          {/* Content mockup */}
+          <div className="p-3 flex flex-col gap-2 pointer-events-none">
+            {/* Tag */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <div className="h-2.5 rounded-sm w-1" style={{ background: page.color }} />
+              <div className="h-1.5 rounded-full w-16 opacity-50" style={{ background: page.color }} />
+            </div>
+
+            {page.content === 'matrix' ? (
+              <div className="grid grid-cols-3 gap-1">
+                {[3,1,2,8,5,4,7,6,9].map((n,j) => (
+                  <div key={j} className="aspect-square rounded bg-white/[0.06] border border-white/[0.06] flex items-center justify-center">
+                    <span className="text-[10px] font-black blur-[2px]" style={{ color: `${page.color}CC` }}>{n}</span>
+                  </div>
+                ))}
+              </div>
+            ) : page.content === 'numbers' ? (
+              <div className="grid grid-cols-2 gap-1.5">
+                {['Судьба','Душа','Карма','Потенциал'].map((l,j) => (
+                  <div key={j} className="rounded-lg bg-white/[0.04] border border-white/[0.06] p-2 text-center">
+                    <div className="text-[14px] font-black blur-[3px]" style={{ color: page.color }}>{j+3}</div>
+                    <div className="text-[7px] text-gray-600 mt-0.5">{l}</div>
+                  </div>
+                ))}
+              </div>
+            ) : page.content === 'cover' ? (
+              <div className="flex flex-col gap-2">
+                <div className="h-2 rounded-full w-3/4 bg-white/20" />
+                <div className="h-1.5 rounded-full w-1/2 bg-white/10" />
+                <div className="mt-2 grid grid-cols-2 gap-1">
+                  {[65,80,70,90].map((w,j) => <div key={j} className="h-5 rounded bg-white/[0.05] border border-white/[0.06]" />)}
+                </div>
+              </div>
+            ) : page.content === 'affirm' ? (
+              <div className="flex flex-col gap-1.5">
+                {[1,2,3,4,5].map(j => (
+                  <div key={j} className="flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full shrink-0" style={{ background: page.color }} />
+                    <div className="h-1.5 rounded-full bg-white/10 blur-[1px] flex-1" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {[75, 55, 85, 45, 70, 60].map((w, j) => (
+                  <div key={j} className="flex flex-col gap-0.5">
+                    {j % 3 === 0 && <div className="h-1.5 rounded-full w-2/3 mb-0.5 opacity-60" style={{ background: page.color }} />}
+                    <div className="h-1.5 rounded-full bg-white/10 blur-[1px]" style={{ width: `${w}%` }} />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Lock overlay on some pages */}
+            {i % 3 === 2 && (
+              <div className="mt-1 flex items-center justify-center gap-1 opacity-40">
+                <span className="text-[8px] text-gray-500">🔒 только для вас</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Social proof counter ─────────────────────────────────────────────────────
+function SocialProofCounter() {
+  const [count, ref] = useCountUp(2140);
+  return (
+    <div ref={ref} className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-3 mx-auto mt-2">
+      <div className="flex -space-x-2">
+        {['А','О','Д','Ж'].map((l, i) => (
+          <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 border-2 border-[#0D0E14] flex items-center justify-center text-[10px] font-black text-[#D4AF37]">{l}</div>
+        ))}
+      </div>
+      <div className="text-left">
+        <span className="text-white font-black text-sm">{count.toLocaleString('ru-RU')}+</span>
+        <span className="text-gray-400 text-xs ml-1.5">разборов уже выдано</span>
+      </div>
+      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+    </div>
+  );
+}
 
 // ─── Date Select ──────────────────────────────────────────────────────────────
 
@@ -781,7 +980,7 @@ function OrderModal({ onClose, initialDate }) {
 
         {/* Шапка */}
         <div className="relative px-6 pt-6 pb-5 border-b border-white/[0.07]">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4">
             <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
               <Sparkles size={16} className="text-[#D4AF37]" />
             </div>
@@ -790,6 +989,32 @@ function OrderModal({ onClose, initialDate }) {
               <p className="text-white font-black text-base leading-tight">Глубокий анализ матрицы</p>
             </div>
           </div>
+
+          {/* Progress steps */}
+          <div className="flex items-center gap-0">
+            {[
+              { label: 'Данные', num: 1 },
+              { label: 'Оплата', num: 2 },
+              { label: 'Разбор готов', num: 3 },
+            ].map((s, i) => {
+              const active = step === 'form' ? i === 0 : step === 'loading' ? i <= 1 : i <= 2;
+              const current = step === 'form' ? i === 0 : step === 'loading' ? i === 1 : i === 2;
+              return (
+                <React.Fragment key={i}>
+                  <div className="flex items-center gap-1.5">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black transition-all ${
+                      active ? 'bg-[#D4AF37] text-black' : 'bg-white/[0.06] text-gray-600'
+                    }`}>{s.num}</div>
+                    <span className={`text-[10px] font-bold transition-all ${current ? 'text-[#D4AF37]' : active ? 'text-gray-400' : 'text-gray-600'}`}>{s.label}</span>
+                  </div>
+                  {i < 2 && (
+                    <div className={`flex-1 h-px mx-2 transition-all ${active && i < (step === 'form' ? 0 : step === 'loading' ? 1 : 2) ? 'bg-[#D4AF37]/50' : 'bg-white/[0.08]'}`} />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
           <button onClick={onClose} className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
             <X size={14} />
           </button>
@@ -1259,88 +1484,28 @@ export default function NumerosApp() {
           </section>
 
           {/* ── PDF Preview ── */}
-          <section className="py-16 md:py-24 px-6 max-w-6xl mx-auto">
-            <div className="text-center mb-10 md:mb-16">
+          <section className="py-16 md:py-24 overflow-hidden">
+            <div className="text-center mb-10 md:mb-14 px-6">
               <span className="inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4">
                 Что внутри разбора
               </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-4">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-3">
                 Посмотрите на реальный разбор
               </h2>
-              <p className="text-gray-400 text-base max-w-xl mx-auto">
-                PDF содержит 10+ страниц персонального анализа, составленного специально для вас
+              <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+                17 разделов персонального анализа — от характера до карьеры и теневой стороны личности
               </p>
             </div>
 
-            {/* Pages strip */}
-            <div className="relative">
-              {/* Fade edges */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0D0E14] to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0D0E14] to-transparent z-10 pointer-events-none" />
-
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory px-4">
-                {[
-                  { title: 'Психоматрица', icon: '⬡', lines: [70, 90, 55, 80, 65] },
-                  { title: 'Ваши цифры', icon: '∞', lines: [85, 60, 75, 50, 90] },
-                  { title: 'Характер и личность', icon: '◈', lines: [65, 80, 70, 85, 55] },
-                  { title: 'Денежный потенциал', icon: '◇', lines: [90, 55, 80, 65, 75] },
-                  { title: 'Кармические уроки', icon: '✦', lines: [60, 85, 50, 90, 70] },
-                  { title: 'Прогноз по годам', icon: '◎', lines: [75, 65, 85, 55, 80] },
-                ].map((page, i) => (
-                  <div
-                    key={i}
-                    className="shrink-0 snap-center w-52 md:w-64 bg-[#13141C] border border-white/[0.07] rounded-2xl overflow-hidden"
-                    style={{ aspectRatio: '3/4' }}
-                  >
-                    {/* Page header */}
-                    <div className="bg-[#D4AF37]/10 border-b border-white/[0.06] px-4 py-3 flex items-center justify-between">
-                      <div>
-                        <div className="text-[#D4AF37] text-[9px] font-black uppercase tracking-widest mb-0.5">NUMEROS</div>
-                        <div className="text-white text-[11px] font-bold">{page.title}</div>
-                      </div>
-                      <span className="text-[#D4AF37] text-xl opacity-60">{page.icon}</span>
-                    </div>
-
-                    {/* Blurred content */}
-                    <div className="p-4 flex flex-col gap-3 select-none pointer-events-none">
-                      {i === 0 ? (
-                        /* Matrix grid */
-                        <div className="grid grid-cols-3 gap-1.5 mb-2">
-                          {[8,2,6,5,7,3,9,1,4].map((n,j) => (
-                            <div key={j} className="aspect-square rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center">
-                              <span className="text-[#D4AF37] text-sm font-black blur-[3px]">{n}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        /* Text lines */
-                        <div className="flex flex-col gap-2 mt-1">
-                          {page.lines.map((w, j) => (
-                            <div key={j} className="flex flex-col gap-1">
-                              {j === 0 && <div className="h-1.5 rounded-full bg-[#D4AF37]/40 w-2/3 mb-1" />}
-                              <div className="h-2 rounded-full bg-white/10 blur-[2px]" style={{ width: `${w}%` }} />
-                              {j % 2 === 0 && <div className="h-2 rounded-full bg-white/6 blur-[2px]" style={{ width: `${w - 15}%` }} />}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Bottom badge */}
-                      <div className="mt-auto pt-2 border-t border-white/[0.05]">
-                        <div className="h-1.5 rounded-full bg-[#D4AF37]/20 w-1/2" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Pages strip — auto-scrolling */}
+            <PDFPreviewStrip onOrder={() => setShowOrderModal(true)} />
 
             {/* Stats row */}
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-10 md:mt-14">
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-10 md:mt-14 px-6">
               {[
-                { value: '10', label: 'страниц анализа' },
-                { value: '8', label: 'разделов разбора' },
-                { value: 'PDF', label: 'удобный формат' },
+                { value: '17', label: 'разделов разбора' },
+                { value: '15+', label: 'страниц анализа' },
+                { value: 'PDF', label: 'на вашу почту' },
               ].map((s, i) => (
                 <div key={i} className="text-center">
                   <div className="text-2xl md:text-3xl font-black text-[#D4AF37] mb-1">{s.value}</div>
@@ -1350,7 +1515,7 @@ export default function NumerosApp() {
             </div>
 
             {/* CTA */}
-            <div className="mt-12 flex flex-col items-center gap-4">
+            <div className="mt-10 md:mt-12 flex flex-col items-center gap-4 px-6">
               <button
                 onClick={() => setShowOrderModal(true)}
                 className={`${BTN_PRIMARY} px-10 py-4 text-sm shadow-2xl shadow-[#D4AF37]/20`}
@@ -1366,44 +1531,63 @@ export default function NumerosApp() {
           </section>
 
           {/* ── Testimonials ── */}
-          <section id="testimonials-section" className="py-16 md:py-32">
-            <div className="px-6 max-w-7xl mx-auto mb-8 md:mb-12">
-              <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-white text-center">
-                Отзывы
+          <section id="testimonials-section" className="py-16 md:py-28 px-6 max-w-7xl mx-auto">
+            {/* Header + counter */}
+            <div className="text-center mb-10 md:mb-16">
+              <span className="inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4">
+                Реальные результаты
+              </span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-4">
+                Что говорят после разбора
               </h2>
+              {/* Animated trust counter */}
+              <SocialProofCounter />
             </div>
-            {/* Mobile: horizontal swipe scroll */}
-            <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-10 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none px-6 md:max-w-7xl md:mx-auto scrollbar-none pb-4 md:pb-0"
+
+            {/* Cards grid — 2 cols on md, 1 col on mobile with scroll */}
+            <div className="flex md:grid md:grid-cols-2 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none scrollbar-none pb-4 md:pb-0"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {testimonials.map((t, idx) => (
                 <div
                   key={idx}
-                  className="glass-card p-6 md:p-10 rounded-3xl md:rounded-[48px] flex flex-col shrink-0 w-[80vw] sm:w-[60vw] md:w-auto snap-start"
+                  className="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl flex flex-col shrink-0 w-[85vw] sm:w-[70vw] md:w-auto snap-start border border-white/[0.07]"
                 >
-                  <Quote className="text-[#D4AF37]/20 mb-4 md:mb-8" size={24} />
-                  <p className="text-gray-300 text-base md:text-lg italic mb-6 md:mb-10 grow leading-relaxed">
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-[#D4AF37] text-sm">★</span>
+                    ))}
+                  </div>
+                  <p className="text-gray-200 text-sm md:text-base leading-relaxed mb-5 grow">
                     &ldquo;{t.text}&rdquo;
                   </p>
-                  <div className="flex items-center gap-3 mt-auto">
-                    <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/30 shrink-0">
-                      <Image
-                        src={t.avatar}
-                        alt={t.name}
-                        fill
-                        className="object-cover"
-                        sizes="48px"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-black text-white text-sm md:text-base">{t.name}</div>
-                      <div className="text-[10px] text-[#D4AF37] uppercase tracking-widest mt-0.5">
-                        {t.role}
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.07]">
+                    <div className="flex items-center gap-3">
+                      {/* Avatar initials */}
+                      <div className="w-9 h-9 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] text-xs font-black shrink-0">
+                        {t.name.split(' ')[0][0]}
                       </div>
+                      <div>
+                        <div className="font-bold text-white text-sm">{t.name}</div>
+                        <div className="text-[10px] text-gray-500 mt-0.5">{t.role}</div>
+                      </div>
+                    </div>
+                    {/* Destiny number badge */}
+                    <div className="flex flex-col items-center bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-1.5">
+                      <span className="text-[9px] text-gray-500 uppercase tracking-wider">Судьба</span>
+                      <span className="text-[#D4AF37] font-black text-base leading-none">{t.destiny}</span>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Bottom trust line */}
+            <div className="mt-8 md:mt-10 flex flex-wrap justify-center items-center gap-4 md:gap-8 text-gray-500 text-xs">
+              <div className="flex items-center gap-1.5"><span className="text-[#D4AF37]">✓</span> Реальные покупатели</div>
+              <div className="flex items-center gap-1.5"><span className="text-[#D4AF37]">✓</span> Казахстан и СНГ</div>
+              <div className="flex items-center gap-1.5"><span className="text-[#D4AF37]">✓</span> PDF на почту за 5 минут</div>
             </div>
           </section>
 
