@@ -39,7 +39,7 @@ const s = StyleSheet.create({
   coverLogoDot: { width: 34, height: 34, borderRadius: 17, borderWidth: 1, borderColor: C.gold, backgroundColor: C.goldFaint, alignItems: 'center', paddingTop: 7 },
   coverLogoDotText: { fontSize: 15, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'center', lineHeight: 1 },
   coverLogoText: { fontSize: 17, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 3 },
-  coverBadge: { alignSelf: 'flex-start', backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 20, paddingHorizontal: 12, paddingTop: 4.5, paddingBottom: 3.5, marginBottom: 18 },
+  coverBadge: { alignSelf: 'flex-start', backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 18 },
   coverBadgeText: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 2, lineHeight: 1, textAlign: 'center' },
   coverName: { fontSize: 30, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white, marginBottom: 8, lineHeight: 1.2 },
   coverDate: { fontSize: 12, color: C.grayLight },
@@ -60,7 +60,7 @@ const s = StyleSheet.create({
   footerL: { fontSize: 7.5, color: C.gray },
   footerR: { fontSize: 7.5, color: C.gold, fontFamily: 'Roboto', fontWeight: 'bold', letterSpacing: 1 },
 
-  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 2, marginBottom: 12, marginTop: 2 },
+  sectionLabel: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, letterSpacing: 2, marginBottom: 12, marginTop: 2, borderLeftWidth: 3, borderLeftColor: C.gold, paddingLeft: 7 },
 
   // Intro
   introCard: { backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderLeftWidth: 3, borderLeftColor: C.gold, borderRadius: 10, padding: 14, marginBottom: 18 },
@@ -102,7 +102,7 @@ const s = StyleSheet.create({
   dotsRow: { flexDirection: 'row', gap: 2 },
   dot: { width: 3.5, height: 3.5, borderRadius: 2, backgroundColor: C.border },
   dotFill: { backgroundColor: C.gold },
-  statusBadge: { borderRadius: 8, paddingHorizontal: 5, paddingTop: 2, paddingBottom: 1, marginTop: 2 },
+  statusBadge: { borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2, marginTop: 2 },
   statusText: { fontSize: 5, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
   sideCell: { flex: 1, backgroundColor: '#0F1220', borderWidth: 1, borderColor: '#1E2540', borderRadius: 7, paddingVertical: 9, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', gap: 3 },
   sideCellTopBar: { position: 'absolute', top: 0, left: 6, right: 6, height: 1.5, backgroundColor: C.blue, borderRadius: 1, opacity: 0.7 },
@@ -126,14 +126,14 @@ const s = StyleSheet.create({
   cellTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
   cellTitleHL: { color: C.gold },
   cellSub: { fontSize: 7.5, color: C.gray, marginTop: 1.5 },
-  cellBadge: { borderRadius: 10, paddingHorizontal: 8, paddingTop: 3, paddingBottom: 2 },
+  cellBadge: { borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3 },
   cellBadgeText: { fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', lineHeight: 1, textAlign: 'center' },
   cellBody: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
 
   // ─── Combinations ─────────────────────────────────────────────────────────────
   combCard: { backgroundColor: '#0D0B14', borderWidth: 1, borderColor: '#221840', borderLeftWidth: 3, borderLeftColor: C.purple, borderRadius: 10, padding: 13, marginBottom: 8 },
   combHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 7 },
-  combChip: { backgroundColor: '#1E1530', borderWidth: 1, borderColor: '#3A2A50', borderRadius: 6, paddingHorizontal: 8, paddingTop: 3.5, paddingBottom: 2.5 },
+  combChip: { backgroundColor: '#1E1530', borderWidth: 1, borderColor: '#3A2A50', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
   combChipText: { fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple, lineHeight: 1, textAlign: 'center' },
   combTitle: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', flex: 1 },
   combBody: { fontSize: 9.5, color: C.text, lineHeight: 1.75 },
@@ -204,14 +204,14 @@ const s = StyleSheet.create({
   pyNumCircle: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#1A1B26', borderWidth: 1, borderColor: C.border, alignItems: 'center', paddingTop: 5, marginRight: 10, flexShrink: 0 },
   pyNum: { fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, textAlign: 'center', lineHeight: 1 },
   pyMeaning: { flex: 1, fontSize: 9, color: C.text, lineHeight: 1.55 },
-  pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingTop: 2.5, paddingBottom: 1.5, marginLeft: 6 },
+  pyCurrentBadge: { backgroundColor: C.gold, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 6 },
   pyCurrentBadgeText: { fontSize: 6, fontFamily: 'Roboto', fontWeight: 'bold', color: C.dark, lineHeight: 1, textAlign: 'center' },
 
   // ─── Lines section ────────────────────────────────────────────────────────────
   linesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   lineCard: { width: '48%', backgroundColor: C.card, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 12, marginBottom: 0 },
   lineHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 7 },
-  lineNumBadge: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 6, paddingHorizontal: 7, paddingTop: 3, paddingBottom: 1.5, minWidth: 24, alignItems: 'center' },
+  lineNumBadge: { backgroundColor: C.goldFaint, borderWidth: 1, borderColor: C.goldBorder, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, minWidth: 24, alignItems: 'center' },
   lineNumText: { fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, lineHeight: 1, textAlign: 'center' },
   lineTitleBlock: { flex: 1 },
   lineTitle: { fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.white },
@@ -220,8 +220,8 @@ const s = StyleSheet.create({
 
   // ─── Archetype ────────────────────────────────────────────────────────────────
   archetypeCard: { backgroundColor: '#0F0C1C', borderWidth: 1.5, borderColor: '#3A2A50', borderRadius: 14, padding: 18, marginBottom: 14, flexDirection: 'row', gap: 16 },
-  archetypeIconBox: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#1E1530', borderWidth: 1.5, borderColor: C.purple, alignItems: 'center', paddingTop: 14, flexShrink: 0 },
-  archetypeIcon: { fontSize: 24, color: C.purple, textAlign: 'center', lineHeight: 1 },
+  archetypeIconBox: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#1E1530', borderWidth: 1.5, borderColor: C.purple, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  archetypeIcon: { fontSize: 14, fontFamily: 'Roboto', fontWeight: 'bold', color: C.purple, textAlign: 'center', lineHeight: 1 },
   archetypeRight: { flex: 1 },
   archetypeName: { fontSize: 16, fontFamily: 'Roboto', fontWeight: 'bold', color: '#C4A8E8', marginBottom: 3 },
   archetypeTagline: { fontSize: 9, color: C.purple, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 8, letterSpacing: 0.5 },
@@ -282,7 +282,7 @@ const s = StyleSheet.create({
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const CELL_ICONS = { 1:'◆', 2:'◈', 3:'◉', 4:'♡', 5:'◇', 6:'◎', 7:'★', 8:'◐', 9:'◑' };
+const CELL_ICONS = { 1:'1', 2:'2', 3:'3', 4:'4', 5:'5', 6:'6', 7:'7', 8:'8', 9:'9' };
 
 function statusStyle(s2) {
   if (s2 === 'База')    return { bg: '#162030', color: C.blue };
@@ -368,8 +368,8 @@ function KeyNumbersAnalysis({ matrix, keyNumbers }) {
 
 // ─── Archetype ────────────────────────────────────────────────────────────────
 const ARCHETYPE_ICONS = {
-  'Творец': '✦', 'Лидер': '◆', 'Целитель': '♡', 'Мудрец': '◎',
-  'Искатель': '◇', 'Хранитель': '◐', 'Вдохновитель': '★', 'Строитель': '◈', 'Мистик': '◑',
+  'Творец': 'Тв', 'Лидер': 'Лд', 'Целитель': 'Цл', 'Мудрец': 'Мд',
+  'Искатель': 'Ис', 'Хранитель': 'Хр', 'Вдохновитель': 'Вд', 'Строитель': 'Ст', 'Мистик': 'Мс',
 };
 function ArchetypeSection({ archetype }) {
   if (!archetype) return null;
@@ -379,6 +379,7 @@ function ArchetypeSection({ archetype }) {
       <View style={s.archetypeIconBox}>
         <Text style={s.archetypeIcon}>{icon}</Text>
       </View>
+
       <View style={s.archetypeRight}>
         <Text style={s.archetypeName}>{archetype.name}</Text>
         <Text style={s.archetypeTagline}>{archetype.tagline}</Text>
@@ -455,10 +456,10 @@ function TalismansSection({ talismans }) {
 
 // ─── Practical tips ───────────────────────────────────────────────────────────
 const TIP_CONFIGS = [
-  { key: 'money',         icon: '◈', label: 'Деньги и финансы',      bg: '#0D1410', border: '#1A2A1A', accent: C.green   },
-  { key: 'relationships', icon: '♡', label: 'Отношения',              bg: '#100C14', border: '#201828', accent: C.rose    },
-  { key: 'health',        icon: '◎', label: 'Здоровье и энергия',     bg: '#080F14', border: '#142030', accent: C.blue    },
-  { key: 'career',        icon: '★', label: 'Карьера и реализация',   bg: '#10100A', border: '#28280A', accent: C.gold    },
+  { key: 'money',         icon: '$', label: 'Деньги и финансы',      bg: '#0D1410', border: '#1A2A1A', accent: C.green   },
+  { key: 'relationships', icon: 'L', label: 'Отношения',              bg: '#100C14', border: '#201828', accent: C.rose    },
+  { key: 'health',        icon: '+', label: 'Здоровье и энергия',     bg: '#080F14', border: '#142030', accent: C.blue    },
+  { key: 'career',        icon: '>', label: 'Карьера и реализация',   bg: '#10100A', border: '#28280A', accent: C.gold    },
 ];
 function TipsSection({ tips }) {
   if (!tips) return null;
@@ -679,7 +680,7 @@ function StrengthsWeaknesses({ strengths, weaknesses }) {
     <View wrap={false} style={s.swCard}>
       <View style={s.swRow}>
         <View style={s.swLeftCol}>
-          <Text style={[s.swColTitle, { color: C.green }]}>✓  Сильные стороны</Text>
+          <Text style={[s.swColTitle, { color: C.green }]}>Сильные стороны</Text>
           {(strengths || []).map((item, i) => (
             <View key={i} style={s.swItem}>
               <View style={[s.swBullet, { backgroundColor: C.green }]} />
@@ -688,7 +689,7 @@ function StrengthsWeaknesses({ strengths, weaknesses }) {
           ))}
         </View>
         <View style={s.swRightCol}>
-          <Text style={[s.swColTitle, { color: C.rose }]}>◌  Зоны роста</Text>
+          <Text style={[s.swColTitle, { color: C.rose }]}>Зоны роста</Text>
           {(weaknesses || []).map((item, i) => (
             <View key={i} style={[s.swItem]}>
               <View style={[s.swBullet, { backgroundColor: C.rose }]} />
@@ -707,7 +708,7 @@ function KarmicSection({ karmicLessons, karmicSummary }) {
     return (
       <View wrap={false} style={s.karmicNoLessons}>
         <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 5 }}>
-          ★  Все цифры присутствуют в вашей матрице
+          Все цифры присутствуют в вашей матрице
         </Text>
         {karmicSummary ? (
           <Text style={s.karmicNoLessonsText}>{karmicSummary}</Text>
@@ -905,7 +906,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
           </View>
         ) : null}
 
-        <Text style={s.sectionLabel}>◆  КЛЮЧЕВЫЕ ЧИСЛА</Text>
+        <Text style={s.sectionLabel}>КЛЮЧЕВЫЕ ЧИСЛА</Text>
         <View wrap={false} style={s.keyRow}>
           {[
             { label: 'Число судьбы', value: matrix.destiny, desc: 'Жизненный путь'        },
@@ -930,7 +931,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
-        <Text style={s.sectionLabel}>◆  ПСИХОМАТРИЦА ПИФАГОРА</Text>
+        <Text style={s.sectionLabel}>ПСИХОМАТРИЦА ПИФАГОРА</Text>
         <View wrap={false}>
           <FullMatrix matrix={matrix} />
         </View>
@@ -938,10 +939,27 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Footer name={name} />
       </Page>
 
-      {/* ── Page 4: Lines analysis ──────────────────────────────────────────── */}
+      {/* ── Page 4: Cell analysis + Combinations ─────────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
-        <Text style={s.sectionLabel}>◆  ЛИНИИ МАТРИЦЫ — ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА</Text>
+        <Text style={s.sectionLabel}>РАЗБОР СЕКТОРОВ МАТРИЦЫ</Text>
+        {cells.map((cell, i) => <CellCard key={i} cell={cell} />)}
+
+        {combs.length > 0 && (
+          <>
+            <View style={s.divider} />
+            <Text style={s.sectionLabel}>ЗНАЧИМЫЕ КОМБИНАЦИИ ЦИФР</Text>
+            {combs.map((comb, i) => <CombCard key={i} comb={comb} />)}
+          </>
+        )}
+
+        <Footer name={name} />
+      </Page>
+
+      {/* ── Page 5: Lines analysis ──────────────────────────────────────────── */}
+      <Page size="A4" style={[s.page, s.contentPage]}>
+        <PageHeader name={name} />
+        <Text style={s.sectionLabel}>ЛИНИИ МАТРИЦЫ — ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА</Text>
         <View style={{ marginBottom: 10 }}>
           <Text style={{ fontSize: 9, color: C.grayLight, lineHeight: 1.65 }}>
             Линии психоматрицы — это суммы трёх связанных ячеек. Они раскрывают скрытые грани характера: самооценку, таланты, целеустремлённость, духовность и темперамент.
@@ -951,32 +969,15 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
         <Footer name={name} />
       </Page>
 
-      {/* ── Page 5: Cell analysis + Combinations ─────────────────────────── */}
-      <Page size="A4" style={[s.page, s.contentPage]}>
-        <PageHeader name={name} />
-        <Text style={s.sectionLabel}>◆  РАЗБОР СЕКТОРОВ МАТРИЦЫ</Text>
-        {cells.map((cell, i) => <CellCard key={i} cell={cell} />)}
-
-        {combs.length > 0 && (
-          <>
-            <View style={s.divider} />
-            <Text style={s.sectionLabel}>◆  ЗНАЧИМЫЕ КОМБИНАЦИИ ЦИФР</Text>
-            {combs.map((comb, i) => <CombCard key={i} comb={comb} />)}
-          </>
-        )}
-
-        <Footer name={name} />
-      </Page>
-
       {/* ── Page 4: Money + Relationships + Forecast ──────────────────────── */}
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
-        <Text style={s.sectionLabel}>◆  ДЕНЕЖНЫЙ ПОТЕНЦИАЛ</Text>
+        <Text style={s.sectionLabel}>ДЕНЕЖНЫЙ ПОТЕНЦИАЛ</Text>
         <View wrap={false} style={s.moneyCard}>
           <View style={s.specialIconRow}>
             <View style={[s.specialIconBox, { backgroundColor: '#182010' }]}>
-              <Text style={{ fontSize: 16, color: C.green }}>◈</Text>
+              <Text style={{ fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.green }}>$</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={[s.specialTitle, { color: C.green }]}>{money.title || 'Денежный потенциал'}</Text>
@@ -994,11 +995,11 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  КОД ОТНОШЕНИЙ</Text>
+        <Text style={s.sectionLabel}>КОД ОТНОШЕНИЙ</Text>
         <View wrap={false} style={s.relCard}>
           <View style={s.specialIconRow}>
             <View style={[s.specialIconBox, { backgroundColor: '#1C0F18' }]}>
-              <Text style={{ fontSize: 16, color: '#D48EC0' }}>♡</Text>
+              <Text style={{ fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: '#D48EC0' }}>L</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={[s.specialTitle, { color: '#D48EC0' }]}>{rel.title || 'Код отношений'}</Text>
@@ -1010,11 +1011,11 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ПРОГНОЗ НА {forecast.year || curYear} ГОД</Text>
+        <Text style={s.sectionLabel}>ПРОГНОЗ НА {forecast.year || curYear} ГОД</Text>
         <View wrap={false} style={s.foreCard}>
           <View style={s.specialIconRow}>
             <View style={[s.specialIconBox, { backgroundColor: '#081818' }]}>
-              <Text style={{ fontSize: 16, color: C.teal }}>◎</Text>
+              <Text style={{ fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: C.teal }}>→</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={[s.specialTitle, { color: C.teal }]}>{forecast.title || `Прогноз на ${curYear}`}</Text>
@@ -1033,18 +1034,18 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
-        <Text style={s.sectionLabel}>◆  СИЛЬНЫЕ СТОРОНЫ И ЗОНЫ РОСТА</Text>
+        <Text style={s.sectionLabel}>СИЛЬНЫЕ СТОРОНЫ И ЗОНЫ РОСТА</Text>
         <StrengthsWeaknesses strengths={strengths} weaknesses={weaknesses} />
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  КАРМИЧЕСКИЕ УРОКИ</Text>
+        <Text style={s.sectionLabel}>КАРМИЧЕСКИЕ УРОКИ</Text>
         <KarmicSection karmicLessons={karmicLessons} karmicSummary={karmicSummary} />
 
         {nameNumerology && (
           <>
             <View style={s.divider} />
-            <Text style={s.sectionLabel}>◆  АНАЛИЗ ИМЕНИ</Text>
+            <Text style={s.sectionLabel}>АНАЛИЗ ИМЕНИ</Text>
             <NameAnalysis nameNumerology={nameNumerology} nameAnalysis={nameAnalysis} name={name} />
           </>
         )}
@@ -1056,7 +1057,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
-        <Text style={s.sectionLabel}>◆  ПИНАКЛЫ ВАШЕЙ ЖИЗНИ</Text>
+        <Text style={s.sectionLabel}>ПИНАКЛЫ ВАШЕЙ ЖИЗНИ</Text>
         <View style={{ marginBottom: 6 }}>
           <Text style={{ fontSize: 9, color: C.grayLight, lineHeight: 1.65, marginBottom: 12 }}>
             Пинаклы — это четыре ключевых периода жизни, каждый из которых несёт особую энергию и возможности.
@@ -1066,7 +1067,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ЛИЧНЫЕ ГОДЫ — ПРОГНОЗ НА 5 ЛЕТ</Text>
+        <Text style={s.sectionLabel}>ЛИЧНЫЕ ГОДЫ — ПРОГНОЗ НА 5 ЛЕТ</Text>
         <View style={{ marginBottom: 8 }}>
           <Text style={{ fontSize: 9, color: C.grayLight, lineHeight: 1.65 }}>
             Каждый год несёт особую числовую энергию, задающую тон событиям.
@@ -1081,22 +1082,22 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
       <Page size="A4" style={[s.page, s.contentPage]}>
         <PageHeader name={name} />
 
-        <Text style={s.sectionLabel}>◆  АРХЕТИП ВАШЕЙ ЛИЧНОСТИ</Text>
+        <Text style={s.sectionLabel}>АРХЕТИП ВАШЕЙ ЛИЧНОСТИ</Text>
         <ArchetypeSection archetype={analysis.archetype} />
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ЛИЧНЫЕ АФФИРМАЦИИ</Text>
+        <Text style={s.sectionLabel}>ЛИЧНЫЕ АФФИРМАЦИИ</Text>
         <AffirmationsSection affirmations={analysis.affirmations} />
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ТАЛИСМАНЫ, ЦВЕТА И ЧИСЛА</Text>
+        <Text style={s.sectionLabel}>ТАЛИСМАНЫ, ЦВЕТА И ЧИСЛА</Text>
         <TalismansSection talismans={analysis.talismans} />
 
         <View style={s.divider} />
 
-        <Text style={s.sectionLabel}>◆  ПРАКТИЧЕСКИЕ РЕКОМЕНДАЦИИ</Text>
+        <Text style={s.sectionLabel}>ПРАКТИЧЕСКИЕ РЕКОМЕНДАЦИИ</Text>
         <TipsSection tips={analysis.tips} />
 
         <Footer name={name} />
@@ -1108,13 +1109,13 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         {famous.length > 0 && (
           <>
-            <Text style={s.sectionLabel}>◆  ЗНАМЕНИТОСТИ С ВАШИМ ЧИСЛОМ СУДЬБЫ</Text>
+            <Text style={s.sectionLabel}>ЗНАМЕНИТОСТИ С ВАШИМ ЧИСЛОМ СУДЬБЫ</Text>
             <FamousPersonCard famous={famous} destinyDigit={matrix.destiny} />
             <View style={s.divider} />
           </>
         )}
 
-        <Text style={s.sectionLabel}>◆  ИТОГ И РЕКОМЕНДАЦИИ</Text>
+        <Text style={s.sectionLabel}>ИТОГ И РЕКОМЕНДАЦИИ</Text>
         <View wrap={false} style={s.conclusionCard}>
           <Text style={s.conclusionTitle}>★  Ваш персональный итог</Text>
           <Text style={s.conclusionBody}>{conc}</Text>
