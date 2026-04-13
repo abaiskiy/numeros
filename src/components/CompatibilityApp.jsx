@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import SiteFooter from '@/components/SiteFooter';
+import PaymentTrustBadges from '@/components/PaymentTrustBadges';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
 import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield, X, FileText, Star, Calendar } from 'lucide-react';
@@ -415,7 +416,8 @@ function CompatibilityOrderModal({ onClose, initialName1, initialDate1, initialN
             <button type="submit" className="w-full inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300">
               Получить разбор <ArrowRight size={16} />
             </button>
-            <p className="text-center text-gray-600 text-[10px]">Безопасная оплата · PDF на почту за 5 минут</p>
+            <PaymentTrustBadges accent="rose" />
+            <p className="text-center text-gray-600 text-[10px] mt-1">PDF на почту за 5 минут после оплаты</p>
           </form>
 
         ) : step === 'loading' ? (

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
 import SiteFooter from '@/components/SiteFooter';
+import PaymentTrustBadges from '@/components/PaymentTrustBadges';
 import {
   ArrowRight,
   TrendingUp,
@@ -350,6 +351,41 @@ function BottomCell({ label, value, icon }) {
 }
 
 // ─── ModernMatrixGrid ─────────────────────────────────────────────────────────
+
+/** Pulse placeholder while «расчёт» матрицы (короткая задержка для UX). */
+function MatrixSkeleton() {
+  const pulse = 'animate-pulse rounded-xl bg-white/[0.06] border border-white/[0.06]';
+  return (
+    <div
+      className="relative w-full max-w-[580px] mx-auto overflow-hidden"
+      aria-busy="true"
+      aria-label="Расчёт матрицы"
+    >
+      <div className="relative z-10 p-[1px] md:p-1 bg-gradient-to-br from-white/10 to-transparent rounded-3xl md:rounded-[40px]">
+        <div className="bg-[#0D0E14] rounded-[28px] md:rounded-[36px] p-3 md:p-6">
+          <div className="grid grid-cols-4 gap-1.5 md:gap-2.5">
+            <div className={`col-span-3 ${pulse} h-[88px] md:h-[118px]`} />
+            <div className={`${pulse} h-[88px] md:h-[118px]`} />
+            {[0, 1, 2].map((row) => (
+              <React.Fragment key={row}>
+                <div className={`${pulse} aspect-square min-h-[72px] md:min-h-[88px]`} />
+                <div className={`${pulse} aspect-square min-h-[72px] md:min-h-[88px]`} />
+                <div className={`${pulse} aspect-square min-h-[72px] md:min-h-[88px]`} />
+                <div className={`${pulse} aspect-square min-h-[72px] md:min-h-[88px]`} />
+              </React.Fragment>
+            ))}
+            {[...Array(4)].map((_, i) => (
+              <div key={`b-${i}`} className={`${pulse} h-14 md:h-16`} />
+            ))}
+          </div>
+          <p className="text-center text-[10px] text-gray-500 mt-4 font-semibold tracking-wide">
+            Считаем вашу матрицу…
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }) {
   const d = data;
@@ -1139,7 +1175,8 @@ function OrderModal({ onClose, initialDate }) {
             <button type="submit" className={`${BTN_PRIMARY} w-full py-4 justify-center text-sm`}>
               Оплатить и получить разбор <ArrowRight size={16} />
             </button>
-            <p className="text-center text-gray-600 text-[10px]">Безопасная оплата · Готово за 5 минут</p>
+            <PaymentTrustBadges accent="gold" />
+            <p className="text-center text-gray-600 text-[10px] mt-1">Готово за 5 минут после оплаты</p>
           </form>
         ) : step === 'loading' ? (
           /* Загрузка */
@@ -1193,6 +1230,8 @@ export default function NumerosApp() {
   const [view, setView] = useState('landing');
   const [birthDate, setBirthDate] = useState('');
   const [matrixData, setMatrixData] = useState(null);
+  const [matrixLoading, setMatrixLoading] = useState(false);
+  const matrixCalcTimeoutRef = useRef(null);
   const [dateError, setDateError] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -1254,8 +1293,18 @@ export default function NumerosApp() {
       return;
     }
     setDateError(false);
-    setMatrixData(calculateMatrix(birthDate));
+    if (matrixCalcTimeoutRef.current) {
+      window.clearTimeout(matrixCalcTimeoutRef.current);
+      matrixCalcTimeoutRef.current = null;
+    }
+    setMatrixLoading(true);
+    setMatrixData(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    matrixCalcTimeoutRef.current = window.setTimeout(() => {
+      matrixCalcTimeoutRef.current = null;
+      setMatrixData(calculateMatrix(birthDate));
+      setMatrixLoading(false);
+    }, 520);
   };
 
   return (
@@ -1328,25 +1377,33 @@ export default function NumerosApp() {
                 className="w-full max-w-md flex flex-col gap-3 md:gap-5 mx-auto lg:mx-0"
               >
                 <DateSelect value={birthDate} onChange={(v) => { setBirthDate(v); if (v) setDateError(false); }} showError={dateError} />
-                <button className={`w-full group ${BTN_PRIMARY} py-4 md:py-6 shadow-2xl shadow-[#D4AF37]/10`}>
-                  Рассчитать матрицу
-                  <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                <button
+                  type="submit"
+                  disabled={matrixLoading}
+                  className={`w-full group ${BTN_PRIMARY} py-4 md:py-6 shadow-2xl shadow-[#D4AF37]/10 disabled:opacity-60 disabled:pointer-events-none`}
+                >
+                  {matrixLoading ? 'Считаем…' : 'Рассчитать матрицу'}
+                  {!matrixLoading && <ArrowRight size={18} className="group-hover:translate-x-1.5 transition-transform duration-300" />}
                 </button>
               </form>
             </div>
             <div className="flex-1 w-full animate-float" id="matrix-capture-zone">
-              {matrixData && (
-                <div className="flex justify-center gap-3 mb-4">
-                  {/* Дата */}
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[9px] uppercase tracking-[0.25em] font-black">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
-                    {formatDate(birthDate)}
-                  </div>
-                  {/* Поделиться */}
-                  <ShareButton birthDate={birthDate} matrixData={matrixData} formatDate={formatDate} />
-                </div>
+              {matrixLoading ? (
+                <MatrixSkeleton />
+              ) : (
+                <>
+                  {matrixData && (
+                    <div className="flex justify-center gap-3 mb-4">
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[9px] uppercase tracking-[0.25em] font-black">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
+                        {formatDate(birthDate)}
+                      </div>
+                      <ShareButton birthDate={birthDate} matrixData={matrixData} formatDate={formatDate} />
+                    </div>
+                  )}
+                  <ModernMatrixGrid data={matrixData ?? DEMO_DATA} />
+                </>
               )}
-              <ModernMatrixGrid data={matrixData ?? DEMO_DATA} />
             </div>
           </section>
 
