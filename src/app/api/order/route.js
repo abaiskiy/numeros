@@ -34,7 +34,7 @@ async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, k
 МАТРИЦА ПИФАГОРА:
 - Характер (1): ${matrix.char.v} [${matrix.char.s}]
 - Энергия (2): ${matrix.energy.v} [${matrix.energy.s}]
-- Самооценка (3): ${matrix.interest.v} [${matrix.interest.s}]
+- Интерес к жизни (3): ${matrix.interest.v} [${matrix.interest.s}]
 - Здоровье (4): ${matrix.health.v} [${matrix.health.s}]
 - Логика (5): ${matrix.logic.v} [${matrix.logic.s}]
 - Труд и деньги (6): ${matrix.labor.v} [${matrix.labor.s}]
@@ -81,7 +81,7 @@ ${bookContext}
       "content": "80-120 слов, обращение на Вы, конкретный личный анализ"
     },
     { "digit": 2, "title": "Энергия и биополе", "value": "${matrix.energy.v}", "status": "${matrix.energy.s}", "content": "80-120 слов" },
-    { "digit": 3, "title": "Самооценка и интерес к жизни", "value": "${matrix.interest.v}", "status": "${matrix.interest.s}", "content": "80-120 слов" },
+    { "digit": 3, "title": "Интерес к жизни", "value": "${matrix.interest.v}", "status": "${matrix.interest.s}", "content": "80-120 слов" },
     { "digit": 4, "title": "Здоровье и тело", "value": "${matrix.health.v}", "status": "${matrix.health.s}", "content": "80-120 слов" },
     { "digit": 5, "title": "Логика и интуиция", "value": "${matrix.logic.v}", "status": "${matrix.logic.s}", "content": "80-120 слов" },
     { "digit": 6, "title": "Труд и материальный мир", "value": "${matrix.labor.v}", "status": "${matrix.labor.s}", "content": "80-120 слов" },
@@ -90,11 +90,19 @@ ${bookContext}
     { "digit": 9, "title": "Память и интеллект", "value": "${matrix.memory.v}", "status": "${matrix.memory.s}", "content": "80-120 слов" }
   ],
   "combinations": [
+    Найди ВСЕ значимые комбинации в матрице ${name}. Анализируй:
+    1. Повторяющиеся цифры: 11 (пара), 111 (тройка), 1111+ (четыре и более) — для каждой из цифр 1-9
+    2. Отсутствие цифр в матрице (0 цифры) — это тоже значимо
+    3. Наличие полной линии (все 3 ячейки заполнены): горизонталь, вертикаль, диагональ
+    4. Мощные ячейки (Экстра или Импульс) — их взаимодействие
+    5. Общий баланс матрицы (перевес в левой/правой части, верхней/нижней)
+    Для КАЖДОЙ найденной значимой комбинации:
     {
-      "title": "название значимой комбинации",
-      "digits": "например: 111 + 66",
-      "content": "50-80 слов о том что означает эта комбинация для ${name}"
+      "title": "Название комбинации (кратко)",
+      "digits": "Обозначение: например 111 или Линия Таланта 7-8-9 или Нет цифры 5",
+      "content": "80-120 слов: персональный разбор значения этой комбинации для ${name}, конкретные жизненные проявления, советы. Обращение на Вы."
     }
+    Верни минимум 4, максимум 8 комбинаций — только реально присутствующие в матрице.
   ],
   "money": {
     "score": <число от 1 до 10>,
