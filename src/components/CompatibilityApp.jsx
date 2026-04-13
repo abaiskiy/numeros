@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import SiteFooter from '@/components/SiteFooter';
 import PaymentTrustBadges from '@/components/PaymentTrustBadges';
+import PDFPreviewStrip, { COMPATIBILITY_PDF_PAGES } from '@/components/marketing/PDFPreviewStrip';
+import TestimonialsSection, { COMPATIBILITY_TESTIMONIALS } from '@/components/marketing/TestimonialsSection';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
 import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield, X, FileText, Star, Calendar } from 'lucide-react';
@@ -889,6 +891,63 @@ export default function CompatibilityApp() {
           initialDate2={date2}
         />
       )}
+
+      {/* ── PDF preview + отзывы + счётчик (как на главной) ── */}
+      <section className="py-16 md:py-24 overflow-hidden border-t border-white/[0.06]">
+        <div className="text-center mb-10 md:mb-14 px-6">
+          <span className="inline-block bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4">
+            Что внутри PDF пары
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-3">
+            Посмотрите на разбор совместимости
+          </h2>
+          <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+            Те же стандарты, что и у личного разбора: сферы, даты, честные зоны напряжения — всё в одном файле
+          </p>
+        </div>
+
+        <PDFPreviewStrip pages={COMPATIBILITY_PDF_PAGES} />
+
+        <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-10 md:mt-14 px-6">
+          {[
+            { value: '10+', label: 'страниц для двоих' },
+            { value: '6', label: 'сфер совместимости' },
+            { value: 'PDF', label: 'на вашу почту' },
+          ].map((s, i) => (
+            <div key={i} className="text-center">
+              <div className="text-2xl md:text-3xl font-black text-rose-400 mb-1">{s.value}</div>
+              <div className="text-gray-500 text-xs uppercase tracking-wider">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 md:mt-12 flex flex-col items-center gap-4 px-6">
+          <button
+            type="button"
+            onClick={() => setShowOrderModal(true)}
+            className="w-full max-w-sm inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300"
+          >
+            Получить разбор пары <ArrowRight size={16} />
+          </button>
+          <div className="flex items-center gap-3 text-gray-500 text-xs">
+            <span className="text-gray-600 line-through">5 980 ₸</span>
+            <span className="text-white font-bold text-sm">2 990 ₸</span>
+            <span className="bg-rose-500/15 text-rose-400 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+              −50%
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <TestimonialsSection
+        eyebrow="Пары доверяют"
+        title="Отзывы о разборе совместимости"
+        items={COMPATIBILITY_TESTIMONIALS}
+        accent="rose"
+        counterLabel="разборов уже выдано"
+        counterInitials={['А', 'Е', 'М', 'Г']}
+        trustLine={['Реальные пары и семьи', 'Тот же сервис Numeros', 'PDF на почту за 5 минут']}
+      />
 
       <SiteFooter separator="·" />
     </div>
