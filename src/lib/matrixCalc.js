@@ -80,6 +80,109 @@ export function countKey(n) {
   return String(n);
 }
 
+const DIGIT_CELL_NAME = {
+  1: 'Характер', 2: 'Энергия', 3: 'Интерес к жизни',
+  4: 'Здоровье', 5: 'Логика', 6: 'Труд',
+  7: 'Удача', 8: 'Долг', 9: 'Память',
+};
+
+const MATRIX_LINES = [
+  { name: 'Самооценки',       cells: [1,2,3], key: '1-2-3' },
+  { name: 'Быта',             cells: [4,5,6], key: '4-5-6' },
+  { name: 'Таланта',          cells: [7,8,9], key: '7-8-9' },
+  { name: 'Целеустремлённости', cells: [1,4,7], key: '1-4-7' },
+  { name: 'Семьи',            cells: [2,5,8], key: '2-5-8' },
+  { name: 'Стабильности',     cells: [3,6,9], key: '3-6-9' },
+  { name: 'Духовности',       cells: [1,5,9], key: '1-5-9' },
+  { name: 'Темперамента',     cells: [3,5,7], key: '3-5-7' },
+];
+
+/**
+ * Finds ALL meaningful combinations actually present in the matrix,
+ * enriched with book descriptions where available.
+ *
+ * Priority order: strong repeats (3–4+) → pairs → complete lines → missing digits → empty lines
+ * Capped at 8 to keep the GPT prompt manageable.
+ *
+ * Returns an array of { label, digits, bookDesc } for use in the GPT prompt.
+ */
+export function detectCombinations(matrix, book) {
+  const { counts } = matrix;
+  const quantitative = book.quantitative ?? {};
+  const specials     = book.transitions?.specials ?? {};
+  const linesBook    = book.lines ?? {};
+
+  const strongRepeats = []; // 3+ of same digit
+  const pairs         = []; // exactly 2 of same digit
+  const complete      = []; // line where all 3 cells are non-zero
+  const missing       = []; // digit count = 0
+  const emptyLines    = []; // line where all 3 cells are zero
+
+  // ── 1. Per-digit analysis ──────────────────────────────────────────────────
+  for (let d = 1; d <= 9; d++) {
+    const c        = counts[d] || 0;
+    const cellName = DIGIT_CELL_NAME[d];
+    const qData    = quantitative[String(d)];
+
+    if (c === 0) {
+      const bookDesc = qData?.counts?.['0'] ?? null;
+      missing.push({
+        label: `Отсутствие цифры ${d} — ${cellName}`,
+        digits: `нет ${d}`,
+        bookDesc,
+      });
+    } else if (c >= 3) {
+      const pattern   = String(d).repeat(c);
+      const typeLabel = c >= 4 ? 'Мощная группа' : 'Тройка';
+      const bookDesc  = specials[pattern] ?? qData?.counts?.[countKey(c)] ?? null;
+      strongRepeats.push({
+        label: `${typeLabel} ${pattern} — ${cellName}`,
+        digits: pattern,
+        bookDesc,
+      });
+    } else if (c === 2) {
+      const pattern  = String(d).repeat(2);
+      const bookDesc = specials[pattern] ?? qData?.counts?.['2'] ?? null;
+      pairs.push({
+        label: `Пара ${pattern} — ${cellName}`,
+        digits: pattern,
+        bookDesc,
+      });
+    }
+  }
+
+  // ── 2. Line analysis ────────────────────────────────────────────────────────
+  const allRowsCols = [
+    ...(Object.values(linesBook.rows      ?? {})),
+    ...(Object.values(linesBook.columns   ?? {})),
+    ...(Object.values(linesBook.diagonals ?? {})),
+  ];
+
+  for (const line of MATRIX_LINES) {
+    const allFilled = line.cells.every(d => (counts[d] || 0) > 0);
+    const allEmpty  = line.cells.every(d => (counts[d] || 0) === 0);
+
+    if (allFilled) {
+      const bookEntry = allRowsCols.find(r => r.name?.includes(line.name));
+      complete.push({
+        label: `Полная линия ${line.name} (${line.key})`,
+        digits: line.key,
+        bookDesc: bookEntry?.meaning ?? null,
+      });
+    } else if (allEmpty) {
+      emptyLines.push({
+        label: `Пустая линия ${line.name} (${line.key})`,
+        digits: line.key,
+        bookDesc: null,
+      });
+    }
+  }
+
+  // ── 3. Merge by priority and cap at 8 ──────────────────────────────────────
+  const ordered = [...strongRepeats, ...pairs, ...complete, ...missing, ...emptyLines];
+  return ordered.slice(0, 8);
+}
+
 export function buildBookContext(matrix, book) {
   const { quantitative, transitions, lines } = book;
   const { counts } = matrix;

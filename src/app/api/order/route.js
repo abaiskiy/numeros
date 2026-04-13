@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
-  calculateMatrix, buildBookContext,
+  calculateMatrix, buildBookContext, detectCombinations,
   calculatePinnacles, getPersonalYears, getKarmicLessons,
   calculateNameNumerology, getFamousByDestiny,
 } from '@/lib/matrixCalc';
 
 // ─── GPT analysis ─────────────────────────────────────────────────────────────
 
-async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons) {
+async function generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations) {
   const { default: OpenAI } = await import('openai');
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -90,19 +90,12 @@ ${bookContext}
     { "digit": 9, "title": "Память и интеллект", "value": "${matrix.memory.v}", "status": "${matrix.memory.s}", "content": "80-120 слов" }
   ],
   "combinations": [
-    Найди ВСЕ значимые комбинации в матрице ${name}. Анализируй:
-    1. Повторяющиеся цифры: 11 (пара), 111 (тройка), 1111+ (четыре и более) — для каждой из цифр 1-9
-    2. Отсутствие цифр в матрице (0 цифры) — это тоже значимо
-    3. Наличие полной линии (все 3 ячейки заполнены): горизонталь, вертикаль, диагональ
-    4. Мощные ячейки (Экстра или Импульс) — их взаимодействие
-    5. Общий баланс матрицы (перевес в левой/правой части, верхней/нижней)
-    Для КАЖДОЙ найденной значимой комбинации:
-    {
-      "title": "Название комбинации (кратко)",
-      "digits": "Обозначение: например 111 или Линия Таланта 7-8-9 или Нет цифры 5",
-      "content": "80-120 слов: персональный разбор значения этой комбинации для ${name}, конкретные жизненные проявления, советы. Обращение на Вы."
-    }
-    Верни минимум 4, максимум 8 комбинаций — только реально присутствующие в матрице.
+    ВНИМАНИЕ: оставь поля title и digits точно как указано ниже. Напиши только поле content.
+    ${foundCombinations.length === 0 ? '' : foundCombinations.map(c => `{
+      "title": "${c.label}",
+      "digits": "${c.digits}",
+      "content": "80-120 слов: персональный разбор значения этой комбинации конкретно для ${name} — жизненные проявления, сильные стороны или зоны роста, практические советы. ${c.bookDesc ? 'Книжный контекст: ' + c.bookDesc.replace(/"/g, "'") : 'Опирайся на нумерологические знания по данной комбинации.'}. Обращение на Вы."
+    }`).join(',\n    ')}
   ],
   "money": {
     "score": <число от 1 до 10>,
@@ -277,8 +270,11 @@ export async function POST(req) {
     const bookPath = join(process.cwd(), 'src/data/numerology-book.json');
     const book = JSON.parse(readFileSync(bookPath, 'utf-8'));
 
+    const foundCombinations = detectCombinations(matrix, book);
+    console.log('[order] 4a. Detected combinations:', foundCombinations.map(c => c.label).join('; '));
+
     console.log('[order] 5. Calling GPT...');
-    const analysis = await generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons);
+    const analysis = await generateAnalysis(name, birthDate, matrix, book, nameNumerology, karmicLessons, foundCombinations);
     console.log('[order] 5. GPT done');
 
     console.log('[order] 6. Building PDF...');
