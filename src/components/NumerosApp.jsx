@@ -1225,7 +1225,10 @@ export default function NumerosApp() {
       {(
         <div className="relative z-10">
           {/* ── Hero ── */}
-          <section className="pt-28 md:pt-48 pb-12 md:pb-24 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20">
+          <section className="relative pt-28 md:pt-48 pb-12 md:pb-24 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20">
+            {/* Hero ambient glow */}
+            <div className="glow-gold" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%, -60%)', opacity: 0.7 }} />
+            <div className="glow-indigo" style={{ width: 400, height: 400, top: '20%', right: '-10%', opacity: 0.5 }} />
             <div className="flex-1 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[8px] md:text-[9px] uppercase tracking-[0.2em] md:tracking-[0.3em] mb-6 md:mb-10 font-black">
                 <Sparkles size={12} /> Профессиональный расчет судьбы
@@ -1280,7 +1283,8 @@ export default function NumerosApp() {
           {matrixData && <BlurredPreview onOrder={() => setShowOrderModal(true)} />}
 
           {/* ── CTA — Персональный разбор ── */}
-          <section className="py-10 md:py-16 px-6">
+          <section className="relative py-10 md:py-16 px-6 overflow-hidden">
+            <div className="glow-gold" style={{ width: 600, height: 400, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.6 }} />
             <div className="max-w-2xl mx-auto">
               <div className="relative rounded-3xl overflow-hidden p-[1px] bg-gradient-to-br from-[#D4AF37]/50 via-[#D4AF37]/15 to-transparent">
                 <div className="bg-gradient-to-br from-[#D4AF37]/10 to-[#08090D] rounded-3xl px-6 md:px-10 py-8 md:py-10">
@@ -1495,6 +1499,7 @@ export default function NumerosApp() {
 
           {/* ── Final CTA ── */}
           <section className="py-20 md:py-40 px-6 text-center relative overflow-hidden">
+            <div className="glow-gold" style={{ width: 800, height: 500, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.55 }} />
             <h2 className="text-3xl md:text-7xl font-extrabold mb-4 md:mb-6">
               Узнайте свою судьбу
             </h2>

@@ -586,7 +586,10 @@ export default function CompatibilityApp() {
       )}
 
       {/* ── Hero ── */}
-      <section className="pt-28 md:pt-40 pb-16 px-6 max-w-5xl mx-auto text-center">
+      <section className="relative pt-28 md:pt-40 pb-16 px-6 max-w-5xl mx-auto text-center overflow-hidden">
+        {/* Hero ambient glow */}
+        <div className="glow-rose" style={{ width: 700, height: 600, top: '30%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.65 }} />
+        <div className="glow-gold" style={{ width: 350, height: 350, top: '60%', right: '5%', opacity: 0.4 }} />
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/5 text-[#D4AF37] text-[8px] uppercase tracking-[0.25em] mb-6 font-black">
           <Heart size={12} /> Нумерологическая совместимость
         </div>
@@ -859,7 +862,8 @@ export default function CompatibilityApp() {
           </div>
 
           {/* CTA — premium analysis */}
-          <div className="mt-4 rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-br from-[#D4AF37]/5 to-transparent p-8 md:p-10">
+          <div className="mt-4 rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-br from-[#D4AF37]/5 to-transparent p-8 md:p-10 relative overflow-hidden">
+            <div className="glow-gold" style={{ width: 500, height: 300, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.5 }} />
             <div className="flex flex-col md:flex-row md:items-center gap-8">
               <div className="flex-1">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-rose-500/30 bg-rose-500/5 text-rose-400 text-[8px] uppercase tracking-[0.25em] mb-4 font-black">
@@ -922,7 +926,8 @@ export default function CompatibilityApp() {
       )}
 
       {/* ── PDF preview + отзывы + счётчик (как на главной) ── */}
-      <section className="py-16 md:py-24 overflow-hidden border-t border-white/[0.06]">
+      <section className="relative py-16 md:py-24 overflow-hidden border-t border-white/[0.06]">
+        <div className="glow-rose" style={{ width: 700, height: 500, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.5 }} />
         <div className="text-center mb-10 md:mb-14 px-6">
           <span className="inline-block bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full mb-4">
             Что внутри PDF пары
