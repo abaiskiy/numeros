@@ -7,7 +7,7 @@ import PDFPreviewStrip, { COMPATIBILITY_PDF_PAGES } from '@/components/marketing
 import TestimonialsSection, { COMPATIBILITY_TESTIMONIALS } from '@/components/marketing/TestimonialsSection';
 import Link from 'next/link';
 import NavBar from '@/components/NavBar';
-import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield, X, FileText, Star, Calendar } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Heart, Sparkles, Users, Zap, Target, TrendingUp, Shield, X, FileText, Star, Calendar, Plus, Minus } from 'lucide-react';
 import { Manrope } from 'next/font/google';
 
 const manrope = Manrope({ subsets: ['latin', 'cyrillic'], weight: ['400','600','700','800'] });
@@ -465,6 +465,34 @@ function CompatibilityOrderModal({ onClose, initialName1, initialDate1, initialN
   );
 }
 
+// ─── FAQ данные ───────────────────────────────────────────────────────────────
+const COMPAT_FAQS = [
+  {
+    q: 'Когда я получу PDF?',
+    a: 'В течение 2–5 минут после оплаты. Сервис автоматически генерирует разбор пары и отправляет его на указанный email. Если письмо не пришло — проверьте папку «Спам».',
+  },
+  {
+    q: 'Как рассчитывается совместимость?',
+    a: 'Используется метод Квадрата Пифагора: для каждого строится числовая матрица из даты рождения, затем сравниваются ключевые числа (Судьба, Душа, Карма), секторы и энергетические линии. Итоговый балл — интегральная оценка по нескольким параметрам.',
+  },
+  {
+    q: 'Что входит в полный разбор совместимости?',
+    a: 'PDF 10+ страниц: общий балл и уровень совместимости, детальный анализ по 6 сферам (любовь, быт, финансы, цели, общение, сексуальность), матрицы обоих партнёров, точки напряжения и ресурсы пары, прогноз и лучшие периоды для совместных решений.',
+  },
+  {
+    q: 'Нужно ли знать точное время рождения?',
+    a: 'Нет. Для Квадрата Пифагора достаточно только дат рождения обоих — день, месяц и год. Время используется в других системах, например в астрологии.',
+  },
+  {
+    q: 'Подходит ли разбор для дружбы или деловых партнёров?',
+    a: 'Да. Многие используют разбор для анализа деловых отношений, дружеских пар или между родителями и детьми. Числа показывают зоны совпадения и напряжения в любом типе отношений.',
+  },
+  {
+    q: 'Это персональный текст или шаблон?',
+    a: 'Полностью персональный. Каждый разбор создаётся индивидуально под конкретные даты рождения двух людей. Нет двух одинаковых пар — нет двух одинаковых разборов.',
+  },
+];
+
 // ─── Главный компонент ────────────────────────────────────────────────────────
 export default function CompatibilityApp() {
   const [date1, setDate1] = useState('');
@@ -472,6 +500,7 @@ export default function CompatibilityApp() {
   const [name1, setName1] = useState('');
   const [name2, setName2] = useState('');
   const [result, setResult] = useState(null);
+  const [activeFaq, setActiveFaq] = useState(null);
   const [showError, setShowError] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [paymentBanner, setPaymentBanner] = useState(null); // 'ok' | 'fail' | null
@@ -757,6 +786,14 @@ export default function CompatibilityApp() {
       {result && (
         <section id="result" className="py-16 px-6 max-w-5xl mx-auto">
 
+          {/* Urgency */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[9px] uppercase tracking-[0.2em] font-black">
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              Специальная цена · Ограничено
+            </div>
+          </div>
+
           {/* Общий балл */}
           <div className="text-center mb-12">
             <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold mb-4">Результат</p>
@@ -948,6 +985,36 @@ export default function CompatibilityApp() {
         counterInitials={['А', 'Е', 'М', 'Г']}
         trustLine={['Реальные пары и семьи', 'Тот же сервис Numeros', 'PDF на почту за 5 минут']}
       />
+
+      {/* ── FAQ ── */}
+      <section className="py-16 md:py-32 px-4 md:px-6 max-w-4xl mx-auto">
+        <h2 className="text-3xl md:text-5xl font-black tracking-tighter text-center mb-10 md:mb-20">
+          Часто задаваемые вопросы
+        </h2>
+        <div className="space-y-3 md:space-y-4">
+          {COMPAT_FAQS.map((faq, idx) => (
+            <div
+              key={idx}
+              className="glass-card rounded-2xl md:rounded-3xl border border-white/5 overflow-hidden"
+            >
+              <button
+                onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                className="w-full px-5 py-4 md:px-8 md:py-7 flex items-center justify-between text-left gap-3"
+              >
+                <span className="text-sm md:text-lg font-bold leading-snug">{faq.q}</span>
+                <span className="shrink-0 text-gray-400">
+                  {activeFaq === idx ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              {activeFaq === idx && (
+                <div className="px-5 pb-5 md:px-8 md:pb-8 text-gray-400 text-sm md:text-base font-medium leading-relaxed">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       <SiteFooter separator="·" />
     </div>

@@ -209,6 +209,86 @@ const FAMOUS_BY_DIGIT = {
   },
 };
 
+// ─── BlurredPreview ───────────────────────────────────────────────────────────
+
+function BlurredPreview({ onOrder }) {
+  const previewCards = [
+    {
+      icon: '💰',
+      label: 'Денежный потенциал',
+      lines: ['Ваш денежный код раскрыт', 'Число изобилия и способы активации', 'Блоки, мешающие доходу'],
+    },
+    {
+      icon: '🌑',
+      label: 'Теневая сторона',
+      lines: ['Скрытые страхи и саботаж', 'Что блокирует ваш рост', 'Как работать с тенью'],
+    },
+    {
+      icon: '🦁',
+      label: 'Архетип личности',
+      lines: ['Ваш архетип и миссия', 'Сильные стороны натуры', 'Путь реализации таланта'],
+    },
+    {
+      icon: '🎯',
+      label: 'Предназначение',
+      lines: ['Ваша жизненная задача', 'Сфера наибольшей реализации', 'Ключевые периоды роста'],
+    },
+  ];
+
+  return (
+    <section className="py-10 md:py-14 px-6">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-6">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold mb-2">Полный разбор</p>
+          <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-2">
+            В вашей матрице скрыто ещё{' '}
+            <span className="text-[#D4AF37]">4 раздела</span>
+          </h3>
+          <p className="text-gray-400 text-sm">Они недоступны в бесплатном расчёте</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-6 relative">
+          {previewCards.map((card, i) => (
+            <div
+              key={i}
+              className="glass-card border border-white/5 rounded-2xl p-4 relative overflow-hidden select-none"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xl">{card.icon}</span>
+                <span className="text-xs font-black text-white">{card.label}</span>
+              </div>
+              <div className="space-y-1.5 blur-[5px] pointer-events-none">
+                {card.lines.map((line, j) => (
+                  <div key={j} className="flex items-start gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-[#D4AF37] mt-1.5 shrink-0" />
+                    <span className="text-gray-300 text-[11px] leading-snug">{line}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center">
+                  <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+                    <rect x="1" y="5" width="10" height="8" rx="2" stroke="#D4AF37" strokeWidth="1.5"/>
+                    <path d="M4 5V3.5a2 2 0 014 0V5" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={onOrder}
+          className="w-full inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300 shadow-xl shadow-[#D4AF37]/20"
+        >
+          Разблокировать полный разбор <ArrowRight size={15} />
+        </button>
+        <p className="text-center text-gray-600 text-[10px] mt-3">Готово за 5 минут · PDF на email · 3 990 ₸</p>
+      </div>
+    </section>
+  );
+}
+
 function FamousSection({ destiny }) {
   const digit = reduceToSingle(destiny);
   const data  = FAMOUS_BY_DIGIT[digit];
@@ -1195,6 +1275,9 @@ export default function NumerosApp() {
 
           {/* ── Знаменитости с тем же числом судьбы ── */}
           {matrixData && <FamousSection destiny={matrixData.destiny} />}
+
+          {/* ── Размытый превью PDF-разбора ── */}
+          {matrixData && <BlurredPreview onOrder={() => setShowOrderModal(true)} />}
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="py-10 md:py-16 px-6">
