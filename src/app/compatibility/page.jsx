@@ -17,20 +17,11 @@ export const metadata = {
     siteName: "Numeros",
     locale: "ru_RU",
     type: "website",
-    images: [
-      {
-        url: "https://numeros.kz/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Numeros — Совместимость по дате рождения",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Совместимость по дате рождения — Numeros",
     description: "Нумерологический разбор совместимости пары. PDF на почту.",
-    images: ["https://numeros.kz/og-image.png"],
   },
 };
 
