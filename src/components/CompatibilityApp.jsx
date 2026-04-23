@@ -786,14 +786,6 @@ export default function CompatibilityApp() {
       {result && (
         <section id="result" className="py-16 px-6 max-w-5xl mx-auto">
 
-          {/* Urgency */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[9px] uppercase tracking-[0.2em] font-black">
-              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
-              Специальная цена · Ограничено
-            </div>
-          </div>
-
           {/* Общий балл */}
           <div className="text-center mb-12">
             <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold mb-4">Результат</p>
