@@ -51,6 +51,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ru" className={`${manrope.variable} h-full antialiased`}>
       <head>
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LZ9BTNENXY"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LZ9BTNENXY', { send_page_view: true });
+          `}
+        </Script>
+
         <Script id="yandex-metrika" strategy="afterInteractive">
           {`
             (function(m,e,t,r,i,k,a){
