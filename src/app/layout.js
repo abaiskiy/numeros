@@ -85,6 +85,7 @@ export default function RootLayout({ children }) {
                   "@type": "Product",
                   "name": "Персональный нумерологический разбор",
                   "description": "Подробный PDF-разбор по матрице Пифагора: характер, денежный потенциал, карьера, теневая сторона, прогноз на год и аффирмации.",
+                  "image": "https://numeros.kz/opengraph-image",
                   "brand": { "@type": "Brand", "name": "Numeros" },
                   "offers": {
                     "@type": "Offer",
@@ -92,6 +93,21 @@ export default function RootLayout({ children }) {
                     "priceCurrency": "KZT",
                     "availability": "https://schema.org/InStock",
                     "url": "https://numeros.kz",
+                    "shippingDetails": {
+                      "@type": "OfferShippingDetails",
+                      "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "KZT" },
+                      "deliveryTime": {
+                        "@type": "ShippingDeliveryTime",
+                        "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 0, "unitCode": "MIN" },
+                        "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 10, "unitCode": "MIN" },
+                      },
+                      "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "KZ" },
+                    },
+                    "hasMerchantReturnPolicy": {
+                      "@type": "MerchantReturnPolicy",
+                      "applicableCountry": "KZ",
+                      "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+                    },
                   },
                   "aggregateRating": {
                     "@type": "AggregateRating",
