@@ -29,7 +29,7 @@ export async function POST(req) {
     const isLocal     = siteUrl.includes('localhost');
     const isTest      = process.env.NODE_ENV !== 'production';
 
-    const successBase = type === 'compatibility' ? `${siteUrl}/compatibility` : siteUrl;
+    const successBase = `${siteUrl}/success?type=${type}`;
 
     // Custom params forwarded by FreedomPay to pg_result_url webhook
     const customParams = {
@@ -49,8 +49,8 @@ export async function POST(req) {
       amount,
       currency:    'KZT',
       description,
-      successUrl:  `${successBase}?payment=ok`,
-      failureUrl:  `${successBase}?payment=fail`,
+      successUrl:  successBase,
+      failureUrl:  `${siteUrl}${type === 'compatibility' ? '/compatibility' : ''}?payment=fail`,
       resultUrl:   `${siteUrl}/api/freedompay/result`,
       userEmail:   email,
       customParams,
