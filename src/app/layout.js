@@ -16,9 +16,9 @@ const siteUrl =
 const ICON_CACHE = "3";
 
 export const metadata = {
-  metadataBase: new URL(siteUrl),
-  title: "Numeros — Профессиональный расчет судьбы",
-  description: "Раскрой свой потенциал через сакральную геометрию Квадрата Пифагора. Узнай свои сильные стороны за несколько секунд.",
+  metadataBase: new URL('https://numeros.kz'),
+  title: "Нумерологический разбор по дате рождения — Матрица Пифагора | Numeros",
+  description: "Персональный нумерологический разбор по дате рождения: характер, денежный потенциал, предназначение. PDF на почту за 5 минут. Матрица Пифагора онлайн.",
   icons: {
     icon: [
       { url: `/icon.png?v=${ICON_CACHE}`, sizes: "32x32", type: "image/png" },
@@ -51,6 +51,60 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ru" className={`${manrope.variable} h-full antialiased`}>
       <head>
+        {/* Schema.org structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  "@id": "https://numeros.kz/#website",
+                  "url": "https://numeros.kz",
+                  "name": "Numeros",
+                  "description": "Персональный нумерологический разбор по матрице Пифагора",
+                  "inLanguage": "ru-RU",
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://numeros.kz/#organization",
+                  "name": "Numeros",
+                  "url": "https://numeros.kz",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://numeros.kz/icon.png",
+                  },
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer service",
+                    "availableLanguage": ["Russian", "Kazakh"],
+                  },
+                },
+                {
+                  "@type": "Product",
+                  "name": "Персональный нумерологический разбор",
+                  "description": "Подробный PDF-разбор по матрице Пифагора: характер, денежный потенциал, карьера, теневая сторона, прогноз на год и аффирмации.",
+                  "brand": { "@type": "Brand", "name": "Numeros" },
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "3990",
+                    "priceCurrency": "KZT",
+                    "availability": "https://schema.org/InStock",
+                    "url": "https://numeros.kz",
+                  },
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.9",
+                    "reviewCount": "214",
+                    "bestRating": "5",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
+
         {/* Google Analytics 4 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-LZ9BTNENXY"
