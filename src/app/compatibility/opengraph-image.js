@@ -91,7 +91,7 @@ export default function Image() {
             fontSize: 20, fontWeight: 800,
             letterSpacing: 1,
           }}>
-            2 990 ₸
+            2 990 тг
           </div>
         </div>
       </div>
