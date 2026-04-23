@@ -26,22 +26,26 @@ function SuccessContent() {
   const product = PRODUCTS[type] ?? PRODUCTS.numerology;
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.gtag) return;
-
-    // GA4 purchase event — используется как конверсия в Google Ads
-    window.gtag('event', 'purchase', {
+    const payload = {
       transaction_id: `fp-${Date.now()}`,
       value: product.value,
       currency: 'KZT',
-      items: [
-        {
-          item_id: type,
-          item_name: product.name,
-          price: product.value,
-          quantity: 1,
-        },
-      ],
-    });
+      items: [{ item_id: type, item_name: product.name, price: product.value, quantity: 1 }],
+    };
+
+    const fireEvent = () => {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'purchase', payload);
+      } else {
+        // gtag ещё не загрузился — пушим напрямую в dataLayer
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: 'purchase', ...payload });
+      }
+    };
+
+    // Даём gtag ~800ms на загрузку, затем стреляем в любом случае
+    const timer = setTimeout(fireEvent, 800);
+    return () => clearTimeout(timer);
   }, [type, product]);
 
   return (
