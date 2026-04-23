@@ -33,6 +33,8 @@ import {
   Share2,
   Copy,
   Check,
+  DollarSign,
+  Moon,
 } from 'lucide-react';
 
 // ─── Pythagorean square calculation ──────────────────────────────────────────
@@ -211,25 +213,25 @@ const FAMOUS_BY_DIGIT = {
 
 // ─── BlurredPreview ───────────────────────────────────────────────────────────
 
-function BlurredPreview({ onOrder }) {
+function BlurredPreview() {
   const previewCards = [
     {
-      icon: '💰',
+      icon: <DollarSign size={14} className="text-[#D4AF37]" />,
       label: 'Денежный потенциал',
       lines: ['Ваш денежный код раскрыт', 'Число изобилия и способы активации', 'Блоки, мешающие доходу'],
     },
     {
-      icon: '🌑',
+      icon: <Moon size={14} className="text-[#D4AF37]" />,
       label: 'Теневая сторона',
       lines: ['Скрытые страхи и саботаж', 'Что блокирует ваш рост', 'Как работать с тенью'],
     },
     {
-      icon: '🦁',
+      icon: <Crown size={14} className="text-[#D4AF37]" />,
       label: 'Архетип личности',
       lines: ['Ваш архетип и миссия', 'Сильные стороны натуры', 'Путь реализации таланта'],
     },
     {
-      icon: '🎯',
+      icon: <Target size={14} className="text-[#D4AF37]" />,
       label: 'Предназначение',
       lines: ['Ваша жизненная задача', 'Сфера наибольшей реализации', 'Ключевые периоды роста'],
     },
@@ -247,14 +249,16 @@ function BlurredPreview({ onOrder }) {
           <p className="text-gray-400 text-sm">Они недоступны в бесплатном расчёте</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-6 relative">
+        <div className="grid grid-cols-2 gap-3 relative">
           {previewCards.map((card, i) => (
             <div
               key={i}
               className="glass-card border border-white/5 rounded-2xl p-4 relative overflow-hidden select-none"
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">{card.icon}</span>
+                <div className="w-6 h-6 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
+                  {card.icon}
+                </div>
                 <span className="text-xs font-black text-white">{card.label}</span>
               </div>
               <div className="space-y-1.5 blur-[5px] pointer-events-none">
@@ -276,14 +280,6 @@ function BlurredPreview({ onOrder }) {
             </div>
           ))}
         </div>
-
-        <button
-          onClick={onOrder}
-          className="w-full inline-flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300 shadow-xl shadow-[#D4AF37]/20"
-        >
-          Разблокировать полный разбор <ArrowRight size={15} />
-        </button>
-        <p className="text-center text-gray-600 text-[10px] mt-3">Готово за 5 минут · PDF на email · 3 990 ₸</p>
       </div>
     </section>
   );
@@ -1280,7 +1276,7 @@ export default function NumerosApp() {
           {matrixData && <FamousSection destiny={matrixData.destiny} />}
 
           {/* ── Размытый превью PDF-разбора ── */}
-          {matrixData && <BlurredPreview onOrder={() => setShowOrderModal(true)} />}
+          {matrixData && <BlurredPreview />}
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="relative py-10 md:py-16 px-6 overflow-hidden">
