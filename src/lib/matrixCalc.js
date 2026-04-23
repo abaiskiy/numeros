@@ -184,8 +184,14 @@ export function detectCombinations(matrix, book) {
 }
 
 export function buildBookContext(matrix, book) {
-  const { quantitative, transitions, lines } = book;
+  const { quantitative, transitions, lines, basicMeanings } = book;
   const { counts } = matrix;
+
+  const reduceSingle = (n) => {
+    let num = Math.abs(n);
+    while (num > 9) num = String(num).split('').reduce((s, d) => s + Number(d), 0);
+    return num || 9;
+  };
 
   const CELLS = [
     { key: 'char',     digit: 1 },
@@ -199,8 +205,31 @@ export function buildBookContext(matrix, book) {
     { key: 'memory',   digit: 9 },
   ];
 
-  let ctx = '=== ИНТЕРПРЕТАЦИИ ИЗ КНИГИ ===\n\n';
+  let ctx = '';
 
+  // ── 1. Суть ключевых чисел из basicMeanings ──────────────────────────────
+  if (basicMeanings) {
+    ctx += '=== СУТЬ КЛЮЧЕВЫХ ЧИСЕЛ (из книги Александрова) ===\n';
+    const keyNums = [
+      { label: 'Число судьбы', raw: matrix.destiny },
+      { label: 'Число души',   raw: matrix.soul    },
+      { label: 'Карма',        raw: matrix.karma   },
+      { label: 'Потенциал',    raw: matrix.hidden  },
+    ];
+    for (const { label, raw } of keyNums) {
+      const reduced = reduceSingle(raw);
+      const bm = basicMeanings[String(reduced)];
+      if (bm?.essence) {
+        ctx += `${label} ${raw} → суть цифры ${reduced} «${bm.name}»: ${bm.essence}`;
+        if (bm.keywords?.length) ctx += ` Ключевые слова: ${bm.keywords.join(', ')}.`;
+        ctx += '\n';
+      }
+    }
+    ctx += '\n';
+  }
+
+  // ── 2. Интерпретации ячеек по количеству ─────────────────────────────────
+  ctx += '=== ИНТЕРПРЕТАЦИИ ЯЧЕЕК МАТРИЦЫ (из книги) ===\n\n';
   for (const { digit } of CELLS) {
     const q = quantitative[String(digit)];
     if (!q) continue;
@@ -209,6 +238,7 @@ export function buildBookContext(matrix, book) {
     ctx += `Цифра ${digit} — ${q.cellName} (количество: ${c}):\n${interpretation}\n\n`;
   }
 
+  // ── 3. Особые комбинации ──────────────────────────────────────────────────
   const specials = transitions?.specials ?? {};
   const matchedSpecials = [];
   for (const [pattern, desc] of Object.entries(specials)) {
@@ -222,14 +252,39 @@ export function buildBookContext(matrix, book) {
     }
   }
   if (matchedSpecials.length > 0) {
-    ctx += `=== ОСОБЫЕ КОМБИНАЦИИ ===\n${matchedSpecials.join('\n')}\n\n`;
+    ctx += `=== ОСОБЫЕ КОМБИНАЦИИ (из книги) ===\n${matchedSpecials.join('\n')}\n\n`;
   }
 
-  if (lines?.rows) {
-    ctx += `=== ЛИНИИ ПСИХОМАТРИЦЫ ===\n`;
-    for (const [, row] of Object.entries(lines.rows)) {
-      ctx += `${row.name}: ${row.meaning}\n`;
+  // ── 4. Линии матрицы — значения + книжные трактовки ──────────────────────
+  if (lines) {
+    const allLines = {
+      ...lines.rows,
+      ...lines.columns,
+      ...lines.diagonals,
+    };
+
+    // Mapping: digit key → matrix field + PDF label
+    const LINE_MAP = [
+      { key: '123', field: 'selfEsteem',   label: 'Самооценка (1-2-3)'          },
+      { key: '456', field: 'household',    label: 'Быт / Семейность (4-5-6)'    },
+      { key: '789', field: 'talent',       label: 'Талант / Стабильность (7-8-9)'},
+      { key: '147', field: 'goal',         label: 'Целеустремлённость (1-4-7)'  },
+      { key: '258', field: 'family',       label: 'Семья / Достаток (2-5-8)'    },
+      { key: '369', field: 'stability',    label: 'Стабильность / Талант (3-6-9)'},
+      { key: '159', field: 'spirituality', label: 'Духовность (1-5-9)'          },
+      { key: '357', field: 'temperament',  label: 'Темперамент (3-5-7)'         },
+    ];
+
+    ctx += '=== ЛИНИИ ПСИХОМАТРИЦЫ (из книги) ===\n';
+    for (const { key, field, label } of LINE_MAP) {
+      const entry = allLines[key];
+      const val   = matrix[field];
+      const status = (val === '—' || val === undefined) ? 'линия пустая' : `значение ${val}`;
+      if (entry?.meaning) {
+        ctx += `${label} [${status}] — ${entry.name}: ${entry.meaning}\n`;
+      }
     }
+    ctx += '\n';
   }
 
   return ctx;

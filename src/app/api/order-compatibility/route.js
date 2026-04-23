@@ -65,6 +65,49 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
   const only1 = [1,2,3,4,5,6,7,8,9].filter(d => (m1.counts[d]||0) > 0 && (m2.counts[d]||0) === 0);
   const only2 = [1,2,3,4,5,6,7,8,9].filter(d => (m1.counts[d]||0) === 0 && (m2.counts[d]||0) > 0);
 
+  // ── Книжный контекст: суть ключевых чисел ────────────────────────────────
+  const reduceSingle = (n) => {
+    let num = Math.abs(n);
+    while (num > 9) num = String(num).split('').reduce((s, d) => s + Number(d), 0);
+    return num || 9;
+  };
+  const bm = book.basicMeanings ?? {};
+  const lines = book.lines ?? {};
+  const allLines = { ...lines.rows, ...lines.columns, ...lines.diagonals };
+
+  const keyNumCtx = (m, personName) => {
+    const pairs = [
+      { label: 'Число судьбы', raw: m.destiny },
+      { label: 'Число души',   raw: m.soul    },
+      { label: 'Карма',        raw: m.karma   },
+    ];
+    return pairs.map(({ label, raw }) => {
+      const reduced = reduceSingle(raw);
+      const entry = bm[String(reduced)];
+      if (!entry?.essence) return null;
+      return `${label} ${raw} (цифра ${reduced} «${entry.name}»): ${entry.essence}`;
+    }).filter(Boolean).join('\n');
+  };
+
+  const lineCtxForPerson = (m) => {
+    const LINE_MAP = [
+      { key: '123', field: 'selfEsteem' }, { key: '456', field: 'household'  },
+      { key: '789', field: 'talent'     }, { key: '147', field: 'goal'       },
+      { key: '258', field: 'family'     }, { key: '369', field: 'stability'  },
+      { key: '159', field: 'spirituality' }, { key: '357', field: 'temperament' },
+    ];
+    return LINE_MAP.map(({ key, field }) => {
+      const entry = allLines[key];
+      const val = m[field];
+      if (!entry?.meaning) return null;
+      const status = (!val || val === '—') ? 'пустая' : `значение ${val}`;
+      return `${entry.name} [${status}]: ${entry.meaning}`;
+    }).filter(Boolean).join('\n');
+  };
+
+  const bookCtx1 = `${keyNumCtx(m1, name1 || 'Первый')}\n${lineCtxForPerson(m1)}`;
+  const bookCtx2 = `${keyNumCtx(m2, name2 || 'Второй')}\n${lineCtxForPerson(m2)}`;
+
   const prompt = `Ты — профессиональный нумеролог. Составь глубокий персонализированный разбор совместимости двух людей на основе их психоматриц Пифагора.
 
 ЧЕЛОВЕК 1: ${name1 || 'Первый'} (${fmt(date1)})
@@ -88,6 +131,14 @@ async function generateCompatibilityAnalysis(name1, date1, m1, name2, date2, m2,
 - Только у ${name1 || 'первого'}: ${only1.length > 0 ? only1.join(', ') : 'нет уникальных'}
 - Только у ${name2 || 'второго'}: ${only2.length > 0 ? only2.join(', ') : 'нет уникальных'}
 - Текущий ${curYear}: ${name1} ЛГ-${py1[0]?.personalYear ?? '?'}, ${name2} ЛГ-${py2[0]?.personalYear ?? '?'}
+
+=== КОНТЕКСТ ИЗ КНИГИ АЛЕКСАНДРОВА ===
+
+${name1 || 'Первый'}:
+${bookCtx1}
+
+${name2 || 'Второй'}:
+${bookCtx2}
 
 Составь разбор строго в формате JSON. Поля title, icon, color в spheres — оставь точно как указано, заполни только score и content.
 {
