@@ -453,6 +453,220 @@ function InsightAndFamous({ matrixData }) {
   );
 }
 
+// ─── ResultModal ─────────────────────────────────────────────────────────────
+
+const KEY_TO_DIGIT = { char: 1, energy: 2, interest: 3, health: 4, logic: 5, labor: 6, luck: 7, duty: 8, memory: 9 };
+
+const CELL_HINTS = {
+  char:     { label: 'Характер',  strong: 'Природная харизма — люди тянутся к вам сами', base: 'Устойчивый характер, гибкий в общении', empty: 'Характер раскрывается через жизненный опыт' },
+  energy:   { label: 'Энергия',   strong: 'Мощная жизненная сила — источник и магнит для других', base: 'Стабильная энергия без резких перепадов', empty: 'Важно осознанно восполнять энергию' },
+  interest: { label: 'Интерес',   strong: 'Широкий кругозор и нестандартный взгляд на мир', base: 'Устойчивые интересы с реальным потенциалом', empty: 'Глубина важнее широты увлечений' },
+  health:   { label: 'Здоровье',  strong: 'Крепкая конституция и природная выносливость', base: 'Здоровье требует режима и внимания', empty: 'Телу нужна особая забота' },
+  logic:    { label: 'Логика',    strong: 'Острый ум — принимаете точные взвешенные решения', base: 'Логика и интуиция в хорошем балансе', empty: 'Решения идут через чувства, а не анализ' },
+  labor:    { label: 'Труд',      strong: 'Трудолюбие становится вашим главным конкурентным активом', base: 'Работаете системно и надёжно', empty: 'Ставка на эффективность, а не количество' },
+  luck:     { label: 'Удача',     strong: 'Нужные люди и события притягиваются сами', base: 'Удача активируется активными действиями', empty: 'Создаёте возможности сами — без ожиданий' },
+  duty:     { label: 'Долг',      strong: 'Высокая ответственность — на вас всегда можно положиться', base: 'Балансируете между долгом и свободой', empty: 'Свобода важнее жёстких обязательств' },
+  memory:   { label: 'Память',    strong: 'Богатый внутренний опыт — источник мудрости', base: 'Хорошая память на людей и ситуации', empty: 'Живёте настоящим, не удерживая прошлое' },
+};
+
+function ResultModal({ matrixData, onClose, onBuy }) {
+  const destinyDigit = reduceToSingle(matrixData.destiny);
+  const soulDigit    = reduceToSingle(matrixData.soul);
+  const destinyHint  = DESTINY_HINTS[destinyDigit];
+  const soulHint     = SOUL_HINTS[soulDigit];
+  const famousData   = FAMOUS_BY_DESTINY[matrixData.destiny];
+
+  const cellKeys = ['char','energy','interest','health','logic','labor','luck','duty','memory'];
+  const topCells = cellKeys
+    .map(k => ({ key: k, cell: matrixData[k], count: matrixData[k].v === '—' ? 0 : matrixData[k].v.length }))
+    .filter(c => c.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-end md:items-center justify-center p-0 md:p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+
+      <div
+        className="relative z-10 w-full md:max-w-xl bg-[#0D0E14] rounded-t-[28px] md:rounded-[28px] border border-white/[0.08] flex flex-col shadow-2xl shadow-black/60"
+        style={{ maxHeight: '92dvh' }}
+      >
+        {/* Drag handle (mobile only) */}
+        <div className="flex justify-center pt-2.5 shrink-0 md:hidden">
+          <div className="w-9 h-1 rounded-full bg-white/20" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 pt-3 pb-3.5 border-b border-white/[0.06] shrink-0">
+          <div>
+            <p className="text-[8px] uppercase tracking-[0.3em] text-[#D4AF37] font-black mb-0.5">Нумерологический профиль</p>
+            <h3 className="text-base font-black text-white leading-tight">Расшифровка вашей матрицы</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+          >
+            <X size={14} />
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="px-5 py-5 space-y-5">
+
+            {/* ── Destiny ── */}
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center">
+                <span className="text-xl font-black text-white leading-none">{matrixData.destiny}</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[8px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Число судьбы</span>
+                  <span className="text-gray-600 text-[8px]">·</span>
+                  <span className="text-[8px] uppercase tracking-[0.15em] font-black text-gray-400">{destinyHint?.title}</span>
+                </div>
+                <p className="text-gray-300 text-sm leading-relaxed">{destinyHint?.text}</p>
+              </div>
+            </div>
+
+            {/* ── Soul ── */}
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center">
+                <span className="text-xl font-black text-white leading-none">{matrixData.soul}</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[8px] uppercase tracking-[0.2em] font-black text-indigo-400">Число души</span>
+                  <span className="text-gray-600 text-[8px]">·</span>
+                  <span className="text-[8px] uppercase tracking-[0.15em] font-black text-gray-400">Внутренняя мотивация</span>
+                </div>
+                <p className="text-gray-300 text-sm leading-relaxed">{soulHint}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-white/[0.06]" />
+
+            {/* ── Top cells ── */}
+            {topCells.length > 0 && (
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.25em] text-gray-500 font-black mb-3">Сильнейшие энергии вашей матрицы</p>
+                <div className="space-y-2">
+                  {topCells.map(({ key, cell, count }) => {
+                    const hints = CELL_HINTS[key];
+                    const digit = KEY_TO_DIGIT[key];
+                    const hint = cell.h ? hints.strong : hints.base;
+                    return (
+                      <div key={key} className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.025] border border-white/[0.06]">
+                        <div className="shrink-0 w-10 h-10 rounded-xl bg-[#D4AF37]/[0.08] border border-[#D4AF37]/20 flex items-center justify-center">
+                          <span className="text-[11px] font-black text-[#D4AF37] tracking-tight leading-none">
+                            {String(digit).repeat(Math.min(count, 4))}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <p className="text-white text-xs font-black">{hints.label}</p>
+                            {cell.h && (
+                              <span className="text-[7px] font-black uppercase tracking-wider text-[#D4AF37] bg-[#D4AF37]/10 px-1.5 py-0.5 rounded-full shrink-0">
+                                Мощно
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-400 text-[11px] leading-snug">{hint}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ── Famous people ── */}
+            {famousData && (
+              <>
+                <div className="border-t border-white/[0.06]" />
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_5px_#D4AF37]" />
+                    <span className="text-[8px] uppercase tracking-[0.25em] text-[#D4AF37] font-black">Ваше окружение успеха</span>
+                  </div>
+                  <p className="text-gray-500 text-xs mb-3">
+                    Число судьбы <span className="text-white/50">{matrixData.destiny}</span> — {famousData.trait}
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {famousData.people.slice(0, 3).map((p) => (
+                      <div key={p.name} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3 text-center">
+                        <div className="w-8 h-8 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center mx-auto mb-2">
+                          <span className="text-[#D4AF37] font-black text-sm leading-none">{p.name.charAt(0)}</span>
+                        </div>
+                        <p className="text-white font-bold text-[10px] leading-tight">{p.name}</p>
+                        <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-wide mt-0.5">{p.field}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ── Premium locked teaser ── */}
+            <div className="border-t border-white/[0.06]" />
+            <div className="rounded-2xl border border-[#D4AF37]/15 bg-[#D4AF37]/[0.03] p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-5 h-5 rounded-md bg-[#D4AF37]/10 flex items-center justify-center shrink-0">
+                  <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+                    <rect x="0.75" y="4.25" width="8.5" height="7" rx="1.75" stroke="#D4AF37" strokeWidth="1.5"/>
+                    <path d="M3 4V3a2 2 0 014 0v1" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <p className="text-[8px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">В полном разборе ещё 8 разделов</p>
+              </div>
+              <div className="space-y-2 select-none">
+                {[
+                  { icon: '💰', text: 'Денежный потенциал — ваш числовой код дохода', blur: false },
+                  { icon: '🌑', text: 'Теневая сторона — скрытые блоки и страхи', blur: false },
+                  { icon: '🦁', text: 'Архетип личности — миссия и тип личности', blur: false },
+                  { icon: '💑', text: 'Код отношений — совместимость и партнёрство', blur: true },
+                  { icon: '📅', text: 'Прогноз на 3 года — активные и сложные периоды', blur: true },
+                  { icon: '💫', text: 'Аффирмации под ваш нумерологический профиль', blur: true },
+                ].map((item, i) => (
+                  <div key={i} className={`flex items-center gap-2.5 ${item.blur ? 'blur-[3px]' : ''}`}>
+                    <span className="text-sm shrink-0">{item.icon}</span>
+                    <span className="text-gray-300 text-xs">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-1" />
+          </div>
+        </div>
+
+        {/* Sticky CTA */}
+        <div className="shrink-0 px-5 pt-3 pb-5 md:pb-4 border-t border-white/[0.06] bg-[#0D0E14]">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-baseline gap-2">
+              <span className="text-gray-500 text-sm line-through">9 990 ₸</span>
+              <span className="text-white text-2xl font-black">3 990 ₸</span>
+              <span className="text-[#D4AF37] text-[9px] font-black uppercase tracking-wide">−60%</span>
+            </div>
+            <span className="text-gray-600 text-[10px]">10+ стр. · email · 5 мин</span>
+          </div>
+          <button
+            onClick={onBuy}
+            className="w-full flex items-center justify-center gap-2 bg-[#D4AF37] text-black hover:bg-white px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.25em] transition-all duration-300 shadow-lg shadow-[#D4AF37]/25"
+          >
+            Получить полный разбор <ArrowRight size={14} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Shared button classes ────────────────────────────────────────────────────
 
 const BTN_PRIMARY =
@@ -1207,6 +1421,7 @@ export default function NumerosApp() {
   const [dateError, setDateError] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(null);
   const [paymentBanner, setPaymentBanner] = useState(null); // 'ok' | 'fail' | null
 
@@ -1237,6 +1452,13 @@ export default function NumerosApp() {
     window.addEventListener('open-order-modal', handler);
     return () => window.removeEventListener('open-order-modal', handler);
   }, []);
+
+  // Авто-открытие расшифровки после расчёта матрицы
+  useEffect(() => {
+    if (!matrixData) return;
+    const t = setTimeout(() => setShowResultModal(true), 600);
+    return () => clearTimeout(t);
+  }, [matrixData]);
 
   useEffect(() => {
     const handler = () => { setView('landing'); setPaymentBanner(null); };
@@ -1271,6 +1493,7 @@ export default function NumerosApp() {
     }
     setMatrixLoading(true);
     setMatrixData(null);
+    setShowResultModal(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     matrixCalcTimeoutRef.current = window.setTimeout(() => {
       matrixCalcTimeoutRef.current = null;
@@ -1382,10 +1605,17 @@ export default function NumerosApp() {
             </div>
           </section>
 
-          {/* ── Расшифровка чисел + Известные личности ── */}
-          {matrixData && <InsightAndFamous matrixData={matrixData} />}
-
-          {/* ── Размытый превью PDF-разбора ── */}
+          {/* ── Кнопка повторного открытия расшифровки ── */}
+          {matrixData && !showResultModal && (
+            <div className="flex justify-center py-4 px-6">
+              <button
+                onClick={() => setShowResultModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/5 text-[#D4AF37] text-[9px] uppercase tracking-[0.25em] font-black hover:bg-[#D4AF37]/10 transition-all"
+              >
+                <Eye size={12} /> Открыть расшифровку
+              </button>
+            </div>
+          )}
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="relative py-10 md:py-16 px-6 overflow-hidden">
@@ -1633,6 +1863,13 @@ export default function NumerosApp() {
       {/* ── Модал заказа разбора ── */}
       {showOrderModal && (
         <OrderModal onClose={() => setShowOrderModal(false)} initialDate={birthDate} />
+      )}
+      {showResultModal && matrixData && (
+        <ResultModal
+          matrixData={matrixData}
+          onClose={() => setShowResultModal(false)}
+          onBuy={() => { setShowResultModal(false); setShowOrderModal(true); }}
+        />
       )}
     </div>
   );
