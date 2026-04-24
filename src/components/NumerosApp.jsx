@@ -304,7 +304,7 @@ function InsightAndFamous({ matrixData }) {
           <div className="flex items-center gap-3 mb-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
             <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-black">
-              Число судьбы {destinyDigit} · Ваше окружение успеха
+              Ваше окружение успеха
             </span>
           </div>
           <p className="text-gray-500 text-sm mb-6">
