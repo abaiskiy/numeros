@@ -1598,37 +1598,34 @@ export default function NumerosApp() {
                 </>
               )}
             </div>
-
-            {/* ── Кнопка расшифровки — прямо под матрицей ── */}
-            {matrixData && (
-              <div className="w-full max-w-[580px] mx-auto mt-5 px-3">
-                <button
-                  onClick={() => setShowResultModal(true)}
-                  className="relative w-full group overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-gradient-to-br from-[#D4AF37]/15 to-[#D4AF37]/5 hover:from-[#D4AF37]/25 hover:to-[#D4AF37]/10 transition-all duration-300 px-6 py-4 flex items-center justify-between shadow-lg shadow-[#D4AF37]/10"
-                >
-                  {/* Shimmer sweep */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center shrink-0">
-                      <Sparkles size={16} className="text-[#D4AF37]" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-white font-black text-sm leading-tight">Читать расшифровку</p>
-                      <p className="text-[#D4AF37]/70 text-[10px] font-semibold mt-0.5">
-                        Числа судьбы, души, топ-энергии и окружение успеха
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Открыть</span>
-                    <ArrowRight size={14} className="text-[#D4AF37] group-hover:translate-x-0.5 transition-transform duration-200" />
-                  </div>
-                </button>
-              </div>
-            )}
           </section>
+
+          {/* ── Кнопка расшифровки — под матрицей, вне flex-layout ── */}
+          {matrixData && (
+            <div className="px-6 pb-4 max-w-[620px] mx-auto w-full">
+              <button
+                onClick={() => setShowResultModal(true)}
+                className="relative w-full group overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-gradient-to-br from-[#D4AF37]/15 to-[#D4AF37]/5 hover:from-[#D4AF37]/25 hover:to-[#D4AF37]/10 transition-all duration-300 px-6 py-4 flex items-center justify-between shadow-lg shadow-[#D4AF37]/10"
+              >
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center shrink-0">
+                    <Sparkles size={16} className="text-[#D4AF37]" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-white font-black text-sm leading-tight">Читать расшифровку</p>
+                    <p className="text-[#D4AF37]/70 text-[10px] font-semibold mt-0.5">
+                      Числа судьбы, души, топ-энергии и окружение успеха
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Открыть</span>
+                  <ArrowRight size={14} className="text-[#D4AF37] group-hover:translate-x-0.5 transition-transform duration-200" />
+                </div>
+              </button>
+            </div>
+          )}
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="relative py-10 md:py-16 px-6 overflow-hidden">
