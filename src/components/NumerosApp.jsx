@@ -237,28 +237,30 @@ const SOUL_HINTS = {
   9: 'Внутри вы несёте много чужой боли и опыта. Вам важно отпускать и не нести всё в одиночку.',
 };
 
-function KeyNumbersInsight({ matrixData }) {
-  const destinyDigit = reduceToSingle(matrixData.destiny);
-  const soulDigit    = reduceToSingle(matrixData.soul);
-  const destinyHint  = DESTINY_HINTS[destinyDigit];
-  const soulHint     = SOUL_HINTS[soulDigit];
-  // Для отображения используем сырые значения — они всегда разные
+function InsightAndFamous({ matrixData }) {
+  const destinyDigit   = reduceToSingle(matrixData.destiny);
+  const soulDigit      = reduceToSingle(matrixData.soul);
+  const destinyHint    = DESTINY_HINTS[destinyDigit];
+  const soulHint       = SOUL_HINTS[soulDigit];
   const destinyDisplay = matrixData.destiny;
   const soulDisplay    = matrixData.soul;
+  const famousData     = FAMOUS_BY_DIGIT[destinyDigit];
 
   return (
-    <section className="px-6 pb-4 max-w-2xl mx-auto">
-      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] overflow-hidden divide-y divide-white/[0.06]">
+    <section className="py-10 md:py-14 px-6 max-w-4xl mx-auto">
+
+      {/* Расшифровка чисел */}
+      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] overflow-hidden divide-y divide-white/[0.06] mb-8">
 
         {/* Число судьбы */}
         <div className="p-5 md:p-6 flex gap-4 items-start">
-          <div className="shrink-0 w-10 h-10 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex flex-col items-center justify-center">
+          <div className="shrink-0 w-10 h-10 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center">
             <span className="text-base font-black text-white leading-none">{destinyDisplay}</span>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[9px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Число судьбы</span>
-              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-600">·</span>
+              <span className="text-[9px] font-black text-gray-600">·</span>
               <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-400">{destinyHint?.title}</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">{destinyHint?.text}</p>
@@ -267,20 +269,20 @@ function KeyNumbersInsight({ matrixData }) {
 
         {/* Число души */}
         <div className="p-5 md:p-6 flex gap-4 items-start">
-          <div className="shrink-0 w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col items-center justify-center">
+          <div className="shrink-0 w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
             <span className="text-base font-black text-white leading-none">{soulDisplay}</span>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[9px] uppercase tracking-[0.2em] font-black text-blue-400">Число души</span>
-              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-600">·</span>
+              <span className="text-[9px] font-black text-gray-600">·</span>
               <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-400">Внутренняя мотивация</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">{soulHint}</p>
           </div>
         </div>
 
-        {/* Тизер на остальные числа */}
+        {/* Тизер */}
         <div className="p-5 md:p-6 flex gap-4 items-center">
           <div className="shrink-0 w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center">
             <svg width="14" height="16" viewBox="0 0 12 14" fill="none">
@@ -295,6 +297,40 @@ function KeyNumbersInsight({ matrixData }) {
         </div>
 
       </div>
+
+      {/* Известные личности с тем же числом судьбы */}
+      {famousData && (
+        <>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
+            <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-black">
+              Число судьбы {destinyDigit} · Ваше окружение успеха
+            </span>
+          </div>
+          <p className="text-gray-500 text-sm mb-6">
+            Эти известные люди разделяют с вами одно число судьбы —&nbsp;
+            <span className="text-[#D4AF37]/80">{famousData.trait}</span>
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {famousData.people.map((p) => (
+              <div
+                key={p.name}
+                className="group relative rounded-2xl overflow-hidden border border-white/[0.07] bg-white/[0.03] hover:bg-[#D4AF37]/5 hover:border-[#D4AF37]/25 transition-all duration-300 p-5"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-4">
+                  <span className="text-[#D4AF37] font-black text-lg leading-none">{p.name.charAt(0)}</span>
+                </div>
+                <p className="text-white font-bold text-sm mb-0.5">{p.name}</p>
+                <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.15em] mb-2">{p.field}</p>
+                <p className="text-gray-500 text-xs leading-relaxed">{p.fact}</p>
+                <p className="mt-3 text-gray-700 text-[10px]">{p.birth}</p>
+                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
     </section>
   );
 }
@@ -373,63 +409,6 @@ function BlurredPreview() {
   );
 }
 
-function FamousSection({ destiny }) {
-  const digit = reduceToSingle(destiny);
-  const data  = FAMOUS_BY_DIGIT[digit];
-  if (!data) return null;
-  return (
-    <section className="py-10 md:py-14 px-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_6px_#D4AF37]" />
-          <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-black">
-            Число судьбы {digit}
-          </span>
-        </div>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-1">
-          Ваше окружение успеха
-        </h2>
-        <p className="text-gray-500 text-sm mb-7">
-          Эти известные люди разделяют с вами одно число судьбы —&nbsp;
-          <span className="text-[#D4AF37]/80">{data.trait}</span>
-        </p>
-
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {data.people.map((p) => (
-            <div
-              key={p.name}
-              className="group relative rounded-2xl overflow-hidden border border-white/[0.07] bg-white/[0.03] hover:bg-[#D4AF37]/5 hover:border-[#D4AF37]/25 transition-all duration-300 p-5"
-            >
-              {/* Avatar */}
-              <div className="w-11 h-11 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center mb-4">
-                <span className="text-[#D4AF37] font-black text-lg leading-none">
-                  {p.name.charAt(0)}
-                </span>
-              </div>
-
-              {/* Name & field */}
-              <p className="text-white font-bold text-sm mb-0.5">{p.name}</p>
-              <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.15em] mb-2">
-                {p.field}
-              </p>
-
-              {/* Fact */}
-              <p className="text-gray-500 text-xs leading-relaxed">{p.fact}</p>
-
-              {/* Birth */}
-              <p className="mt-3 text-gray-700 text-[10px]">{p.birth}</p>
-
-              {/* Subtle accent line */}
-              <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ─── Shared button classes ────────────────────────────────────────────────────
 
@@ -1360,11 +1339,8 @@ export default function NumerosApp() {
             </div>
           </section>
 
-          {/* ── Мини-расшифровка ключевых чисел ── */}
-          {matrixData && <KeyNumbersInsight matrixData={matrixData} />}
-
-          {/* ── Знаменитости с тем же числом судьбы ── */}
-          {matrixData && <FamousSection destiny={matrixData.destiny} />}
+          {/* ── Расшифровка чисел + Известные личности ── */}
+          {matrixData && <InsightAndFamous matrixData={matrixData} />}
 
           {/* ── Размытый превью PDF-разбора ── */}
           {matrixData && <BlurredPreview />}
