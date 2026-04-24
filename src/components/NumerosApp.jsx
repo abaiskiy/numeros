@@ -469,7 +469,7 @@ const CELL_HINTS = {
   memory:   { label: 'Память',    strong: 'Богатый внутренний опыт — источник мудрости', base: 'Хорошая память на людей и ситуации', empty: 'Живёте настоящим, не удерживая прошлое' },
 };
 
-function ResultModal({ matrixData, onClose, onBuy }) {
+function ResultModal({ matrixData, birthDate, onClose, onBuy }) {
   const destinyDigit = reduceToSingle(matrixData.destiny);
   const soulDigit    = reduceToSingle(matrixData.soul);
   const destinyHint  = DESTINY_HINTS[destinyDigit];
@@ -504,8 +504,10 @@ function ResultModal({ matrixData, onClose, onBuy }) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-3 pb-3.5 border-b border-white/[0.06] shrink-0">
           <div>
-            <p className="text-[8px] uppercase tracking-[0.3em] text-[#D4AF37] font-black mb-0.5">Нумерологический профиль</p>
-            <h3 className="text-base font-black text-white leading-tight">Расшифровка вашей матрицы</h3>
+            <p className="text-[8px] uppercase tracking-[0.3em] text-[#D4AF37] font-black mb-0.5">
+              Расшифровка · {birthDate}
+            </p>
+            <h3 className="text-base font-black text-white leading-tight">Ваш нумерологический профиль</h3>
           </div>
           <button
             onClick={onClose}
@@ -1453,13 +1455,6 @@ export default function NumerosApp() {
     return () => window.removeEventListener('open-order-modal', handler);
   }, []);
 
-  // Авто-открытие расшифровки после расчёта матрицы
-  useEffect(() => {
-    if (!matrixData) return;
-    const t = setTimeout(() => setShowResultModal(true), 600);
-    return () => clearTimeout(t);
-  }, [matrixData]);
-
   useEffect(() => {
     const handler = () => { setView('landing'); setPaymentBanner(null); };
     window.addEventListener('navigate-home', handler);
@@ -1603,19 +1598,37 @@ export default function NumerosApp() {
                 </>
               )}
             </div>
-          </section>
 
-          {/* ── Кнопка повторного открытия расшифровки ── */}
-          {matrixData && !showResultModal && (
-            <div className="flex justify-center py-4 px-6">
-              <button
-                onClick={() => setShowResultModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/5 text-[#D4AF37] text-[9px] uppercase tracking-[0.25em] font-black hover:bg-[#D4AF37]/10 transition-all"
-              >
-                <Eye size={12} /> Открыть расшифровку
-              </button>
-            </div>
-          )}
+            {/* ── Кнопка расшифровки — прямо под матрицей ── */}
+            {matrixData && (
+              <div className="w-full max-w-[580px] mx-auto mt-5 px-3">
+                <button
+                  onClick={() => setShowResultModal(true)}
+                  className="relative w-full group overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-gradient-to-br from-[#D4AF37]/15 to-[#D4AF37]/5 hover:from-[#D4AF37]/25 hover:to-[#D4AF37]/10 transition-all duration-300 px-6 py-4 flex items-center justify-between shadow-lg shadow-[#D4AF37]/10"
+                >
+                  {/* Shimmer sweep */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center shrink-0">
+                      <Sparkles size={16} className="text-[#D4AF37]" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-white font-black text-sm leading-tight">Читать расшифровку</p>
+                      <p className="text-[#D4AF37]/70 text-[10px] font-semibold mt-0.5">
+                        Числа судьбы, души, топ-энергии и окружение успеха
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Открыть</span>
+                    <ArrowRight size={14} className="text-[#D4AF37] group-hover:translate-x-0.5 transition-transform duration-200" />
+                  </div>
+                </button>
+              </div>
+            )}
+          </section>
 
           {/* ── CTA — Персональный разбор ── */}
           <section className="relative py-10 md:py-16 px-6 overflow-hidden">
@@ -1867,6 +1880,7 @@ export default function NumerosApp() {
       {showResultModal && matrixData && (
         <ResultModal
           matrixData={matrixData}
+          birthDate={formatDate(birthDate)}
           onClose={() => setShowResultModal(false)}
           onBuy={() => { setShowResultModal(false); setShowOrderModal(true); }}
         />
