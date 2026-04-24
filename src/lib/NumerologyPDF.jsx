@@ -945,18 +945,13 @@ function PersonalYearsTable({ years }) {
 // ─── Famous person comparison ─────────────────────────────────────────────────
 function FamousPersonCard({ famous, destinyDigit }) {
   if (!famous || famous.length === 0) return null;
-  const digit = (() => {
-    let n = Math.abs(destinyDigit);
-    while (n > 9) n = String(n).split('').reduce((s, d) => s + Number(d), 0);
-    return n;
-  })();
   return (
     <View wrap={false} style={s.famousCard}>
       <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: C.gold, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1.5 }}>
         Ваше окружение успеха
       </Text>
       <Text style={s.famousIntro}>
-        Люди с числом судьбы {digit} — такие же, как у вас — оставили яркий след в истории:
+        Число судьбы {Math.abs(destinyDigit)} объединяет вас с этими людьми, оставившими след в истории:
       </Text>
       <View style={s.famousRow}>
         {famous.map((f, i) => (
@@ -1310,7 +1305,7 @@ export function NumerologyPDF({ name, birthDate, matrix, analysis, extras }) {
 
         {famous.length > 0 && (
           <>
-            <SectionLabel>ЗНАМЕНИТОСТИ С ВАШИМ ЧИСЛОМ СУДЬБЫ</SectionLabel>
+            <SectionLabel>ВАШЕ ОКРУЖЕНИЕ УСПЕХА</SectionLabel>
             <FamousPersonCard famous={famous} destinyDigit={matrix.destiny} />
             <View style={s.divider} />
           </>
