@@ -250,7 +250,7 @@ function KeyNumbersInsight({ matrixData }) {
         {/* Число судьбы */}
         <div className="p-5 md:p-6 flex gap-4 items-start">
           <div className="shrink-0 w-10 h-10 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex flex-col items-center justify-center">
-            <span className="text-base font-black text-white leading-none">{matrixData.destiny}</span>
+            <span className="text-base font-black text-white leading-none">{destinyDigit}</span>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -265,7 +265,7 @@ function KeyNumbersInsight({ matrixData }) {
         {/* Число души */}
         <div className="p-5 md:p-6 flex gap-4 items-start">
           <div className="shrink-0 w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col items-center justify-center">
-            <span className="text-base font-black text-white leading-none">{matrixData.soul}</span>
+            <span className="text-base font-black text-white leading-none">{soulDigit}</span>
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
