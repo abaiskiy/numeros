@@ -211,6 +211,91 @@ const FAMOUS_BY_DIGIT = {
   },
 };
 
+// ─── KeyNumbersInsight ────────────────────────────────────────────────────────
+
+const DESTINY_HINTS = {
+  1: { title: 'Первопроходец', text: 'Вы рождены вести, а не следовать. Ваша сила — в смелости начинать то, чего ещё никто не делал. Независимость и воля — ваш главный ресурс.' },
+  2: { title: 'Дипломат', text: 'Ваш дар — чувствовать людей и строить мосты между ними. Вы достигаете большего через партнёрство, чем в одиночку. Интуиция редко вас подводит.' },
+  3: { title: 'Творец', text: 'Вы несёте в мир красоту и вдохновение. Ваша реализация — через творчество, слово и общение. Там, где вы есть, рождается радость.' },
+  4: { title: 'Строитель', text: 'Вы создаёте фундаменты — в семье, бизнесе, идеях. Ваша сила в надёжности и системном мышлении. То, что построено вашими руками, стоит долго.' },
+  5: { title: 'Исследователь', text: 'Свобода и перемены — ваша природа. Вы учитесь через опыт и быстро адаптируетесь. Ваш путь — широкий, с множеством разных глав.' },
+  6: { title: 'Хранитель', text: 'Ваше призвание — создавать тепло и защищённость для близких. Вы несёте ответственность легко, потому что это идёт от сердца. Гармония в отношениях — ваш приоритет.' },
+  7: { title: 'Мыслитель', text: 'Вы ищете глубину там, где другие видят поверхность. Ваш ум — аналитический и философский. Одиночество для вас — не наказание, а источник силы.' },
+  8: { title: 'Управляющий', text: 'Вы рождены для материальной реализации и власти. Ваша энергия притягивает ресурсы — если вы не боитесь масштаба. Деньги и статус даются вам через систему.' },
+  9: { title: 'Мудрец', text: 'Вы несёте опыт многих жизней. Ваш путь — служение, завершение циклов и передача знания. Там, где другие теряются, вы видите общую картину.' },
+};
+
+const SOUL_HINTS = {
+  1: 'Внутри вы — лидер, который хочет действовать самостоятельно. Зависимость от других ощущается как давление.',
+  2: 'В душе вы ищете близости и взаимопонимания. Одиночество переносится тяжело — вам важно чувствовать принятие.',
+  3: 'Ваша душа требует самовыражения. Когда вы не творите и не общаетесь — внутри нарастает тревога.',
+  4: 'Внутри вам нужна стабильность и порядок. Хаос выбивает вас из равновесия сильнее, чем кажется окружающим.',
+  5: 'Душа жаждет свободы и новых впечатлений. Рутина для вас — медленное угасание.',
+  6: 'В глубине вы — заботливый человек, которому важно быть нужным. Семья и близкие — ваш главный смысл.',
+  7: 'Внутри вы постоянно анализируете и ищете смысл. Поверхностные отношения оставляют вас пустым.',
+  8: 'Душа требует признания и результата. Вы не можете долго быть в тени — это противоречит вашей природе.',
+  9: 'Внутри вы несёте много чужой боли и опыта. Вам важно отпускать и не нести всё в одиночку.',
+};
+
+function KeyNumbersInsight({ matrixData }) {
+  const destinyDigit = reduceToSingle(matrixData.destiny);
+  const soulDigit    = reduceToSingle(matrixData.soul);
+  const destinyHint  = DESTINY_HINTS[destinyDigit];
+  const soulHint     = SOUL_HINTS[soulDigit];
+
+  return (
+    <section className="px-6 pb-4 max-w-2xl mx-auto">
+      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] overflow-hidden divide-y divide-white/[0.06]">
+
+        {/* Число судьбы */}
+        <div className="p-5 md:p-6 flex gap-4 items-start">
+          <div className="shrink-0 w-10 h-10 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex flex-col items-center justify-center">
+            <span className="text-base font-black text-white leading-none">{matrixData.destiny}</span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[9px] uppercase tracking-[0.2em] font-black text-[#D4AF37]">Число судьбы</span>
+              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-600">·</span>
+              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-400">{destinyHint?.title}</span>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">{destinyHint?.text}</p>
+          </div>
+        </div>
+
+        {/* Число души */}
+        <div className="p-5 md:p-6 flex gap-4 items-start">
+          <div className="shrink-0 w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col items-center justify-center">
+            <span className="text-base font-black text-white leading-none">{matrixData.soul}</span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[9px] uppercase tracking-[0.2em] font-black text-blue-400">Число души</span>
+              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-600">·</span>
+              <span className="text-[9px] uppercase tracking-[0.15em] font-black text-gray-400">Внутренняя мотивация</span>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">{soulHint}</p>
+          </div>
+        </div>
+
+        {/* Тизер на остальные числа */}
+        <div className="p-5 md:p-6 flex gap-4 items-center">
+          <div className="shrink-0 w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center">
+            <svg width="14" height="16" viewBox="0 0 12 14" fill="none">
+              <rect x="1" y="5" width="10" height="8" rx="2" stroke="#6b7280" strokeWidth="1.5"/>
+              <path d="M4 5V3.5a2 2 0 014 0V5" stroke="#6b7280" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p className="text-[9px] uppercase tracking-[0.2em] font-black text-gray-600 mb-0.5">Карма · Потенциал · 9 секторов матрицы</p>
+            <p className="text-gray-500 text-sm">Расшифровка остальных чисел — в полном разборе ниже</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 // ─── BlurredPreview ───────────────────────────────────────────────────────────
 
 function BlurredPreview() {
@@ -386,15 +471,15 @@ function MatrixItem({ label, value, status, highlight = false }) {
       }`}
     >
       {highlight && <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#D4AF37]/0 via-[#D4AF37] to-[#D4AF37]/0" />}
-      <span className={`text-[5px] md:text-[7px] uppercase tracking-[0.1em] font-black leading-none ${highlight ? 'text-[#D4AF37]/80' : 'text-gray-500'}`}>
+      <span className={`text-[8px] md:text-[7px] uppercase tracking-[0.1em] font-black leading-none ${highlight ? 'text-[#D4AF37]/80' : 'text-gray-500'}`}>
         {label}
       </span>
-      <span className={`text-base md:text-[22px] font-black leading-none tracking-tight ${highlight ? 'text-white' : 'text-gray-100'}`}>
+      <span className={`text-lg md:text-[22px] font-black leading-none tracking-tight ${highlight ? 'text-white' : 'text-gray-100'}`}>
         {value || '—'}
       </span>
       <StatusDots value={value} />
       {status && status !== '—' && (
-        <span className={`text-[4px] md:text-[6px] font-black tracking-wider leading-none px-1.5 py-0.5 rounded-full ${badgeClass}`}>
+        <span className={`text-[7px] md:text-[6px] font-black tracking-wider leading-none px-1.5 py-0.5 rounded-full ${badgeClass}`}>
           {status}
         </span>
       )}
@@ -408,9 +493,9 @@ function SideCell({ label, value, icon }) {
   return (
     <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-blue-500/[0.04] border border-blue-500/20 hover:bg-blue-500/[0.08] hover:border-blue-400/30 transition-all cursor-default overflow-hidden relative">
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500/0 via-blue-400/40 to-blue-500/0" />
-      <div className="text-blue-400/60 leading-none scale-75 md:scale-100">{icon}</div>
-      <p className="text-sm md:text-xl font-black text-gray-100 leading-none">{value}</p>
-      <p className="text-[4px] md:text-[6px] uppercase font-black text-blue-400/50 tracking-wide leading-none text-center px-1">{label}</p>
+      <div className="text-blue-400/60 leading-none">{icon}</div>
+      <p className="text-lg md:text-xl font-black text-gray-100 leading-none">{value}</p>
+      <p className="text-[8px] md:text-[6px] uppercase font-black text-blue-400/50 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
@@ -421,9 +506,9 @@ function BottomCell({ label, value, icon }) {
   return (
     <div className="aspect-square flex flex-col items-center justify-center gap-1 md:gap-1.5 rounded-2xl md:rounded-[20px] bg-purple-500/[0.04] border border-purple-500/20 hover:bg-purple-500/[0.08] hover:border-purple-400/30 transition-all cursor-default overflow-hidden relative">
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-purple-500/0 via-purple-400/40 to-purple-500/0" />
-      <div className="text-purple-400/60 leading-none scale-75 md:scale-100">{icon}</div>
-      <p className="text-sm md:text-xl font-black text-gray-100 leading-none">{value}</p>
-      <p className="text-[4px] md:text-[6px] uppercase font-black text-purple-400/50 tracking-wide leading-none text-center px-1">{label}</p>
+      <div className="text-purple-400/60 leading-none">{icon}</div>
+      <p className="text-lg md:text-xl font-black text-gray-100 leading-none">{value}</p>
+      <p className="text-[8px] md:text-[6px] uppercase font-black text-purple-400/50 tracking-wide leading-none text-center px-1">{label}</p>
     </div>
   );
 }
@@ -493,8 +578,8 @@ function ModernMatrixGrid({ blurred = false, size = 'normal', data = DEMO_DATA }
                   { l: 'Потенциал', v: d.hidden  },
                 ].map((k) => (
                   <div key={k.l} className="flex flex-col items-center justify-center rounded-xl md:rounded-[14px] bg-[#D4AF37]/10 border border-[#D4AF37]/20 gap-0.5 md:gap-1 py-2 md:py-3">
-                    <span className="text-base md:text-2xl font-black text-white leading-none">{k.v}</span>
-                    <span className="text-[5px] md:text-[7px] uppercase font-black text-[#D4AF37]/60 tracking-wide">{k.l}</span>
+                    <span className="text-lg md:text-2xl font-black text-white leading-none">{k.v}</span>
+                    <span className="text-[8px] md:text-[7px] uppercase font-black text-[#D4AF37]/60 tracking-wide">{k.l}</span>
                   </div>
                 ))}
               </div>
@@ -1271,6 +1356,9 @@ export default function NumerosApp() {
               )}
             </div>
           </section>
+
+          {/* ── Мини-расшифровка ключевых чисел ── */}
+          {matrixData && <KeyNumbersInsight matrixData={matrixData} />}
 
           {/* ── Знаменитости с тем же числом судьбы ── */}
           {matrixData && <FamousSection destiny={matrixData.destiny} />}
