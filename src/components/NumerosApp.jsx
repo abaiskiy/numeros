@@ -57,8 +57,8 @@ function calculateMatrix(dateStr) {
   // A: сумма всех цифр даты (с ведущими нулями: ДД.ММ.ГГГГ)
   const A = dateDigits.reduce((s, d) => s + d, 0);
   const B = sumDigits(A);
-  // C: A минус удвоенная ПЕРВАЯ ЦИФРА ДНЯ (без ведущего нуля: для дня 1 → цифра 1, а не 0)
-  const C = A - Number(String(day)[0]) * 2;
+  // C: A минус удвоенная первая цифра ДД (с ведущим нулём: день 8 → "08" → цифра 0)
+  const C = A - Number(dd[0]) * 2;
   const D = sumDigits(Math.abs(C));
 
   // Collect every digit (date + A + B + C + D), drop zeros
