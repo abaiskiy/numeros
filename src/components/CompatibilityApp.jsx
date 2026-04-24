@@ -25,7 +25,7 @@ function calculateMatrix(dateStr) {
   const dateDigits = (dd + mm + yyyy).split('').map(Number);
   const A = dateDigits.reduce((s, d) => s + d, 0);
   const B = sumDigits(A);
-  const C = A - Number(dd[0]) * 2;
+  const C = A - Number(String(day)[0]) * 2;
   const D = sumDigits(Math.abs(C));
 
   const allDigits = [
